@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrawlCoach - Mis Stats</title>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b1020;
+      color: white;
+      min-height: 100vh;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 30px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    /* HEADER / NAVBAR */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #27314d;
+    }
+
+    .logo {
+      font-size: 38px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .logo span {
+      color: #ffd43b;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* TARJETAS Y CONTENEDORES */
+    .card {
+      background: #151c32;
+      border: 1px solid #27314d;
+      border-radius: 24px;
+      padding: 35px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+      margin-bottom: 25px;
+    }
+
+    .card h2 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #ffd43b;
+    }
+
+    .card-description {
+      color: #8f9ab2;
+      margin-bottom: 25px;
+    }
+
+    /* FORMULARIO DE TAG */
+    .tag-input-group {
+      display: flex;
+      gap: 12px;
+      max-width: 500px;
+    }
+
+    .input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #34405f;
+      border-radius: 11px;
+      background: #0d1427;
+      color: white;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .input:focus {
+      border-color: #ffd43b;
+    }
+
+    /* BOTONES */
+    .button {
+      border: none;
+      border-radius: 11px;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .primary {
+      background: #ffd43b;
+      color: #111827;
+    }
+
+    .secondary {
+      background: #27314d;
+      color: white;
+    }
+
+    .secondary:hover {
+      background: #34405f;
+    }
+
+    /* GRID DE ESTADÍSTICAS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 25px;
+    }
+
+    .full-width {
+      grid-column: span 2;
+    }
+
+    /* MÉTRICAS */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .metric-box {
+      background: #0d1427;
+      border: 1px solid #27314d;
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .metric-label {
+      display: block;
+      font-size: 13px;
+      color: #8f9ab2;
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .green { color: #22c55e; }
+    .red { color: #ef4444; }
+    .yellow { color: #ffd43b; }
+
+    /* LISTAS DE RENDIMIENTO */
+    .list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0d1427;
+      border: 1px solid #27314d;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+
+    /* ANALISIS DE MAPAS */
+    .map-analysis {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .map-box {
+      background: #0d1427;
+      border: 1px solid #27314d;
+      padding: 18px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .map-title {
+      font-size: 13px;
+      color: #8f9ab2;
+    }
+
+    .map-name {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    /* GRÁFICA / EVOLUCIÓN */
+    .graph-placeholder {
+      background: #0d1427;
+      border: 1px dashed #34405f;
+      height: 200px;
+      border-radius: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #8f9ab2;
+      font-size: 15px;
+    }
+
+    .message {
+      display: none;
+      background: #172033;
+      border: 1px solid #33415f;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 15px;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    @media (max-width: 850px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full-width {
+        grid-column: span 1;
+      }
+
+      .tag-input-group {
+        flex-direction: column;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="page">
+  <div class="container">
+
+    <!-- CABECERA -->
+    <header class="header">
+      <div class="logo" onclick="window.location.href='index.html'">
+        Brawl<span>Coach</span>
+      </div>
+      <div class="nav-buttons">
+        <button class="button secondary" onclick="window.location.href='ranked.html'">
+          🎯 Ranked Assistant
+        </button>
+        <button class="button secondary" onclick="window.location.href='index.html'">
+          🏠 Menú Principal
+        </button>
+      </div>
+    </header>
+
+    <!-- FORMULARIO DE VINCULACIÓN -->
+    <div class="card">
+      <h2>📊 Mis Estadísticas</h2>
+      <p class="card-description">Introduce tu Player Tag de Brawl Stars para analizar tus partidas.</p>
+
+      <div class="tag-input-group">
+        <input 
+          id="playerTagInput" 
+          class="input" 
+          type="text" 
+          placeholder="#28992PU8" 
+          maxlength="12"
+        >
+        <button class="button primary" onclick="loadStats()">
+          Buscar Stats
+        </button>
+      </div>
+      <div id="statsMessage" class="message"></div>
+    </div>
+
+    <!-- PANEL DE ESTADÍSTICAS (SKELETON / DATOS) -->
+    <div id="statsDashboard" class="stats-grid" style="display: none;">
+
+      <!-- RESUMEN DE PARTIDAS -->
+      <div class="card">
+        <h3>🎮 Partidas General</h3>
+        <div class="metrics-grid">
+          <div class="metric-box">
+            <span class="metric-label">Partidas Jugadas</span>
+            <span id="totalMatches" class="metric-value">124</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Victorias</span>
+            <span id="totalWins" class="metric-value green">78</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Derrotas</span>
+            <span id="totalLosses" class="metric-value red">46</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">% Winrate</span>
+            <span id="winratePercent" class="metric-value yellow">62.9%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAPAS DONDE MEJOR / PEOR FUNCIONA -->
+      <div class="card">
+        <h3>🗺️ Impacto en Mapas</h3>
+        <div class="map-analysis">
+          <div class="map-box">
+            <span class="map-title">Mejor Mapa</span>
+            <span id="bestMapName" class="map-name">Shooting Star</span>
+            <span id="bestMapRate" class="green" style="font-weight: bold; font-size: 14px;">75% Winrate</span>
+          </div>
+          <div class="map-box">
+            <span class="map-title">Peor Mapa</span>
+            <span id="worstMapName" class="map-name">Center Stage</span>
+            <span id="worstMapRate" class="red" style="font-weight: bold; font-size: 14px;">38% Winrate</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RENDIMIENTO POR MODO -->
+      <div class="card">
+        <h3>🎯 Rendimiento por Modo</h3>
+        <div class="list-container" id="modePerformanceList">
+          <div class="list-item">
+            <span>Brawl Ball</span>
+            <strong class="green">68% Winrate</strong>
+          </div>
+          <div class="list-item">
+            <span>Knockout</span>
+            <strong class="green">61% Winrate</strong>
+          </div>
+          <div class="list-item">
+            <span>Bounty</span>
+            <strong class="yellow">52% Winrate</strong>
+          </div>
+          <div class="list-item">
+            <span>Gem Grab</span>
+            <strong class="red">44% Winrate</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- RENDIMIENTO POR BRAWLER -->
+      <div class="card">
+        <h3>🔥 Rendimiento por Brawler</h3>
+        <div class="list-container" id="brawlerPerformanceList">
+          <div class="list-item">
+            <span>Piper</span>
+            <strong class="green">24 V - 8 D (75%)</strong>
+          </div>
+          <div class="list-item">
+            <span>Stu</span>
+            <strong class="green">18 V - 9 D (66%)</strong>
+          </div>
+          <div class="list-item">
+            <span>Colt</span>
+            <strong class="yellow">12 V - 11 D (52%)</strong>
+          </div>
+          <div class="list-item">
+            <span>Mortis</span>
+            <strong class="red">5 V - 14 D (26%)</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- EVOLUCIÓN DE ESTADÍSTICAS -->
+      <div class="card full-width">
+        <h3>📈 Evolución de Copas y Rendimiento</h3>
+        <div class="graph-placeholder">
+          <span>El gráfico de progreso se cargará al conectar con la API de Brawl Stars</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+  /* CONFIGURACIÓN SUPABASE */
+  const SUPABASE_URL = "https://wzbdwcovghhcjbiedmuh.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_VD7Kf7j3RrEHg2RvVOQ6FA_H4FuT_k-";
+
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  function showMessage(text) {
+    const msg = document.getElementById("statsMessage");
+    msg.textContent = text;
+    msg.style.display = "block";
+  }
+
+  /* PROTECCIÓN DE SESIÓN Y CARGA */
+  async function checkAuthAndLoadTag() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+      alert("Debes iniciar sesión para ver tus estadísticas.");
+      window.location.href = "index.html";
+      return;
+    }
+
+    // Intentar obtener el Tag previamente guardado
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .select('player_tag')
+      .eq('id', session.user.id)
+      .single();
+
+    if (data && data.player_tag) {
+      document.getElementById("playerTagInput").value = data.player_tag;
+      loadStats();
+    }
+  }
+
+  async function loadStats() {
+    const tagInput = document.getElementById("playerTagInput").value.trim();
+
+    if (!tagInput) {
+      showMessage("Por favor, ingresa un Player Tag válido.");
+      return;
+    }
+
+    // Normalizar formato de tag
+    const formattedTag = tagInput.startsWith("#") ? tagInput : "#" + tagInput;
+    document.getElementById("playerTagInput").value = formattedTag;
+
+    // Guardar en Supabase
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+      await supabaseClient
+        .from('profiles')
+        .update({ player_tag: formattedTag })
+        .eq('id', session.user.id);
+    }
+
+    showMessage("Cargando información del jugador...");
+    
+    // Mostramos el dashboard en pantalla
+    document.getElementById("statsDashboard").style.display = "grid";
+    document.getElementById("statsMessage").style.display = "none";
+  }
+
+  // Inicializar al cargar la página
+  checkAuthAndLoadTag();
+</script>
+
+</body>
+</html>
