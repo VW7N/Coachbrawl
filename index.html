@@ -196,6 +196,17 @@
       background: #6975f5;
     }
 
+    /* NUEVO BOTÓN PARA STATS */
+    .stats-button {
+      background: #10b981;
+      color: white;
+      margin-top: 10px;
+    }
+
+    .stats-button:hover {
+      background: #059669;
+    }
+
     .back {
       background: transparent;
       color: #9ca3af;
@@ -350,8 +361,13 @@
             </button>
           </div>
 
+          <!-- BOTONES DE ACCESO RÁPIDO A SECCIONES -->
           <button class="button ranked-button" onclick="openRanked()">
             🎯 Ranked Assistant
+          </button>
+
+          <button class="button stats-button" onclick="openStats()">
+            📊 Mis Stats
           </button>
 
           <div class="counter-badge">
@@ -439,6 +455,18 @@
       window.location.href = "ranked.html";
     } else {
       showMessage("loginMessage", "Debes iniciar sesión para usar el Ranked Assistant.");
+      showScreen("login");
+    }
+  }
+
+  /* ACCESO PROTEGIDO A MIS STATS */
+  async function openStats() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (session) {
+      window.location.href = "stats.html";
+    } else {
+      showMessage("loginMessage", "Debes iniciar sesión para ver tus estadísticas.");
       showScreen("login");
     }
   }
