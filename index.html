@@ -158,6 +158,16 @@
       color: white;
     }
 
+    .ranked-button {
+      background: #5865f2;
+      color: white;
+      margin-top: 12px;
+    }
+
+    .ranked-button:hover {
+      background: #6975f5;
+    }
+
     .back {
       background: transparent;
       color: #9ca3af;
@@ -228,6 +238,7 @@
       <div class="main-grid">
 
         <div class="hero">
+
           <div class="logo">
             Brawl<span>Coach</span>
           </div>
@@ -281,6 +292,7 @@
           </div>
         </div>
 
+
         <div class="card">
 
           <h2>Bienvenido 👋</h2>
@@ -289,12 +301,22 @@
             Inicia sesión para entrar en BrawlCoach.
           </p>
 
-          <button class="button primary" onclick="showScreen('login')">
+          <button
+            class="button primary"
+            onclick="showScreen('login')">
             Iniciar sesión
           </button>
 
-          <button class="button secondary" onclick="showScreen('register')">
+          <button
+            class="button secondary"
+            onclick="showScreen('register')">
             Crear una cuenta
+          </button>
+
+          <button
+            class="button ranked-button"
+            onclick="openRanked()">
+            🎯 Ranked Assistant
           </button>
 
         </div>
@@ -333,13 +355,17 @@
           placeholder="Contraseña"
         >
 
-        <button class="button primary" onclick="fakeLogin()">
+        <button
+          class="button primary"
+          onclick="fakeLogin()">
           Iniciar sesión
         </button>
 
         <div id="loginMessage" class="message"></div>
 
-        <button class="back" onclick="showScreen('home')">
+        <button
+          class="back"
+          onclick="showScreen('home')">
           ← Volver
         </button>
 
@@ -384,13 +410,17 @@
           placeholder="Contraseña"
         >
 
-        <button class="button primary" onclick="fakeRegister()">
+        <button
+          class="button primary"
+          onclick="fakeRegister()">
           Crear cuenta
         </button>
 
         <div id="registerMessage" class="message"></div>
 
-        <button class="back" onclick="showScreen('home')">
+        <button
+          class="back"
+          onclick="showScreen('home')">
           ← Volver
         </button>
 
@@ -415,6 +445,11 @@
     document.getElementById(screenId).classList.add("active");
 
     window.scrollTo(0, 0);
+  }
+
+
+  function openRanked() {
+    window.location.href = "ranked.html";
   }
 
 
