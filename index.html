@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BrawlCoach</title>
 
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -292,7 +295,6 @@
           </div>
         </div>
 
-
         <div class="card">
 
           <h2>Bienvenido 👋</h2>
@@ -346,6 +348,7 @@
           class="input"
           type="email"
           placeholder="Correo electrónico"
+          autocomplete="email"
         >
 
         <input
@@ -353,11 +356,13 @@
           class="input"
           type="password"
           placeholder="Contraseña"
+          autocomplete="current-password"
         >
 
         <button
+          id="loginButton"
           class="button primary"
-          onclick="fakeLogin()">
+          onclick="login()">
           Iniciar sesión
         </button>
 
@@ -394,6 +399,8 @@
           class="input"
           type="text"
           placeholder="Nombre de usuario"
+          maxlength="20"
+          autocomplete="username"
         >
 
         <input
@@ -401,6 +408,7 @@
           class="input"
           type="email"
           placeholder="Correo electrónico"
+          autocomplete="email"
         >
 
         <input
@@ -408,11 +416,13 @@
           class="input"
           type="password"
           placeholder="Contraseña"
+          autocomplete="new-password"
         >
 
         <button
+          id="registerButton"
           class="button primary"
-          onclick="fakeRegister()">
+          onclick="register()">
           Crear cuenta
         </button>
 
@@ -434,6 +444,27 @@
 
 <script>
 
+  /*
+   * ============================================================
+   * SUPABASE
+   * ============================================================
+   */
+
+  const SUPABASE_URL = "https://wzbdwcovghhcjbiedmuh.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_VD7Kf7j3RrEHg2RvVOQ6FA_H4FuT_k-";
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+  /*
+   * ============================================================
+   * NAVEGACIÓN
+   * ============================================================
+   */
+
   function showScreen(screenId) {
 
     const screens = document.querySelectorAll(".screen");
@@ -453,41 +484,330 @@
   }
 
 
-  function fakeLogin() {
+  /*
+   * ============================================================
+   * MENSAJES
+   * ============================================================
+   */
 
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
-    const message = document.getElementById("loginMessage");
+  function showMessage(elementId, text) {
 
+    const message = document.getElementById(elementId);
+
+    message.textContent = text;
     message.style.display = "block";
-
-    if (!email || !password) {
-      message.textContent = "Completa todos los campos.";
-      return;
-    }
-
-    message.textContent =
-      "La pantalla funciona, pero el sistema de cuentas todavía no está conectado.";
   }
 
 
-  function fakeRegister() {
+  function hideMessage(elementId) {
 
-    const name = document.getElementById("registerName").value;
-    const email = document.getElementById("registerEmail").value;
-    const password = document.getElementById("registerPassword").value;
-    const message = document.getElementById("registerMessage");
+    const message = document.getElementById(elementId);
 
-    message.style.display = "block";
+    message.textContent = "";
+    message.style.display = "none";
+  }
+
+
+  /*
+   * ============================================================
+   * REGISTRO
+   * ============================================================
+   */
+
+  async function register() {
+
+    const name =
+      document.getElementById("registerName").value.trim();
+
+    const email =
+      document.getElementById("registerEmail").value.trim();
+
+    const password =
+      document.getElementById("registerPassword").value;
+
+    const button =
+      document.getElementById("registerButton");
+
+
+    hideMessage("registerMessage");
+
 
     if (!name || !email || !password) {
-      message.textContent = "Completa todos los campos.";
+
+      showMessage(
+        "registerMessage",
+        "Completa todos los campos."
+      );
+
       return;
     }
 
-    message.textContent =
-      "El registro funciona visualmente, pero todavía no crea una cuenta real.";
+
+    if (name.length < 3) {
+
+      showMessage(
+        "registerMessage",
+        "El nombre de usuario debe tener al menos 3 caracteres."
+      );
+
+      return;
+    }
+
+
+    if (password.length < 6) {
+
+      showMessage(
+        "registerMessage",
+        "La contraseña debe tener al menos 6 caracteres."
+      );
+
+      return;
+    }
+
+
+    button.disabled = true;
+    button.textContent = "Creando cuenta...";
+
+
+    try {
+
+      const { data, error } =
+        await supabaseClient.auth.signUp({
+          email: email,
+          password: password,
+          options: {
+            data: {
+              username: name
+            }
+          }
+        });
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      if (data.user) {
+
+        showMessage(
+          "registerMessage",
+          "Cuenta creada correctamente. Revisa tu correo para confirmar la cuenta."
+        );
+
+        document.getElementById("registerPassword").value = "";
+
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      showMessage(
+        "registerMessage",
+        getAuthErrorMessage(error)
+      );
+
+    } finally {
+
+      button.disabled = false;
+      button.textContent = "Crear cuenta";
+
+    }
+
   }
+
+
+  /*
+   * ============================================================
+   * LOGIN
+   * ============================================================
+   */
+
+  async function login() {
+
+    const email =
+      document.getElementById("loginEmail").value.trim();
+
+    const password =
+      document.getElementById("loginPassword").value;
+
+    const button =
+      document.getElementById("loginButton");
+
+
+    hideMessage("loginMessage");
+
+
+    if (!email || !password) {
+
+      showMessage(
+        "loginMessage",
+        "Completa todos los campos."
+      );
+
+      return;
+    }
+
+
+    button.disabled = true;
+    button.textContent = "Entrando...";
+
+
+    try {
+
+      const { data, error } =
+        await supabaseClient.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      if (data.user) {
+
+        showMessage(
+          "loginMessage",
+          "¡Has iniciado sesión correctamente!"
+        );
+
+        /*
+         * Más adelante aquí podremos redirigir
+         * a la página principal de usuario.
+         */
+
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      showMessage(
+        "loginMessage",
+        getAuthErrorMessage(error)
+      );
+
+    } finally {
+
+      button.disabled = false;
+      button.textContent = "Iniciar sesión";
+
+    }
+
+  }
+
+
+  /*
+   * ============================================================
+   * SESIÓN
+   * ============================================================
+   */
+
+  async function checkSession() {
+
+    const { data, error } =
+      await supabaseClient.auth.getSession();
+
+
+    if (error) {
+
+      console.error(
+        "Error comprobando la sesión:",
+        error
+      );
+
+      return;
+    }
+
+
+    if (data.session) {
+
+      console.log(
+        "Sesión activa:",
+        data.session.user.email
+      );
+
+    }
+
+  }
+
+
+  /*
+   * Detectar cambios de sesión.
+   */
+
+  supabaseClient.auth.onAuthStateChange(
+    function(event, session) {
+
+      console.log(
+        "Auth:",
+        event,
+        session ? "Sesión activa" : "Sin sesión"
+      );
+
+    }
+  );
+
+
+  /*
+   * ============================================================
+   * ERRORES
+   * ============================================================
+   */
+
+  function getAuthErrorMessage(error) {
+
+    if (!error || !error.message) {
+      return "Ha ocurrido un error. Inténtalo de nuevo.";
+    }
+
+
+    const message = error.message.toLowerCase();
+
+
+    if (message.includes("invalid login credentials")) {
+
+      return "Correo o contraseña incorrectos.";
+    }
+
+
+    if (message.includes("email not confirmed")) {
+
+      return "Primero debes confirmar tu correo electrónico.";
+    }
+
+
+    if (message.includes("user already registered")) {
+
+      return "Ya existe una cuenta con ese correo.";
+    }
+
+
+    if (message.includes("password")) {
+
+      return "La contraseña no cumple los requisitos.";
+    }
+
+
+    if (message.includes("rate limit")) {
+
+      return "Demasiados intentos. Espera un poco y vuelve a intentarlo.";
+    }
+
+
+    return error.message;
+  }
+
+
+  /*
+   * Comprobar sesión al cargar la página.
+   */
+
+  checkSession();
 
 </script>
 
