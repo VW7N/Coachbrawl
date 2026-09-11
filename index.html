@@ -124,6 +124,24 @@
       margin-bottom: 28px;
     }
 
+    .user-badge {
+      background: #0d1427;
+      border: 1px solid #34405f;
+      padding: 12px;
+      border-radius: 11px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #ffd43b;
+      word-break: break-all;
+    }
+
+    .counter-badge {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #8f9ab2;
+      text-align: center;
+    }
+
     .input {
       width: 100%;
       padding: 14px;
@@ -159,6 +177,13 @@
     .secondary {
       background: #27314d;
       color: white;
+      margin-top: 10px;
+    }
+
+    .danger {
+      background: #ef4444;
+      color: white;
+      margin-top: 10px;
     }
 
     .ranked-button {
@@ -297,29 +322,41 @@
 
         <div class="card">
 
-          <h2>Bienvenido 👋</h2>
+          <!-- ESTADO: SIN SESIÓN -->
+          <div id="loggedOutView">
+            <h2>Bienvenido 👋</h2>
+            <p class="card-description">
+              Inicia sesión para entrar en BrawlCoach.
+            </p>
 
-          <p class="card-description">
-            Inicia sesión para entrar en BrawlCoach.
-          </p>
+            <button class="button primary" onclick="showScreen('login')">
+              Iniciar sesión
+            </button>
 
-          <button
-            class="button primary"
-            onclick="showScreen('login')">
-            Iniciar sesión
-          </button>
+            <button class="button secondary" onclick="showScreen('register')">
+              Crear una cuenta
+            </button>
+          </div>
 
-          <button
-            class="button secondary"
-            onclick="showScreen('register')">
-            Crear una cuenta
-          </button>
+          <!-- ESTADO: CON SESIÓN ACTIVA -->
+          <div id="loggedInView" style="display: none;">
+            <h2>¡Hola de nuevo! 👋</h2>
+            <p class="card-description">Sesión iniciada correctamente</p>
+            
+            <div id="userInfo" class="user-badge">Cargando datos...</div>
 
-          <button
-            class="button ranked-button"
-            onclick="openRanked()">
+            <button class="button danger" onclick="logout()">
+              Cerrar sesión
+            </button>
+          </div>
+
+          <button class="button ranked-button" onclick="openRanked()">
             🎯 Ranked Assistant
           </button>
+
+          <div class="counter-badge">
+            👥 Jugadores registrados: <strong id="playerCount" style="color: white;">-</strong>
+          </div>
 
         </div>
 
@@ -327,488 +364,243 @@
 
     </section>
 
-
     <!-- LOGIN -->
     <section id="login" class="screen">
-
       <div class="card" style="max-width: 450px; margin: auto;">
-
         <div class="logo" style="font-size: 38px;">
           Brawl<span>Coach</span>
         </div>
-
         <h2>Iniciar sesión</h2>
+        <p class="card-description">Entra en tu cuenta.</p>
 
-        <p class="card-description">
-          Entra en tu cuenta.
-        </p>
+        <input id="loginEmail" class="input" type="email" placeholder="Correo electrónico" autocomplete="email">
+        <input id="loginPassword" class="input" type="password" placeholder="Contraseña" autocomplete="current-password">
 
-        <input
-          id="loginEmail"
-          class="input"
-          type="email"
-          placeholder="Correo electrónico"
-          autocomplete="email"
-        >
-
-        <input
-          id="loginPassword"
-          class="input"
-          type="password"
-          placeholder="Contraseña"
-          autocomplete="current-password"
-        >
-
-        <button
-          id="loginButton"
-          class="button primary"
-          onclick="login()">
+        <button id="loginButton" class="button primary" onclick="login()">
           Iniciar sesión
         </button>
 
         <div id="loginMessage" class="message"></div>
 
-        <button
-          class="back"
-          onclick="showScreen('home')">
+        <button class="back" onclick="showScreen('home')">
           ← Volver
         </button>
-
       </div>
-
     </section>
-
 
     <!-- REGISTRO -->
     <section id="register" class="screen">
-
       <div class="card" style="max-width: 450px; margin: auto;">
-
         <div class="logo" style="font-size: 38px;">
           Brawl<span>Coach</span>
         </div>
-
         <h2>Crear cuenta</h2>
+        <p class="card-description">Únete a BrawlCoach.</p>
 
-        <p class="card-description">
-          Únete a BrawlCoach.
-        </p>
+        <input id="registerName" class="input" type="text" placeholder="Nombre de usuario" maxlength="20" autocomplete="username">
+        <input id="registerEmail" class="input" type="email" placeholder="Correo electrónico" autocomplete="email">
+        <input id="registerPassword" class="input" type="password" placeholder="Contraseña" autocomplete="new-password">
 
-        <input
-          id="registerName"
-          class="input"
-          type="text"
-          placeholder="Nombre de usuario"
-          maxlength="20"
-          autocomplete="username"
-        >
-
-        <input
-          id="registerEmail"
-          class="input"
-          type="email"
-          placeholder="Correo electrónico"
-          autocomplete="email"
-        >
-
-        <input
-          id="registerPassword"
-          class="input"
-          type="password"
-          placeholder="Contraseña"
-          autocomplete="new-password"
-        >
-
-        <button
-          id="registerButton"
-          class="button primary"
-          onclick="register()">
+        <button id="registerButton" class="button primary" onclick="register()">
           Crear cuenta
         </button>
 
         <div id="registerMessage" class="message"></div>
 
-        <button
-          class="back"
-          onclick="showScreen('home')">
+        <button class="back" onclick="showScreen('home')">
           ← Volver
         </button>
-
       </div>
-
     </section>
 
   </div>
 </div>
 
-
 <script>
-
-  /*
-   * ============================================================
-   * SUPABASE
-   * ============================================================
-   */
-
+  /* CONFIGURACIÓN SUPABASE */
   const SUPABASE_URL = "https://wzbdwcovghhcjbiedmuh.supabase.co";
   const SUPABASE_KEY = "sb_publishable_VD7Kf7j3RrEHg2RvVOQ6FA_H4FuT_k-";
 
-  const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-
-  /*
-   * ============================================================
-   * NAVEGACIÓN
-   * ============================================================
-   */
-
+  /* NAVEGACIÓN PANTALLAS */
   function showScreen(screenId) {
-
     const screens = document.querySelectorAll(".screen");
-
-    screens.forEach(function(screen) {
-      screen.classList.remove("active");
-    });
-
+    screens.forEach(s => s.classList.remove("active"));
     document.getElementById(screenId).classList.add("active");
-
     window.scrollTo(0, 0);
   }
-
 
   function openRanked() {
     window.location.href = "ranked.html";
   }
 
-
-  /*
-   * ============================================================
-   * MENSAJES
-   * ============================================================
-   */
-
+  /* GESTIÓN DE MENSAJES */
   function showMessage(elementId, text) {
-
-    const message = document.getElementById(elementId);
-
-    message.textContent = text;
-    message.style.display = "block";
+    const msg = document.getElementById(elementId);
+    msg.textContent = text;
+    msg.style.display = "block";
   }
-
 
   function hideMessage(elementId) {
-
-    const message = document.getElementById(elementId);
-
-    message.textContent = "";
-    message.style.display = "none";
+    const msg = document.getElementById(elementId);
+    msg.textContent = "";
+    msg.style.display = "none";
   }
 
-
-  /*
-   * ============================================================
-   * REGISTRO
-   * ============================================================
-   */
-
+  /* REGISTRO REAL */
   async function register() {
-
-    const name =
-      document.getElementById("registerName").value.trim();
-
-    const email =
-      document.getElementById("registerEmail").value.trim();
-
-    const password =
-      document.getElementById("registerPassword").value;
-
-    const button =
-      document.getElementById("registerButton");
-
+    const name = document.getElementById("registerName").value.trim();
+    const email = document.getElementById("registerEmail").value.trim();
+    const password = document.getElementById("registerPassword").value;
+    const button = document.getElementById("registerButton");
 
     hideMessage("registerMessage");
 
-
     if (!name || !email || !password) {
-
-      showMessage(
-        "registerMessage",
-        "Completa todos los campos."
-      );
-
+      showMessage("registerMessage", "Completa todos los campos.");
       return;
     }
-
 
     if (name.length < 3) {
-
-      showMessage(
-        "registerMessage",
-        "El nombre de usuario debe tener al menos 3 caracteres."
-      );
-
+      showMessage("registerMessage", "El nombre debe tener al menos 3 caracteres.");
       return;
     }
-
 
     if (password.length < 6) {
-
-      showMessage(
-        "registerMessage",
-        "La contraseña debe tener al menos 6 caracteres."
-      );
-
+      showMessage("registerMessage", "La contraseña debe tener al menos 6 caracteres.");
       return;
     }
-
 
     button.disabled = true;
     button.textContent = "Creando cuenta...";
 
-
     try {
+      const { data, error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password,
+        options: { data: { username: name } }
+      });
 
-      const { data, error } =
-        await supabaseClient.auth.signUp({
-          email: email,
-          password: password,
-          options: {
-            data: {
-              username: name
-            }
-          }
-        });
-
-
-      if (error) {
-        throw error;
-      }
-
+      if (error) throw error;
 
       if (data.user) {
-
-        showMessage(
-          "registerMessage",
-          "Cuenta creada correctamente. Revisa tu correo para confirmar la cuenta."
-        );
-
+        showMessage("registerMessage", "Cuenta creada. Si requiere confirmación, revisa tu correo.");
         document.getElementById("registerPassword").value = "";
-
+        updatePlayerCount();
       }
-
     } catch (error) {
-
       console.error(error);
-
-      showMessage(
-        "registerMessage",
-        getAuthErrorMessage(error)
-      );
-
+      showMessage("registerMessage", getAuthErrorMessage(error));
     } finally {
-
       button.disabled = false;
       button.textContent = "Crear cuenta";
-
     }
-
   }
 
-
-  /*
-   * ============================================================
-   * LOGIN
-   * ============================================================
-   */
-
+  /* INICIO DE SESIÓN REAL */
   async function login() {
-
-    const email =
-      document.getElementById("loginEmail").value.trim();
-
-    const password =
-      document.getElementById("loginPassword").value;
-
-    const button =
-      document.getElementById("loginButton");
-
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    const button = document.getElementById("loginButton");
 
     hideMessage("loginMessage");
 
-
     if (!email || !password) {
-
-      showMessage(
-        "loginMessage",
-        "Completa todos los campos."
-      );
-
+      showMessage("loginMessage", "Completa todos los campos.");
       return;
     }
-
 
     button.disabled = true;
     button.textContent = "Entrando...";
 
-
     try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
 
-      const { data, error } =
-        await supabaseClient.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
-
-
-      if (error) {
-        throw error;
-      }
-
+      if (error) throw error;
 
       if (data.user) {
-
-        showMessage(
-          "loginMessage",
-          "¡Has iniciado sesión correctamente!"
-        );
-
-        /*
-         * Más adelante aquí podremos redirigir
-         * a la página principal de usuario.
-         */
-
+        showScreen("home");
       }
-
     } catch (error) {
-
       console.error(error);
-
-      showMessage(
-        "loginMessage",
-        getAuthErrorMessage(error)
-      );
-
+      showMessage("loginMessage", getAuthErrorMessage(error));
     } finally {
-
       button.disabled = false;
       button.textContent = "Iniciar sesión";
-
     }
-
   }
 
-
-  /*
-   * ============================================================
-   * SESIÓN
-   * ============================================================
-   */
-
-  async function checkSession() {
-
-    const { data, error } =
-      await supabaseClient.auth.getSession();
-
-
-    if (error) {
-
-      console.error(
-        "Error comprobando la sesión:",
-        error
-      );
-
-      return;
-    }
-
-
-    if (data.session) {
-
-      console.log(
-        "Sesión activa:",
-        data.session.user.email
-      );
-
-    }
-
+  /* CERRAR SESIÓN */
+  async function logout() {
+    await supabaseClient.auth.signOut();
+    showScreen("home");
   }
 
+  /* GESTIÓN Y PERSISTENCIA DE SESIÓN */
+  function renderAuthState(session) {
+    const loggedOutView = document.getElementById("loggedOutView");
+    const loggedInView = document.getElementById("loggedInView");
+    const userInfo = document.getElementById("userInfo");
 
-  /*
-   * Detectar cambios de sesión.
-   */
-
-  supabaseClient.auth.onAuthStateChange(
-    function(event, session) {
-
-      console.log(
-        "Auth:",
-        event,
-        session ? "Sesión activa" : "Sin sesión"
-      );
-
+    if (session && session.user) {
+      const username = session.user.user_metadata?.username || session.user.email;
+      userInfo.textContent = `👤 ${username}`;
+      loggedOutView.style.display = "none";
+      loggedInView.style.display = "block";
+    } else {
+      loggedOutView.style.display = "block";
+      loggedInView.style.display = "none";
     }
-  );
+  }
 
+  /* CONTADOR DE JUGADORES */
+  async function updatePlayerCount() {
+    try {
+      const { count, error } = await supabaseClient
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
 
-  /*
-   * ============================================================
-   * ERRORES
-   * ============================================================
-   */
+      if (!error && count !== null) {
+        document.getElementById("playerCount").textContent = count;
+      } else {
+        document.getElementById("playerCount").textContent = "1+";
+      }
+    } catch (e) {
+      document.getElementById("playerCount").textContent = "1+";
+    }
+  }
 
+  /* SUBSCRIPCIÓN A CAMBIOS DE AUTH */
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+    renderAuthState(session);
+  });
+
+  /* TRADUCCIÓN DE ERRORES */
   function getAuthErrorMessage(error) {
-
-    if (!error || !error.message) {
-      return "Ha ocurrido un error. Inténtalo de nuevo.";
-    }
-
-
+    if (!error || !error.message) return "Ha ocurrido un error. Inténtalo de nuevo.";
     const message = error.message.toLowerCase();
 
-
-    if (message.includes("invalid login credentials")) {
-
-      return "Correo o contraseña incorrectos.";
-    }
-
-
-    if (message.includes("email not confirmed")) {
-
-      return "Primero debes confirmar tu correo electrónico.";
-    }
-
-
-    if (message.includes("user already registered")) {
-
-      return "Ya existe una cuenta con ese correo.";
-    }
-
-
-    if (message.includes("password")) {
-
-      return "La contraseña no cumple los requisitos.";
-    }
-
-
-    if (message.includes("rate limit")) {
-
-      return "Demasiados intentos. Espera un poco y vuelve a intentarlo.";
-    }
-
+    if (message.includes("invalid login credentials")) return "Correo o contraseña incorrectos.";
+    if (message.includes("email not confirmed")) return "Primero debes confirmar tu correo electrónico.";
+    if (message.includes("user already registered")) return "Ya existe una cuenta con ese correo.";
+    if (message.includes("password")) return "La contraseña no cumple los requisitos.";
+    if (message.includes("rate limit")) return "Demasiados intentos. Espera un poco.";
 
     return error.message;
   }
 
+  /* INICIALIZACIÓN */
+  async function init() {
+    const { data } = await supabaseClient.auth.getSession();
+    renderAuthState(data.session);
+    updatePlayerCount();
+  }
 
-  /*
-   * Comprobar sesión al cargar la página.
-   */
-
-  checkSession();
-
+  init();
 </script>
 
 </body>
