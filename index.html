@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrawlCoach</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #111827;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 42px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .logo span {
+      color: #facc15;
+    }
+
+    .subtitle {
+      color: #9ca3af;
+      font-size: 18px;
+      margin-bottom: 45px;
+    }
+
+    .login-box {
+      background: #1f2937;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 450px;
+      margin: auto;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+    }
+
+    .login-box h2 {
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+
+    .login-box p {
+      color: #9ca3af;
+      margin-bottom: 25px;
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      margin-top: 12px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .login {
+      background: #facc15;
+      color: #111827;
+    }
+
+    .register {
+      background: #374151;
+      color: white;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 35px;
+    }
+
+    .feature {
+      background: #1f2937;
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    .feature h3 {
+      margin-bottom: 8px;
+    }
+
+    .feature p {
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .logo {
+        font-size: 34px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="logo">
+      Brawl<span>Coach</span>
+    </div>
+
+    <div class="subtitle">
+      Mejora tu juego. Toma mejores decisiones.
+    </div>
+
+    <div class="login-box">
+      <h2>Bienvenido 👋</h2>
+
+      <p>
+        Inicia sesión para acceder a toda la plataforma.
+      </p>
+
+      <button class="button login">
+        Iniciar sesión
+      </button>
+
+      <button class="button register">
+        Crear cuenta
+      </button>
+    </div>
+
+    <div class="features">
+
+      <div class="feature">
+        <h3>🏆 Ranked</h3>
+        <p>
+          Encuentra mejores picks según el mapa,
+          bans y composición de tu equipo.
+        </p>
+      </div>
+
+      <div class="feature">
+        <h3>📊 Mis Stats</h3>
+        <p>
+          Consulta y analiza tus estadísticas.
+        </p>
+      </div>
+
+      <div class="feature">
+        <h3>👥 Jugadores</h3>
+        <p>
+          Encuentra jugadores y forma tu equipo.
+        </p>
+      </div>
+
+      <div class="feature">
+        <h3>🎓 Coaches</h3>
+        <p>
+          Aprende de jugadores y entrenadores.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>
