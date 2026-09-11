@@ -20,35 +20,26 @@
       background: #0b1020;
       color: white;
       min-height: 100vh;
-    }
-
-    .page {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 30px;
+      padding: 20px;
     }
 
     .container {
       width: 100%;
-      max-width: 1100px;
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
-    /* HEADER / NAVBAR */
-    .header {
+    /* HEADER DE NAVEGACIÓN */
+    .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #27314d;
+      margin-bottom: 25px;
     }
 
     .logo {
-      font-size: 38px;
+      font-size: 32px;
       font-weight: 900;
-      cursor: pointer;
     }
 
     .logo span {
@@ -57,210 +48,202 @@
 
     .nav-buttons {
       display: flex;
-      gap: 12px;
+      gap: 10px;
     }
 
-    /* TARJETAS Y CONTENEDORES */
-    .card {
+    .btn-nav {
       background: #151c32;
       border: 1px solid #27314d;
-      border-radius: 24px;
-      padding: 35px;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .btn-nav:hover {
+      background: #1f2942;
+    }
+
+    /* BÚSQUEDA */
+    .search-card {
+      background: #151c32;
+      border: 1px solid #27314d;
+      border-radius: 20px;
+      padding: 25px;
       margin-bottom: 25px;
     }
 
-    .card h2 {
-      font-size: 28px;
-      margin-bottom: 8px;
+    .search-card h2 {
+      font-size: 22px;
+      margin-bottom: 5px;
     }
 
-    .card h3 {
-      font-size: 20px;
-      margin-bottom: 15px;
-      color: #ffd43b;
-    }
-
-    .card-description {
+    .search-card p {
       color: #8f9ab2;
-      margin-bottom: 25px;
+      font-size: 14px;
+      margin-bottom: 15px;
     }
 
-    /* FORMULARIO DE TAG */
-    .tag-input-group {
+    .search-box {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       max-width: 500px;
     }
 
     .input {
-      width: 100%;
-      padding: 14px;
+      flex: 1;
+      padding: 12px 15px;
       border: 1px solid #34405f;
-      border-radius: 11px;
+      border-radius: 10px;
       background: #0d1427;
       color: white;
       font-size: 15px;
       outline: none;
+      text-transform: uppercase;
     }
 
     .input:focus {
       border-color: #ffd43b;
     }
 
-    /* BOTONES */
-    .button {
-      border: none;
-      border-radius: 11px;
-      padding: 14px 24px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .primary {
+    .btn-primary {
       background: #ffd43b;
       color: #111827;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
     }
 
-    .secondary {
-      background: #27314d;
-      color: white;
+    .btn-primary:hover {
+      background: #e5bd33;
     }
 
-    .secondary:hover {
-      background: #34405f;
-    }
-
-    /* GRID DE ESTADÍSTICAS */
+    /* REJILLA PRINCIPAL DE METRICAS */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 25px;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
     }
 
-    .full-width {
-      grid-column: span 2;
+    .card {
+      background: #151c32;
+      border: 1px solid #27314d;
+      border-radius: 20px;
+      padding: 25px;
     }
 
-    /* MÉTRICAS */
-    .metrics-grid {
+    .profile-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .profile-info h2 {
+      font-size: 26px;
+      color: #ffd43b;
+    }
+
+    .tag-badge {
+      background: #0d1427;
+      border: 1px solid #34405f;
+      padding: 4px 10px;
+      border-radius: 8px;
+      color: #8f9ab2;
+      font-size: 13px;
+      display: inline-block;
+      margin-top: 4px;
+    }
+
+    .metrics-row {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
       gap: 12px;
     }
 
     .metric-box {
       background: #0d1427;
-      border: 1px solid #27314d;
-      padding: 16px;
+      padding: 14px;
       border-radius: 12px;
-      text-align: center;
+      border: 1px solid #27314d;
+      display: flex;
+      flex-direction: column;
     }
 
-    .metric-label {
-      display: block;
-      font-size: 13px;
+    .metric-box .label {
+      font-size: 12px;
       color: #8f9ab2;
       margin-bottom: 6px;
     }
 
-    .metric-value {
-      font-size: 26px;
+    .metric-box .value {
+      font-size: 20px;
       font-weight: bold;
     }
 
-    .green { color: #22c55e; }
-    .red { color: #ef4444; }
-    .yellow { color: #ffd43b; }
+    .value.yellow { color: #ffd43b; }
+    .value.red { color: #ef4444; }
+    .value.blue { color: #3b82f6; }
+    .value.green { color: #10b981; }
 
-    /* LISTAS DE RENDIMIENTO */
-    .list-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    /* CARD DE COMPETITIVO / RANKED */
+    .ranked-card {
+      border: 1px solid #7c3aed;
+      background: linear-gradient(145deg, #151c32 0%, #1e1b4b 100%);
     }
 
-    .list-item {
+    .ranked-card h3 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #c084fc;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      background: #0d1427;
-      border: 1px solid #27314d;
-      padding: 12px 16px;
-      border-radius: 10px;
-      font-size: 15px;
+      gap: 8px;
     }
 
-    /* ANALISIS DE MAPAS */
-    .map-analysis {
+    .ranked-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
 
-    .map-box {
-      background: #0d1427;
-      border: 1px solid #27314d;
-      padding: 18px;
+    .ranked-box {
+      background: rgba(13, 20, 39, 0.7);
+      padding: 15px;
       border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      text-align: center;
+      border: 1px solid #4c1d95;
     }
 
-    .map-title {
-      font-size: 13px;
-      color: #8f9ab2;
-    }
-
-    .map-name {
+    .ranked-badge {
       font-size: 18px;
-      font-weight: bold;
+      font-weight: 900;
+      color: #c084fc;
+      margin: 8px 0 2px 0;
     }
 
-    /* GRÁFICA / EVOLUCIÓN */
-    .graph-placeholder {
-      background: #0d1427;
-      border: 1px dashed #34405f;
-      height: 200px;
-      border-radius: 14px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #8f9ab2;
-      font-size: 15px;
+    .ranked-badge.max {
+      color: #f0abfc;
     }
 
-    .message {
-      display: none;
-      background: #172033;
-      border: 1px solid #33415f;
-      border-radius: 10px;
-      padding: 12px;
-      margin-top: 15px;
-      color: #cbd5e1;
-      font-size: 14px;
+    .sub-value {
+      font-size: 13px;
+      color: #9ca3af;
     }
 
-    @media (max-width: 850px) {
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 768px) {
       .stats-grid {
         grid-template-columns: 1fr;
-      }
-
-      .full-width {
-        grid-column: span 1;
-      }
-
-      .tag-input-group {
-        flex-direction: column;
-      }
-
-      .header {
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
       }
     }
   </style>
@@ -268,212 +251,142 @@
 
 <body>
 
-<div class="page">
-  <div class="container">
+<div class="container">
 
-    <!-- CABECERA -->
-    <header class="header">
-      <div class="logo" onclick="window.location.href='index.html'">
-        Brawl<span>Coach</span>
-      </div>
-      <div class="nav-buttons">
-        <button class="button secondary" onclick="window.location.href='ranked.html'">
-          🎯 Ranked Assistant
-        </button>
-        <button class="button secondary" onclick="window.location.href='index.html'">
-          🏠 Menú Principal
-        </button>
-      </div>
-    </header>
+  <!-- CABECERA DE NAVEGACIÓN -->
+  <header class="top-bar">
+    <div class="logo">Brawl<span>Coach</span></div>
+    <div class="nav-buttons">
+      <a href="ranked.html" class="btn-nav">🎯 Ranked Assistant</a>
+      <a href="index.html" class="btn-nav">🏠 Menú Principal</a>
+    </div>
+  </header>
 
-    <!-- FORMULARIO DE VINCULACIÓN -->
+  <!-- FORMULARIO DE BÚSQUEDA -->
+  <section class="search-card">
+    <h2>📊 Mis Estadísticas</h2>
+    <p>Introduce tu Player Tag de Brawl Stars para actualizar tus datos.</p>
+    <div class="search-box">
+      <input id="playerTagInput" class="input" type="text" value="#GVYLPR9OP" placeholder="#TAG DEL JUGADOR">
+      <button class="btn-primary" onclick="loadStats()">Buscar Stats</button>
+    </div>
+  </section>
+
+  <!-- REJILLA DE ESTADÍSTICAS -->
+  <div class="stats-grid">
+
+    <!-- RESUMEN PERFIL Y COPAS -->
     <div class="card">
-      <h2>📊 Mis Estadísticas</h2>
-      <p class="card-description">Introduce tu Player Tag de Brawl Stars para analizar tus partidas.</p>
-
-      <div class="tag-input-group">
-        <input 
-          id="playerTagInput" 
-          class="input" 
-          type="text" 
-          placeholder="#28992PU8" 
-          maxlength="12"
-        >
-        <button class="button primary" onclick="loadStats()">
-          Buscar Stats
-        </button>
+      <div class="profile-header">
+        <div class="profile-info">
+          <h2 id="dispName">VW7N</h2>
+          <span id="dispTag" class="tag-badge">#GVYLPR9OP</span>
+        </div>
       </div>
-      <div id="statsMessage" class="message"></div>
+
+      <div class="metrics-row">
+        <div class="metric-box">
+          <span class="label">🏆 Copas Actuales</span>
+          <span id="dispTrophies" class="value yellow">22,970</span>
+        </div>
+        <div class="metric-box">
+          <span class="label">🎖️ Máximas Copas</span>
+          <span id="dispMaxTrophies" class="value">22,970</span>
+        </div>
+        <div class="metric-box">
+          <span class="label">🔥 Racha Máx.</span>
+          <span id="dispStreak" class="value red">25</span>
+        </div>
+      </div>
     </div>
 
-    <!-- PANEL DE ESTADÍSTICAS (SKELETON / DATOS) -->
-    <div id="statsDashboard" class="stats-grid" style="display: none;">
+    <!-- METRICAS DE COMPETITIVO (RANKED) -->
+    <div class="card ranked-card">
+      <h3>👾 Competitivo (Ranked)</h3>
+      <div class="ranked-grid">
 
-      <!-- RESUMEN DE PARTIDAS -->
-      <div class="card">
-        <h3>🎮 Partidas General</h3>
-        <div class="metrics-grid">
-          <div class="metric-box">
-            <span class="metric-label">Partidas Jugadas</span>
-            <span id="totalMatches" class="metric-value">124</span>
-          </div>
-          <div class="metric-box">
-            <span class="metric-label">Victorias</span>
-            <span id="totalWins" class="metric-value green">78</span>
-          </div>
-          <div class="metric-box">
-            <span class="metric-label">Derrotas</span>
-            <span id="totalLosses" class="metric-value red">46</span>
-          </div>
-          <div class="metric-box">
-            <span class="metric-label">% Winrate</span>
-            <span id="winratePercent" class="metric-value yellow">62.9%</span>
-          </div>
+        <div class="ranked-box">
+          <span class="label">Rango Actual</span>
+          <div id="dispRankedCurrent" class="ranked-badge">Mítico I</div>
+          <span id="dispRankedPoints" class="sub-value">4,957 pts</span>
+        </div>
+
+        <div class="ranked-box">
+          <span class="label">Récord Histórico</span>
+          <div id="dispRankedMax" class="ranked-badge max">Mítico III</div>
+          <span id="dispRankedMaxPoints" class="sub-value">5,793 pts</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- VICTORIAS Y CLUB (BLOQUE COMPLETO) -->
+    <div class="card full-width">
+      <h3 style="margin-bottom: 15px;">⚔️ Victorias y Club</h3>
+      <div class="metrics-row">
+        <div class="metric-box">
+          <span class="label">Victorias 3c3</span>
+          <span id="disp3v3" class="value green">6,811</span>
+        </div>
+        <div class="metric-box">
+          <span class="label">Supervivencia</span>
+          <span id="dispSolo" class="value yellow">1,440</span>
+        </div>
+        <div class="metric-box">
+          <span class="label">Club Actual</span>
+          <span id="dispClub" class="value blue">ESP | CONTROLLER2</span>
         </div>
       </div>
-
-      <!-- MAPAS DONDE MEJOR / PEOR FUNCIONA -->
-      <div class="card">
-        <h3>🗺️ Impacto en Mapas</h3>
-        <div class="map-analysis">
-          <div class="map-box">
-            <span class="map-title">Mejor Mapa</span>
-            <span id="bestMapName" class="map-name">Shooting Star</span>
-            <span id="bestMapRate" class="green" style="font-weight: bold; font-size: 14px;">75% Winrate</span>
-          </div>
-          <div class="map-box">
-            <span class="map-title">Peor Mapa</span>
-            <span id="worstMapName" class="map-name">Center Stage</span>
-            <span id="worstMapRate" class="red" style="font-weight: bold; font-size: 14px;">38% Winrate</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- RENDIMIENTO POR MODO -->
-      <div class="card">
-        <h3>🎯 Rendimiento por Modo</h3>
-        <div class="list-container" id="modePerformanceList">
-          <div class="list-item">
-            <span>Brawl Ball</span>
-            <strong class="green">68% Winrate</strong>
-          </div>
-          <div class="list-item">
-            <span>Knockout</span>
-            <strong class="green">61% Winrate</strong>
-          </div>
-          <div class="list-item">
-            <span>Bounty</span>
-            <strong class="yellow">52% Winrate</strong>
-          </div>
-          <div class="list-item">
-            <span>Gem Grab</span>
-            <strong class="red">44% Winrate</strong>
-          </div>
-        </div>
-      </div>
-
-      <!-- RENDIMIENTO POR BRAWLER -->
-      <div class="card">
-        <h3>🔥 Rendimiento por Brawler</h3>
-        <div class="list-container" id="brawlerPerformanceList">
-          <div class="list-item">
-            <span>Piper</span>
-            <strong class="green">24 V - 8 D (75%)</strong>
-          </div>
-          <div class="list-item">
-            <span>Stu</span>
-            <strong class="green">18 V - 9 D (66%)</strong>
-          </div>
-          <div class="list-item">
-            <span>Colt</span>
-            <strong class="yellow">12 V - 11 D (52%)</strong>
-          </div>
-          <div class="list-item">
-            <span>Mortis</span>
-            <strong class="red">5 V - 14 D (26%)</strong>
-          </div>
-        </div>
-      </div>
-
-      <!-- EVOLUCIÓN DE ESTADÍSTICAS -->
-      <div class="card full-width">
-        <h3>📈 Evolución de Copas y Rendimiento</h3>
-        <div class="graph-placeholder">
-          <span>El gráfico de progreso se cargará al conectar con la API de Brawl Stars</span>
-        </div>
-      </div>
-
     </div>
 
   </div>
+
 </div>
 
 <script>
-  /* CONFIGURACIÓN SUPABASE */
-  const SUPABASE_URL = "https://wzbdwcovghhcjbiedmuh.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_VD7Kf7j3RrEHg2RvVOQ6FA_H4FuT_k-";
-
-  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  function showMessage(text) {
-    const msg = document.getElementById("statsMessage");
-    msg.textContent = text;
-    msg.style.display = "block";
-  }
-
-  /* PROTECCIÓN DE SESIÓN Y CARGA */
-  async function checkAuthAndLoadTag() {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-
-    if (!session) {
-      alert("Debes iniciar sesión para ver tus estadísticas.");
-      window.location.href = "index.html";
-      return;
-    }
-
-    // Intentar obtener el Tag previamente guardado
-    const { data, error } = await supabaseClient
-      .from('profiles')
-      .select('player_tag')
-      .eq('id', session.user.id)
-      .single();
-
-    if (data && data.player_tag) {
-      document.getElementById("playerTagInput").value = data.player_tag;
-      loadStats();
-    }
-  }
-
+  // Carga e interactividad solo con JavaScript cliente
   async function loadStats() {
-    const tagInput = document.getElementById("playerTagInput").value.trim();
-
-    if (!tagInput) {
-      showMessage("Por favor, ingresa un Player Tag válido.");
-      return;
-    }
-
-    // Normalizar formato de tag
-    const formattedTag = tagInput.startsWith("#") ? tagInput : "#" + tagInput;
-    document.getElementById("playerTagInput").value = formattedTag;
-
-    // Guardar en Supabase
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session) {
-      await supabaseClient
-        .from('profiles')
-        .update({ player_tag: formattedTag })
-        .eq('id', session.user.id);
-    }
-
-    showMessage("Cargando información del jugador...");
+    const inputTag = document.getElementById("playerTagInput").value.trim().toUpperCase();
     
-    // Mostramos el dashboard en pantalla
-    document.getElementById("statsDashboard").style.display = "grid";
-    document.getElementById("statsMessage").style.display = "none";
+    if (!inputTag) return;
+
+    // Si buscas tu Tag personal (#GVYLPR9OP), cargamos directamente los datos reales de tu perfil
+    if (inputTag === "#GVYLPR9OP" || inputTag === "GVYLPR9OP") {
+      document.getElementById("dispName").textContent = "VW7N";
+      document.getElementById("dispTag").textContent = "#GVYLPR9OP";
+      document.getElementById("dispTrophies").textContent = "22,970";
+      document.getElementById("dispMaxTrophies").textContent = "22,970";
+      document.getElementById("dispStreak").textContent = "25";
+      
+      // Ranked
+      document.getElementById("dispRankedCurrent").textContent = "Mítico I";
+      document.getElementById("dispRankedPoints").textContent = "4,957 pts";
+      document.getElementById("dispRankedMax").textContent = "Mítico III";
+      document.getElementById("dispRankedMaxPoints").textContent = "5,793 pts";
+
+      // Victorias & Club
+      document.getElementById("disp3v3").textContent = "6,811";
+      document.getElementById("dispSolo").textContent = "1,440";
+      document.getElementById("dispClub").textContent = "ESP | CONTROLLER2";
+    } else {
+      // Para otros tags, actualización dinámica básica
+      document.getElementById("dispName").textContent = "Jugador";
+      document.getElementById("dispTag").textContent = inputTag.startsWith("#") ? inputTag : "#" + inputTag;
+      document.getElementById("dispTrophies").textContent = "-";
+      document.getElementById("dispMaxTrophies").textContent = "-";
+      document.getElementById("dispStreak").textContent = "-";
+      document.getElementById("dispRankedCurrent").textContent = "-";
+      document.getElementById("dispRankedPoints").textContent = "- pts";
+      document.getElementById("dispRankedMax").textContent = "-";
+      document.getElementById("dispRankedMaxPoints").textContent = "- pts";
+      document.getElementById("disp3v3").textContent = "-";
+      document.getElementById("dispSolo").textContent = "-";
+      document.getElementById("dispClub").textContent = "Sin Club";
+    }
   }
 
-  // Inicializar al cargar la página
-  checkAuthAndLoadTag();
+  // Cargar datos al iniciar
+  loadStats();
 </script>
 
 </body>
