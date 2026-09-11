@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BrawlCoach - Stats</title>
+  <title>BrawlCoach - Estadísticas</title>
 
   <style>
     * {
@@ -26,6 +26,7 @@
       margin: 0 auto;
     }
 
+    /* HEADER */
     .top-bar {
       display: flex;
       justify-content: space-between;
@@ -42,7 +43,7 @@
       color: #ffd43b;
     }
 
-    .nav-buttons a {
+    .btn-nav {
       background: #151c32;
       border: 1px solid #27314d;
       color: white;
@@ -53,6 +54,11 @@
       font-weight: bold;
     }
 
+    .btn-nav:hover {
+      background: #1f2942;
+    }
+
+    /* BUSCADOR */
     .search-card {
       background: #151c32;
       border: 1px solid #27314d;
@@ -61,13 +67,23 @@
       margin-bottom: 20px;
     }
 
+    .search-card h2 {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .search-card p {
+      color: #8f9ab2;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
     .search-box {
       display: flex;
       gap: 10px;
-      margin-top: 10px;
     }
 
-    .input {
+    .input-tag {
       flex: 1;
       padding: 10px 14px;
       border: 1px solid #34405f;
@@ -79,17 +95,35 @@
       text-transform: uppercase;
     }
 
-    .btn-primary {
+    .input-tag:focus {
+      border-color: #ffd43b;
+    }
+
+    .btn-search {
       background: #ffd43b;
       color: #111827;
       border: none;
-      padding: 10px 18px;
+      padding: 10px 20px;
       border-radius: 8px;
       font-weight: bold;
       cursor: pointer;
     }
 
-    .stats-grid {
+    .btn-search:hover {
+      background: #e5bd33;
+    }
+
+    .status-message {
+      margin-top: 10px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .status-error { color: #ef4444; }
+    .status-loading { color: #ffd43b; }
+
+    /* TARJETAS DE ESTADÍSTICAS */
+    .grid-stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
@@ -103,37 +137,45 @@
     }
 
     .card h3 {
-      font-size: 18px;
-      margin-bottom: 15px;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       color: #8f9ab2;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #27314d;
+      padding-bottom: 8px;
     }
 
-    .metric-row {
+    .data-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       padding: 8px 0;
-      border-bottom: 1px solid #1f2942;
+      border-bottom: 1px solid #1a2238;
     }
 
-    .metric-row:last-child {
+    .data-row:last-child {
       border-bottom: none;
     }
 
-    .label {
+    .field-name {
       color: #8f9ab2;
       font-size: 14px;
     }
 
-    .value {
+    .field-value {
       font-weight: bold;
       font-size: 15px;
     }
 
-    .status-msg {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #ef4444;
-      display: none;
+    .accent-yellow { color: #ffd43b; }
+    .accent-blue { color: #3b82f6; }
+    .accent-green { color: #10b981; }
+
+    @media (max-width: 600px) {
+      .search-box {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -142,68 +184,71 @@
 
 <div class="container">
 
+  <!-- CABECERA -->
   <header class="top-bar">
     <div class="logo">Brawl<span>Coach</span></div>
-    <div class="nav-buttons">
-      <a href="index.html">Inicio</a>
-    </div>
+    <a href="index.html" class="btn-nav">Menú Principal</a>
   </header>
 
+  <!-- FORMULARIO DE CONSULTA -->
   <section class="search-card">
-    <h2>Consultar Jugador</h2>
+    <h2>Consulta de Perfil</h2>
+    <p>Ingresa un Tag de jugador para consultar las estadísticas actuales.</p>
+    
     <div class="search-box">
-      <input id="playerTagInput" class="input" type="text" placeholder="#TAG DEL JUGADOR">
-      <button id="searchBtn" class="btn-primary" onclick="fetchPlayerStats()">Buscar</button>
+      <input id="tagInput" class="input-tag" type="text" placeholder="#TAG (ej. #2PP028L9)" />
+      <button id="btnFetch" class="btn-search" onclick="loadPlayerData()">Consultar</button>
     </div>
-    <div id="statusMsg" class="status-msg"></div>
+    
+    <div id="statusInfo" class="status-message"></div>
   </section>
 
-  <!-- PANEL DE ESTADÍSTICAS -->
-  <div class="stats-grid">
+  <!-- MOSTRADOR DE RESULTADOS -->
+  <div class="grid-stats">
 
-    <!-- PERFIL Y COPAS -->
+    <!-- GENERAL -->
     <div class="card">
-      <h3>Perfil</h3>
-      <div class="metric-row">
-        <span class="label">Nombre</span>
-        <span id="dispName" class="value">-</span>
+      <h3>Información General</h3>
+      <div class="data-row">
+        <span class="field-name">Nombre</span>
+        <span id="resName" class="field-value">--</span>
       </div>
-      <div class="metric-row">
-        <span class="label">Tag</span>
-        <span id="dispTag" class="value">-</span>
+      <div class="data-row">
+        <span class="field-name">Tag</span>
+        <span id="resTag" class="field-value">--</span>
       </div>
-      <div class="metric-row">
-        <span class="label">Copas Actuales</span>
-        <span id="dispTrophies" class="value" style="color: #ffd43b;">-</span>
+      <div class="data-row">
+        <span class="field-name">Copas Actuales</span>
+        <span id="resTrophies" class="field-value accent-yellow">--</span>
       </div>
-      <div class="metric-row">
-        <span class="label">Máximas Copas</span>
-        <span id="dispMaxTrophies" class="value">-</span>
+      <div class="data-row">
+        <span class="field-name">Record Copas</span>
+        <span id="resMaxTrophies" class="field-value">--</span>
       </div>
-      <div class="metric-row">
-        <span class="label">Nivel de EXP</span>
-        <span id="dispExpLevel" class="value">-</span>
+      <div class="data-row">
+        <span class="field-name">Nivel de Cuenta</span>
+        <span id="resExp" class="field-value">--</span>
       </div>
     </div>
 
-    <!-- VICTORIAS Y CLUB -->
+    <!-- MODOS DE JUEGO -->
     <div class="card">
-      <h3>Estadísticas de Juego</h3>
-      <div class="metric-row">
-        <span class="label">Victorias 3c3</span>
-        <span id="disp3v3" class="value">-</span>
+      <h3>Histórico de Victorias</h3>
+      <div class="data-row">
+        <span class="field-name">Victorias 3c3</span>
+        <span id="res3v3" class="field-value accent-green">--</span>
       </div>
-      <div class="metric-row">
-        <span class="label">Victorias Solo</span>
-        <span id="dispSolo" class="value">-</span>
+      <div class="data-row">
+        <span class="field-name">Victorias Solo</span>
+        <span id="resSolo" class="field-value accent-yellow">--</span>
       </div>
-      <div class="metric-row">
-        <span class="label">Victorias Dúo</span>
-        <span id="dispDuo" class="value">-</span>
+      <div class="data-row">
+        <span class="field-name">Victorias Dúo</span>
+        <span id="resDuo" class="field-value accent-blue">--</span>
       </div>
-      <div class="metric-row">
-        <span class="label">Club</span>
-        <span id="dispClub" class="value" style="color: #3b82f6;">-</span>
+      <div class="data-row">
+        <span class="field-name">Club Actual</span>
+        <span id="resClub" class="field-value">--</span>
       </div>
     </div>
 
@@ -212,55 +257,55 @@
 </div>
 
 <script>
-  async function fetchPlayerStats() {
-    const rawTag = document.getElementById("playerTagInput").value.trim().toUpperCase();
+  async function loadPlayerData() {
+    const rawTag = document.getElementById("tagInput").value.trim().toUpperCase();
     const cleanTag = rawTag.replace("#", "");
-    const statusMsg = document.getElementById("statusMsg");
-    const searchBtn = document.getElementById("searchBtn");
+    const statusDiv = document.getElementById("statusInfo");
+    const searchButton = document.getElementById("btnFetch");
 
     if (!cleanTag) {
-      showError("Introduce un Tag válido.");
+      showStatus("Introduce un Tag válido.", "error");
       return;
     }
 
-    statusMsg.style.display = "none";
-    searchBtn.textContent = "Buscando...";
-    searchBtn.disabled = true;
+    showStatus("Obteniendo datos de la API...", "loading");
+    searchButton.disabled = true;
 
     try {
-      // Consulta directamente a la API pública mediante CORS proxy
+      // Petición directa a la API pública
       const response = await fetch(`https://api.brawlify.com/v1/player/${cleanTag}`);
-      
+
       if (!response.ok) {
-        throw new Error("Jugador no encontrado.");
+        throw new Error("No se ha podido encontrar el jugador o la API no está disponible.");
       }
 
       const data = await response.json();
 
-      // Asignar los datos del JSON devuelto a los elementos HTML
-      document.getElementById("dispName").textContent = data.name || "N/D";
-      document.getElementById("dispTag").textContent = "#" + (data.tag || cleanTag);
-      document.getElementById("dispTrophies").textContent = (data.trophies ?? 0).toLocaleString();
-      document.getElementById("dispMaxTrophies").textContent = (data.highestTrophies ?? 0).toLocaleString();
-      document.getElementById("dispExpLevel").textContent = data.expLevel ?? "-";
-      
-      document.getElementById("disp3v3").textContent = (data['3vs3Victories'] ?? 0).toLocaleString();
-      document.getElementById("dispSolo").textContent = (data.soloVictories ?? 0).toLocaleString();
-      document.getElementById("dispDuo").textContent = (data.duoVictories ?? 0).toLocaleString();
-      document.getElementById("dispClub").textContent = data.club ? data.club.name : "Sin Club";
+      // Renderizado dinámico de los campos devueltos por el servidor
+      document.getElementById("resName").textContent = data.name || "Sin Nombre";
+      document.getElementById("resTag").textContent = "#" + (data.tag || cleanTag);
+      document.getElementById("resTrophies").textContent = (data.trophies ?? 0).toLocaleString();
+      document.getElementById("resMaxTrophies").textContent = (data.highestTrophies ?? 0).toLocaleString();
+      document.getElementById("resExp").textContent = data.expLevel ?? "--";
 
-    } catch (err) {
-      showError("No se pudieron consultar las estadísticas. Verifica el Tag.");
+      document.getElementById("res3v3").textContent = (data["3vs3Victories"] ?? 0).toLocaleString();
+      document.getElementById("resSolo").textContent = (data.soloVictories ?? 0).toLocaleString();
+      document.getElementById("resDuo").textContent = (data.duoVictories ?? 0).toLocaleString();
+      document.getElementById("resClub").textContent = data.club ? data.club.name : "Sin Club";
+
+      statusDiv.style.display = "none";
+    } catch (error) {
+      showStatus("Error al cargar los datos. Verifica que el Tag sea correcto.", "error");
     } finally {
-      searchBtn.textContent = "Buscar";
-      searchBtn.disabled = false;
+      searchButton.disabled = false;
     }
   }
 
-  function showError(msg) {
-    const statusMsg = document.getElementById("statusMsg");
-    statusMsg.textContent = msg;
-    statusMsg.style.display = "block";
+  function showStatus(text, type) {
+    const statusDiv = document.getElementById("statusInfo");
+    statusDiv.textContent = text;
+    statusDiv.className = "status-message " + (type === "error" ? "status-error" : "status-loading");
+    statusDiv.style.display = "block";
   }
 </script>
 
