@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>BrawlCoach</title>
 
   <style>
@@ -10,79 +11,57 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: Arial, sans-serif;
     }
 
     body {
-      background: #111827;
+      font-family: Arial, sans-serif;
+      background: #0b1020;
       color: white;
       min-height: 100vh;
+    }
+
+    .page {
+      min-height: 100vh;
       display: flex;
+      align-items: center;
       justify-content: center;
+      padding: 30px;
+    }
+
+    .content {
+      width: 100%;
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 70px;
       align-items: center;
     }
 
-    .container {
-      width: 90%;
-      max-width: 1000px;
-      text-align: center;
-    }
-
-    .logo {
-      font-size: 42px;
+    .brand {
+      font-size: 54px;
       font-weight: 900;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
 
-    .logo span {
-      color: #facc15;
+    .brand span {
+      color: #ffd43b;
     }
 
-    .subtitle {
+    .hero h1 {
+      font-size: 48px;
+      line-height: 1.05;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 span {
+      color: #ffd43b;
+    }
+
+    .hero p {
       color: #9ca3af;
-      font-size: 18px;
-      margin-bottom: 45px;
-    }
-
-    .login-box {
-      background: #1f2937;
-      border-radius: 20px;
-      padding: 40px;
-      max-width: 450px;
-      margin: auto;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.35);
-    }
-
-    .login-box h2 {
-      margin-bottom: 10px;
-      font-size: 28px;
-    }
-
-    .login-box p {
-      color: #9ca3af;
-      margin-bottom: 25px;
-    }
-
-    .button {
-      display: block;
-      width: 100%;
-      padding: 15px;
-      margin-top: 12px;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .login {
-      background: #facc15;
-      color: #111827;
-    }
-
-    .register {
-      background: #374151;
-      color: white;
+      font-size: 19px;
+      line-height: 1.6;
+      max-width: 550px;
     }
 
     .features {
@@ -93,27 +72,142 @@
     }
 
     .feature {
-      background: #1f2937;
+      background: #151c32;
+      border: 1px solid #27314d;
+      border-radius: 16px;
       padding: 20px;
-      border-radius: 15px;
+    }
+
+    .feature-icon {
+      font-size: 27px;
+      margin-bottom: 10px;
     }
 
     .feature h3 {
-      margin-bottom: 8px;
+      margin-bottom: 7px;
     }
 
     .feature p {
-      color: #9ca3af;
+      color: #8f9ab2;
       font-size: 14px;
+      line-height: 1.4;
     }
 
-    @media (max-width: 600px) {
+    .login-card {
+      background: #151c32;
+      border: 1px solid #27314d;
+      border-radius: 24px;
+      padding: 35px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+    }
+
+    .login-card h2 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .login-card > p {
+      color: #8f9ab2;
+      margin-bottom: 28px;
+    }
+
+    .input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 14px;
+      border: 1px solid #34405f;
+      border-radius: 11px;
+      background: #0d1427;
+      color: white;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .input:focus {
+      border-color: #ffd43b;
+    }
+
+    .button {
+      width: 100%;
+      border: none;
+      border-radius: 11px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    .login-button {
+      background: #ffd43b;
+      color: #111827;
+    }
+
+    .register-button {
+      background: #27314d;
+      color: white;
+      margin-top: 12px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #69758f;
+      margin: 22px 0;
+      font-size: 13px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      height: 1px;
+      background: #303b57;
+      flex: 1;
+    }
+
+    .small-text {
+      text-align: center;
+      color: #69758f;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 22px;
+    }
+
+    @media (max-width: 850px) {
+      .content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .hero {
+        text-align: center;
+      }
+
+      .hero p {
+        margin: auto;
+      }
+
+      .brand {
+        font-size: 42px;
+      }
+
+      .hero h1 {
+        font-size: 38px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .page {
+        padding: 20px;
+      }
+
       .features {
         grid-template-columns: 1fr;
       }
 
-      .logo {
-        font-size: 34px;
+      .login-card {
+        padding: 25px;
       }
     }
   </style>
@@ -121,66 +215,108 @@
 
 <body>
 
-  <div class="container">
+  <main class="page">
 
-    <div class="logo">
-      Brawl<span>Coach</span>
+    <div class="content">
+
+      <section class="hero">
+
+        <div class="brand">
+          Brawl<span>Coach</span>
+        </div>
+
+        <h1>
+          Juega mejor.<br>
+          <span>Decide mejor.</span>
+        </h1>
+
+        <p>
+          Una plataforma creada para ayudarte a mejorar en Brawl Stars:
+          mejores picks, estadísticas, jugadores, coaches y mucho más.
+        </p>
+
+        <div class="features">
+
+          <div class="feature">
+            <div class="feature-icon">🏆</div>
+            <h3>Ranked Assistant</h3>
+            <p>
+              Encuentra el pick adecuado según el mapa,
+              bans y composición.
+            </p>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon">📊</div>
+            <h3>Tus estadísticas</h3>
+            <p>
+              Analiza tu rendimiento y descubre qué mejorar.
+            </p>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon">👥</div>
+            <h3>Jugadores</h3>
+            <p>
+              Encuentra compañeros para formar equipo.
+            </p>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon">🎓</div>
+            <h3>Coaches</h3>
+            <p>
+              Aprende de jugadores que realmente saben.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <section class="login-card">
+
+        <h2>Bienvenido 👋</h2>
+
+        <p>
+          Entra en BrawlCoach para continuar.
+        </p>
+
+        <input
+          class="input"
+          type="email"
+          placeholder="Correo electrónico"
+        >
+
+        <input
+          class="input"
+          type="password"
+          placeholder="Contraseña"
+        >
+
+        <button class="button login-button">
+          Iniciar sesión
+        </button>
+
+        <div class="divider">
+          o
+        </div>
+
+        <button class="button register-button">
+          Crear una cuenta
+        </button>
+
+        <p class="small-text">
+          Al continuar aceptas las condiciones de uso
+          de BrawlCoach.
+        </p>
+
+      </section>
+
     </div>
 
-    <div class="subtitle">
-      Mejora tu juego. Toma mejores decisiones.
-    </div>
-
-    <div class="login-box">
-      <h2>Bienvenido 👋</h2>
-
-      <p>
-        Inicia sesión para acceder a toda la plataforma.
-      </p>
-
-      <button class="button login">
-        Iniciar sesión
-      </button>
-
-      <button class="button register">
-        Crear cuenta
-      </button>
-    </div>
-
-    <div class="features">
-
-      <div class="feature">
-        <h3>🏆 Ranked</h3>
-        <p>
-          Encuentra mejores picks según el mapa,
-          bans y composición de tu equipo.
-        </p>
-      </div>
-
-      <div class="feature">
-        <h3>📊 Mis Stats</h3>
-        <p>
-          Consulta y analiza tus estadísticas.
-        </p>
-      </div>
-
-      <div class="feature">
-        <h3>👥 Jugadores</h3>
-        <p>
-          Encuentra jugadores y forma tu equipo.
-        </p>
-      </div>
-
-      <div class="feature">
-        <h3>🎓 Coaches</h3>
-        <p>
-          Aprende de jugadores y entrenadores.
-        </p>
-      </div>
-
-    </div>
-
-  </div>
+  </main>
 
 </body>
 </html>
