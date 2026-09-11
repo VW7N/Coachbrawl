@@ -431,8 +431,16 @@
     window.scrollTo(0, 0);
   }
 
-  function openRanked() {
-    window.location.href = "ranked.html";
+  /* ACCESO PROTEGIDO A RANKED ASSISTANT */
+  async function openRanked() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (session) {
+      window.location.href = "ranked.html";
+    } else {
+      showMessage("loginMessage", "Debes iniciar sesión para usar el Ranked Assistant.");
+      showScreen("login");
+    }
   }
 
   /* GESTIÓN DE MENSAJES */
