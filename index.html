@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>BrawlCoach</title>
 
   <style>
@@ -23,45 +22,56 @@
     .page {
       min-height: 100vh;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       padding: 30px;
     }
 
-    .content {
+    .container {
       width: 100%;
       max-width: 1100px;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .main-grid {
       display: grid;
       grid-template-columns: 1fr 420px;
       gap: 70px;
       align-items: center;
     }
 
-    .brand {
-      font-size: 54px;
+    .logo {
+      font-size: 52px;
       font-weight: 900;
       margin-bottom: 20px;
     }
 
-    .brand span {
+    .logo span {
       color: #ffd43b;
     }
 
-    .hero h1 {
+    h1 {
       font-size: 48px;
       line-height: 1.05;
       margin-bottom: 20px;
     }
 
-    .hero h1 span {
+    h1 span {
       color: #ffd43b;
     }
 
-    .hero p {
+    .description {
       color: #9ca3af;
-      font-size: 19px;
+      font-size: 18px;
       line-height: 1.6;
-      max-width: 550px;
+      max-width: 560px;
     }
 
     .features {
@@ -79,7 +89,7 @@
     }
 
     .feature-icon {
-      font-size: 27px;
+      font-size: 28px;
       margin-bottom: 10px;
     }
 
@@ -93,7 +103,7 @@
       line-height: 1.4;
     }
 
-    .login-card {
+    .card {
       background: #151c32;
       border: 1px solid #27314d;
       border-radius: 24px;
@@ -101,12 +111,12 @@
       box-shadow: 0 25px 60px rgba(0,0,0,0.35);
     }
 
-    .login-card h2 {
+    .card h2 {
       font-size: 28px;
       margin-bottom: 8px;
     }
 
-    .login-card > p {
+    .card-description {
       color: #8f9ab2;
       margin-bottom: 28px;
     }
@@ -138,44 +148,42 @@
       margin-top: 5px;
     }
 
-    .login-button {
+    .primary {
       background: #ffd43b;
       color: #111827;
     }
 
-    .register-button {
+    .secondary {
       background: #27314d;
       color: white;
-      margin-top: 12px;
     }
 
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #69758f;
-      margin: 22px 0;
-      font-size: 13px;
+    .back {
+      background: transparent;
+      color: #9ca3af;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+      font-size: 14px;
     }
 
-    .divider::before,
-    .divider::after {
-      content: "";
-      height: 1px;
-      background: #303b57;
-      flex: 1;
+    .back:hover {
+      color: white;
     }
 
-    .small-text {
-      text-align: center;
-      color: #69758f;
-      font-size: 12px;
-      line-height: 1.5;
-      margin-top: 22px;
+    .message {
+      display: none;
+      background: #172033;
+      border: 1px solid #33415f;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 15px;
+      color: #cbd5e1;
+      font-size: 14px;
     }
 
     @media (max-width: 850px) {
-      .content {
+      .main-grid {
         grid-template-columns: 1fr;
         gap: 40px;
       }
@@ -184,29 +192,25 @@
         text-align: center;
       }
 
-      .hero p {
+      .description {
         margin: auto;
       }
 
-      .brand {
+      .logo {
         font-size: 42px;
       }
 
-      .hero h1 {
+      h1 {
         font-size: 38px;
       }
     }
 
     @media (max-width: 500px) {
-      .page {
-        padding: 20px;
-      }
-
       .features {
         grid-template-columns: 1fr;
       }
 
-      .login-card {
+      .card {
         padding: 25px;
       }
     }
@@ -215,108 +219,242 @@
 
 <body>
 
-  <main class="page">
+<div class="page">
+  <div class="container">
 
-    <div class="content">
+    <!-- PANTALLA PRINCIPAL -->
+    <section id="home" class="screen active">
 
-      <section class="hero">
+      <div class="main-grid">
 
-        <div class="brand">
+        <div class="hero">
+          <div class="logo">
+            Brawl<span>Coach</span>
+          </div>
+
+          <h1>
+            Juega mejor.<br>
+            <span>Decide mejor.</span>
+          </h1>
+
+          <p class="description">
+            Una plataforma para jugadores de Brawl Stars:
+            mejores picks, estadísticas, compañeros,
+            coaches y mucho más.
+          </p>
+
+          <div class="features">
+
+            <div class="feature">
+              <div class="feature-icon">🏆</div>
+              <h3>Ranked Assistant</h3>
+              <p>
+                Descubre qué brawler elegir según
+                el mapa y la composición.
+              </p>
+            </div>
+
+            <div class="feature">
+              <div class="feature-icon">📊</div>
+              <h3>Mis Stats</h3>
+              <p>
+                Analiza tu rendimiento y tu progreso.
+              </p>
+            </div>
+
+            <div class="feature">
+              <div class="feature-icon">👥</div>
+              <h3>Jugadores</h3>
+              <p>
+                Encuentra compañeros para jugar.
+              </p>
+            </div>
+
+            <div class="feature">
+              <div class="feature-icon">🎓</div>
+              <h3>Coaches</h3>
+              <p>
+                Aprende de jugadores experimentados.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card">
+
+          <h2>Bienvenido 👋</h2>
+
+          <p class="card-description">
+            Inicia sesión para entrar en BrawlCoach.
+          </p>
+
+          <button class="button primary" onclick="showScreen('login')">
+            Iniciar sesión
+          </button>
+
+          <button class="button secondary" onclick="showScreen('register')">
+            Crear una cuenta
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- LOGIN -->
+    <section id="login" class="screen">
+
+      <div class="card" style="max-width: 450px; margin: auto;">
+
+        <div class="logo" style="font-size: 38px;">
           Brawl<span>Coach</span>
         </div>
 
-        <h1>
-          Juega mejor.<br>
-          <span>Decide mejor.</span>
-        </h1>
+        <h2>Iniciar sesión</h2>
 
-        <p>
-          Una plataforma creada para ayudarte a mejorar en Brawl Stars:
-          mejores picks, estadísticas, jugadores, coaches y mucho más.
-        </p>
-
-        <div class="features">
-
-          <div class="feature">
-            <div class="feature-icon">🏆</div>
-            <h3>Ranked Assistant</h3>
-            <p>
-              Encuentra el pick adecuado según el mapa,
-              bans y composición.
-            </p>
-          </div>
-
-          <div class="feature">
-            <div class="feature-icon">📊</div>
-            <h3>Tus estadísticas</h3>
-            <p>
-              Analiza tu rendimiento y descubre qué mejorar.
-            </p>
-          </div>
-
-          <div class="feature">
-            <div class="feature-icon">👥</div>
-            <h3>Jugadores</h3>
-            <p>
-              Encuentra compañeros para formar equipo.
-            </p>
-          </div>
-
-          <div class="feature">
-            <div class="feature-icon">🎓</div>
-            <h3>Coaches</h3>
-            <p>
-              Aprende de jugadores que realmente saben.
-            </p>
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <section class="login-card">
-
-        <h2>Bienvenido 👋</h2>
-
-        <p>
-          Entra en BrawlCoach para continuar.
+        <p class="card-description">
+          Entra en tu cuenta.
         </p>
 
         <input
+          id="loginEmail"
           class="input"
           type="email"
           placeholder="Correo electrónico"
         >
 
         <input
+          id="loginPassword"
           class="input"
           type="password"
           placeholder="Contraseña"
         >
 
-        <button class="button login-button">
+        <button class="button primary" onclick="fakeLogin()">
           Iniciar sesión
         </button>
 
-        <div class="divider">
-          o
-        </div>
+        <div id="loginMessage" class="message"></div>
 
-        <button class="button register-button">
-          Crear una cuenta
+        <button class="back" onclick="showScreen('home')">
+          ← Volver
         </button>
 
-        <p class="small-text">
-          Al continuar aceptas las condiciones de uso
-          de BrawlCoach.
+      </div>
+
+    </section>
+
+
+    <!-- REGISTRO -->
+    <section id="register" class="screen">
+
+      <div class="card" style="max-width: 450px; margin: auto;">
+
+        <div class="logo" style="font-size: 38px;">
+          Brawl<span>Coach</span>
+        </div>
+
+        <h2>Crear cuenta</h2>
+
+        <p class="card-description">
+          Únete a BrawlCoach.
         </p>
 
-      </section>
+        <input
+          id="registerName"
+          class="input"
+          type="text"
+          placeholder="Nombre de usuario"
+        >
 
-    </div>
+        <input
+          id="registerEmail"
+          class="input"
+          type="email"
+          placeholder="Correo electrónico"
+        >
 
-  </main>
+        <input
+          id="registerPassword"
+          class="input"
+          type="password"
+          placeholder="Contraseña"
+        >
+
+        <button class="button primary" onclick="fakeRegister()">
+          Crear cuenta
+        </button>
+
+        <div id="registerMessage" class="message"></div>
+
+        <button class="back" onclick="showScreen('home')">
+          ← Volver
+        </button>
+
+      </div>
+
+    </section>
+
+  </div>
+</div>
+
+
+<script>
+
+  function showScreen(screenId) {
+
+    const screens = document.querySelectorAll(".screen");
+
+    screens.forEach(function(screen) {
+      screen.classList.remove("active");
+    });
+
+    document.getElementById(screenId).classList.add("active");
+
+    window.scrollTo(0, 0);
+  }
+
+
+  function fakeLogin() {
+
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+    const message = document.getElementById("loginMessage");
+
+    message.style.display = "block";
+
+    if (!email || !password) {
+      message.textContent = "Completa todos los campos.";
+      return;
+    }
+
+    message.textContent =
+      "La pantalla funciona, pero el sistema de cuentas todavía no está conectado.";
+  }
+
+
+  function fakeRegister() {
+
+    const name = document.getElementById("registerName").value;
+    const email = document.getElementById("registerEmail").value;
+    const password = document.getElementById("registerPassword").value;
+    const message = document.getElementById("registerMessage");
+
+    message.style.display = "block";
+
+    if (!name || !email || !password) {
+      message.textContent = "Completa todos los campos.";
+      return;
+    }
+
+    message.textContent =
+      "El registro funciona visualmente, pero todavía no crea una cuenta real.";
+  }
+
+</script>
 
 </body>
 </html>
