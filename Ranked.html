@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrawlCoach — Ranked Assistant</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0f172a;
+      color: white;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #111827;
+      padding: 18px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #263244;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .logo span {
+      color: #facc15;
+    }
+
+    .players {
+      background: #1e293b;
+      padding: 9px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .title {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .title h1 {
+      font-size: 38px;
+      margin-bottom: 10px;
+    }
+
+    .title p {
+      color: #94a3b8;
+      font-size: 17px;
+    }
+
+    .card {
+      background: #172033;
+      border: 1px solid #29364d;
+      border-radius: 18px;
+      padding: 25px;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      margin-bottom: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    select {
+      width: 100%;
+      padding: 13px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: white;
+      font-size: 15px;
+    }
+
+    .brawlers {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .brawler {
+      background: #243047;
+      border: 1px solid #3b4a63;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .brawler:hover {
+      background: #334155;
+    }
+
+    .brawler.selected {
+      background: #eab308;
+      color: #111827;
+      border-color: #facc15;
+      font-weight: bold;
+    }
+
+    .button {
+      width: 100%;
+      margin-top: 25px;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: #facc15;
+      color: #111827;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background: #fde047;
+    }
+
+    #result {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .recommendation {
+      background: #111827;
+      border-radius: 14px;
+      padding: 20px;
+      border-left: 5px solid #facc15;
+    }
+
+    .recommendation h3 {
+      margin-bottom: 10px;
+      font-size: 23px;
+    }
+
+    .reason {
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 700px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .title h1 {
+        font-size: 30px;
+      }
+
+      header {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">Brawl<span>Coach</span></div>
+    <div class="players">👥 0 jugadores</div>
+  </header>
+
+  <main>
+
+    <div class="title">
+      <h1>🎯 Ranked Assistant</h1>
+      <p>Encuentra el mejor brawler para tu partida.</p>
+    </div>
+
+    <div class="card">
+      <h2>1. Configura la partida</h2>
+
+      <div class="form-grid">
+
+        <div>
+          <label for="mode">Modo de juego</label>
+          <select id="mode">
+            <option>Atrapagemas</option>
+            <option>Balón Brawl</option>
+            <option>Zona restringida</option>
+            <option>Supervivencia</option>
+            <option>Noqueo</option>
+            <option>Caza estelar</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="map">Mapa</label>
+          <select id="map">
+            <option>Selecciona un mapa</option>
+            <option>Canal Grande</option>
+            <option>Balón Bomba</option>
+            <option>Zona de Seguridad</option>
+            <option>Campo de Entrenamiento</option>
+            <option>Foso de la Muerte</option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2. Brawlers de tu equipo</h2>
+
+      <p style="color:#94a3b8;">
+        Selecciona los brawlers que ya han elegido tus compañeros.
+      </p>
+
+      <div class="brawlers">
+
+        <button class="brawler" onclick="selectBrawler(this)">Shelly</button>
+        <button class="brawler" onclick="selectBrawler(this)">Colt</button>
+        <button class="brawler" onclick="selectBrawler(this)">Spike</button>
+        <button class="brawler" onclick="selectBrawler(this)">Leon</button>
+        <button class="brawler" onclick="selectBrawler(this)">Crow</button>
+        <button class="brawler" onclick="selectBrawler(this)">Poco</button>
+        <button class="brawler" onclick="selectBrawler(this)">Stu</button>
+        <button class="brawler" onclick="selectBrawler(this)">Max</button>
+
+      </div>
+
+      <button class="button" onclick="recommend()">
+        🔎 Analizar partida
+      </button>
+    </div>
+
+    <div id="result" class="card">
+
+      <h2>💡 Recomendación</h2>
+
+      <div class="recommendation">
+
+        <h3 id="recommendedBrawler">Spike</h3>
+
+        <p class="reason" id="reason">
+          Selecciona el mapa y los brawlers de tu equipo para obtener
+          una recomendación.
+        </p>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+
+    function selectBrawler(button) {
+      button.classList.toggle("selected");
+    }
+
+    function recommend() {
+
+      const map = document.getElementById("map").value;
+      const mode = document.getElementById("mode").value;
+
+      const result = document.getElementById("result");
+      const brawler = document.getElementById("recommendedBrawler");
+      const reason = document.getElementById("reason");
+
+      if (map === "Selecciona un mapa") {
+        alert("Selecciona un mapa primero.");
+        return;
+      }
+
+      brawler.textContent = "Spike";
+
+      reason.textContent =
+        "Para " + mode + " en " + map +
+        ", Spike puede ser una buena opción por su control de zona y presión a distancia. " +
+        "Esta recomendación es una versión inicial del Ranked Assistant.";
+
+      result.style.display = "block";
+    }
+
+  </script>
+
+</body>
+</html>
