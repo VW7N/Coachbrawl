@@ -35,7 +35,7 @@ body{
   font-family:Arial,Helvetica,sans-serif;
 }
 
-button,input{
+button,input,select{
   font:inherit;
 }
 
@@ -366,6 +366,36 @@ button{
    DRAFT
 ========================= */
 
+.draft-controls{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:8px;
+  margin-bottom:15px;
+
+  color:var(--muted);
+  font-size:13px;
+}
+
+.draft-controls select{
+  background:#081523;
+  color:white;
+
+  border:1px solid var(--border);
+
+  border-radius:9px;
+
+  padding:9px 12px;
+
+  outline:none;
+
+  cursor:pointer;
+}
+
+.draft-controls select:focus{
+  border-color:rgba(255,216,61,.55);
+}
+
 .draft-layout{
   display:grid;
 
@@ -612,6 +642,10 @@ button{
     height:100px;
   }
 
+  .draft-controls{
+    justify-content:space-between;
+  }
+
 }
 
 </style>
@@ -751,7 +785,7 @@ button{
 
   <!-- ======================
        DRAFT
-  ======================= -->
+  ====================== -->
 
   <section class="panel">
 
@@ -762,6 +796,31 @@ button{
       <small>
         Selecciona solo lo que conozcas
       </small>
+
+    </div>
+
+
+    <!-- ORDENAR BRAWLERS -->
+
+    <div class="draft-controls">
+
+      <label for="draftSort">
+        Ordenar brawlers:
+      </label>
+
+      <select
+        id="draftSort"
+        onchange="changeDraftSort()">
+
+        <option value="normal">
+          Normal
+        </option>
+
+        <option value="alphabetical">
+          Alfabéticamente
+        </option>
+
+      </select>
 
     </div>
 
@@ -882,6 +941,26 @@ let maps = [];
 
 let selectedMode = null;
 let selectedMap = null;
+
+
+/* =====================================================
+   EXCLUSIONES
+===================================================== */
+
+const EXCLUDED_BRAWLERS = [
+
+  "buzz lightyear",
+  "cosmo",
+  "vince"
+
+];
+
+
+/* =====================================================
+   ORDEN DEL DRAFT
+===================================================== */
+
+let draftSort = "normal";
 
 
 /* =====================================================
@@ -1058,6 +1137,56 @@ function getBrawlerImage(brawler){
 
 
 /* =====================================================
+   ORDENAR BRAWLERS
+===================================================== */
+
+function getOrderedBrawlers(){
+
+  const ordered =
+    [...brawlers];
+
+
+  if(draftSort === "alphabetical"){
+
+    ordered.sort((a,b) =>
+
+      String(a.name || "")
+        .localeCompare(
+          String(b.name || ""),
+          "es",
+          {
+            sensitivity:"base"
+          }
+        )
+
+    );
+
+  }
+
+
+  return ordered;
+
+}
+
+
+/* =====================================================
+   CAMBIAR ORDEN
+===================================================== */
+
+function changeDraftSort(){
+
+  draftSort =
+    document.getElementById(
+      "draftSort"
+    ).value;
+
+
+  renderAllDrafts();
+
+}
+
+
+/* =====================================================
    CARGAR DATOS
 ===================================================== */
 
@@ -1100,11 +1229,28 @@ async function loadData(){
       await responses[2].json();
 
 
+    /*
+      Cargar todos los brawlers excepto:
+
+      Buzz Lightyear
+      Cosmo
+      Vince
+    */
+
     brawlers =
-      brawlerData.list || [];
+      (brawlerData.list || [])
+        .filter(brawler =>
+
+          !EXCLUDED_BRAWLERS.includes(
+            normalize(brawler.name)
+          )
+
+        );
+
 
     modes =
       modeData.list || [];
+
 
     maps =
       mapData.list || [];
@@ -1508,7 +1654,6 @@ function renderSlots(type){
 
   });
 
-
 }
 
 
@@ -1531,61 +1676,70 @@ function renderBrawlerGrid(type){
   container.innerHTML = "";
 
 
-  brawlers.forEach(brawler => {
+  /*
+    getOrderedBrawlers()
+    permite cambiar entre:
 
-    const card =
-      document.createElement("button");
+    Normal
+    Alfabéticamente
+  */
 
-    card.className =
-      "brawler";
+  getOrderedBrawlers()
+    .forEach(brawler => {
 
+      const card =
+        document.createElement("button");
 
-    const id =
-      brawler.id;
-
-
-    if(draft.team.includes(id))
-      card.classList.add("team");
-
-
-    if(draft.enemy.includes(id))
-      card.classList.add("enemy");
+      card.className =
+        "brawler";
 
 
-    if(draft.ban.includes(id))
-      card.classList.add("ban");
+      const id =
+        brawler.id;
 
 
-    if(isSelected(id))
-      card.classList.add("disabled");
+      if(draft.team.includes(id))
+        card.classList.add("team");
 
 
-    card.innerHTML = `
-
-      <img
-        src="${getBrawlerImage(brawler)}"
-        alt="${brawler.name}">
-
-      <div class="brawler-name">
-        ${brawler.name}
-      </div>
-
-    `;
+      if(draft.enemy.includes(id))
+        card.classList.add("enemy");
 
 
-    card.onclick = () => {
-
-      addBrawler(
-        id,
-        type
-      );
-
-    };
+      if(draft.ban.includes(id))
+        card.classList.add("ban");
 
 
-    container.appendChild(card);
+      if(isSelected(id))
+        card.classList.add("disabled");
 
-  });
+
+      card.innerHTML = `
+
+        <img
+          src="${getBrawlerImage(brawler)}"
+          alt="${brawler.name}">
+
+        <div class="brawler-name">
+          ${brawler.name}
+        </div>
+
+      `;
+
+
+      card.onclick = () => {
+
+        addBrawler(
+          id,
+          type
+        );
+
+      };
+
+
+      container.appendChild(card);
+
+    });
 
 }
 
@@ -1597,11 +1751,16 @@ function renderBrawlerGrid(type){
 function renderAllDrafts(){
 
   renderSlots("team");
+
   renderSlots("enemy");
+
   renderSlots("ban");
 
+
   renderBrawlerGrid("team");
+
   renderBrawlerGrid("enemy");
+
   renderBrawlerGrid("ban");
 
 
@@ -2073,6 +2232,7 @@ function updateTop10(){
 
       const card =
         document.createElement("div");
+
 
       card.className =
         "ai-card";
