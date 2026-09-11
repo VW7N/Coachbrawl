@@ -2,16 +2,20 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
 <title>BrawlCoach — Ranked Assistant</title>
 
 <style>
-*{box-sizing:border-box}
+
+*{
+  box-sizing:border-box;
+}
 
 :root{
-  --bg:#07111f;
-  --panel:#0d1a2b;
-  --panel2:#101f33;
+  --bg:#06101d;
+  --panel:#0c1929;
+  --panel2:#101f32;
   --border:rgba(255,255,255,.09);
   --text:#f5f7fb;
   --muted:#91a0b5;
@@ -23,30 +27,36 @@
 
 body{
   margin:0;
-  font-family:Arial,Helvetica,sans-serif;
   background:
-    radial-gradient(circle at 10% 0%,rgba(255,216,61,.08),transparent 30%),
-    radial-gradient(circle at 90% 0%,rgba(61,165,255,.08),transparent 30%),
+    radial-gradient(circle at 10% 0%,rgba(255,216,61,.08),transparent 28%),
+    radial-gradient(circle at 90% 0%,rgba(61,165,255,.08),transparent 28%),
     var(--bg);
   color:var(--text);
-  min-height:100vh;
+  font-family:Arial,Helvetica,sans-serif;
 }
 
-button,input{font:inherit}
-button{cursor:pointer}
+button,input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
 
 .header{
-  height:72px;
+  height:70px;
   padding:0 28px;
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  border-bottom:1px solid var(--border);
-  background:rgba(7,17,31,.9);
-  backdrop-filter:blur(15px);
+  align-items:center;
   position:sticky;
   top:0;
-  z-index:20;
+  z-index:50;
+
+  background:rgba(6,16,29,.94);
+  backdrop-filter:blur(15px);
+
+  border-bottom:1px solid var(--border);
 }
 
 .logo{
@@ -54,7 +64,9 @@ button{cursor:pointer}
   font-weight:900;
 }
 
-.logo span{color:var(--yellow)}
+.logo span{
+  color:var(--yellow);
+}
 
 .header-right{
   display:flex;
@@ -68,61 +80,67 @@ button{cursor:pointer}
 }
 
 .back{
-  border:1px solid var(--border);
   background:var(--panel);
+  border:1px solid var(--border);
   color:white;
-  padding:9px 14px;
   border-radius:10px;
+  padding:9px 14px;
 }
 
 .container{
-  max-width:1450px;
+  max-width:1500px;
   margin:auto;
-  padding:35px 25px 70px;
+  padding:34px 24px 70px;
 }
 
-.hero{margin-bottom:28px}
+.hero{
+  margin-bottom:28px;
+}
 
 .hero h1{
-  font-size:clamp(30px,5vw,52px);
   margin:0 0 8px;
+  font-size:clamp(32px,5vw,52px);
 }
 
 .hero p{
-  color:var(--muted);
   margin:0;
+  color:var(--muted);
 }
 
 .status{
-  display:inline-flex;
+  display:inline-block;
   margin-top:15px;
   padding:7px 11px;
   border-radius:999px;
   background:rgba(74,222,128,.1);
   color:var(--green);
   font-size:12px;
-  font-weight:700;
+  font-weight:bold;
 }
 
-.layout{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 390px;
-  gap:22px;
-}
+/* =========================
+   PANEL
+========================= */
 
 .panel{
-  background:linear-gradient(180deg,rgba(16,31,51,.97),rgba(10,22,37,.97));
+  background:linear-gradient(
+    180deg,
+    rgba(16,31,51,.98),
+    rgba(9,20,34,.98)
+  );
+
   border:1px solid var(--border);
   border-radius:18px;
   padding:20px;
   margin-bottom:20px;
+
   box-shadow:0 15px 40px rgba(0,0,0,.16);
 }
 
 .panel-title{
   display:flex;
-  align-items:center;
   justify-content:space-between;
+  align-items:center;
   gap:15px;
   margin-bottom:16px;
 }
@@ -136,33 +154,42 @@ button{cursor:pointer}
   color:var(--muted);
 }
 
-/* MODOS */
+/* =========================
+   MODOS
+========================= */
 
 .mode-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
+  grid-template-columns:
+    repeat(auto-fit,minmax(150px,1fr));
+
   gap:10px;
 }
 
 .mode-card{
   height:105px;
+  padding:0;
+
   position:relative;
   overflow:hidden;
+
   border:2px solid transparent;
   border-radius:14px;
+
   background:var(--panel2);
-  padding:0;
+
   transition:.18s;
 }
 
 .mode-card:hover{
   transform:translateY(-2px);
-  border-color:rgba(255,216,61,.45);
+  border-color:rgba(255,216,61,.5);
 }
 
 .mode-card.selected{
   border-color:var(--yellow);
-  box-shadow:0 0 0 2px rgba(255,216,61,.12);
+  box-shadow:
+    0 0 0 2px rgba(255,216,61,.12);
 }
 
 .mode-card img{
@@ -175,29 +202,49 @@ button{cursor:pointer}
 .mode-overlay{
   position:absolute;
   inset:0;
+
   display:flex;
   align-items:flex-end;
+
   padding:12px;
-  background:linear-gradient(transparent,rgba(0,0,0,.85));
+
+  background:
+    linear-gradient(
+      transparent,
+      rgba(0,0,0,.9)
+    );
+
   font-weight:800;
 }
 
-/* MAPAS */
+/* =========================
+   MAPAS
+========================= */
 
 .map-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+  grid-template-columns:
+    repeat(auto-fill,minmax(170px,1fr));
+
   gap:10px;
 }
 
 .map-card{
   height:110px;
+
   position:relative;
   overflow:hidden;
+
+  padding:0;
+
   border:2px solid transparent;
   border-radius:14px;
+
   background:var(--panel2);
-  padding:0;
+}
+
+.map-card:hover{
+  border-color:rgba(255,216,61,.5);
 }
 
 .map-card.selected{
@@ -213,323 +260,360 @@ button{cursor:pointer}
 .map-overlay{
   position:absolute;
   inset:0;
+
   display:flex;
   align-items:flex-end;
+
   padding:10px;
-  background:linear-gradient(transparent,rgba(0,0,0,.85));
-  font-weight:700;
+
+  background:
+    linear-gradient(
+      transparent,
+      rgba(0,0,0,.9)
+    );
+
   font-size:13px;
-}
-
-/* DRAFT */
-
-.draft-tabs{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin-bottom:18px;
-}
-
-.draft-tab{
-  border:1px solid var(--border);
-  background:#0b1727;
-  color:var(--muted);
-  border-radius:11px;
-  padding:12px 8px;
   font-weight:800;
 }
 
-.draft-tab.active.team{
-  color:var(--blue);
-  border-color:var(--blue);
-  background:rgba(61,165,255,.09);
+/* =========================
+   TOP 10 IA
+========================= */
+
+.ai-panel{
+  padding:22px;
 }
 
-.draft-tab.active.enemy{
-  color:var(--red);
-  border-color:var(--red);
-  background:rgba(255,83,100,.09);
-}
-
-.draft-tab.active.ban{
-  color:var(--yellow);
-  border-color:var(--yellow);
-  background:rgba(255,216,61,.09);
-}
-
-.slots{
+.ai-header{
   display:flex;
-  flex-wrap:wrap;
-  gap:9px;
+  justify-content:space-between;
+  align-items:center;
   margin-bottom:18px;
 }
 
-.slot{
-  width:72px;
-  height:72px;
-  border-radius:12px;
-  border:1px dashed rgba(255,255,255,.2);
-  background:rgba(255,255,255,.025);
+.ai-header h2{
+  margin:0;
+  font-size:21px;
+}
+
+.ai-header span{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.top10{
+  display:grid;
+
+  grid-template-columns:
+    repeat(10,minmax(80px,1fr));
+
+  gap:9px;
+}
+
+.ai-card{
+  min-width:0;
+
+  background:#091625;
+
+  border:1px solid var(--border);
+
+  border-radius:13px;
+
+  padding:8px;
+
+  text-align:center;
+
+  transition:.18s;
+}
+
+.ai-card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(255,216,61,.6);
+}
+
+.ai-rank{
+  height:21px;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
+  font-size:12px;
+  font-weight:900;
+
+  color:var(--muted);
+}
+
+.ai-image{
+  width:100%;
+  height:74px;
+
+  object-fit:contain;
+
+  display:block;
+}
+
+.ai-score{
+  margin-top:5px;
+
+  font-size:16px;
+  font-weight:900;
+
+  color:var(--yellow);
+}
+
+/* =========================
+   DRAFT
+========================= */
+
+.draft-layout{
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:15px;
+}
+
+.draft-section{
+  background:#091625;
+
+  border:1px solid var(--border);
+
+  border-radius:15px;
+
+  padding:14px;
+}
+
+.draft-section.team{
+  border-top:3px solid var(--blue);
+}
+
+.draft-section.enemy{
+  border-top:3px solid var(--red);
+}
+
+.draft-section.ban{
+  border-top:3px solid var(--yellow);
+}
+
+.draft-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  margin-bottom:12px;
+}
+
+.draft-title strong{
+  font-size:15px;
+}
+
+.draft-title span{
+  color:var(--muted);
+  font-size:11px;
+}
+
+.selected-slots{
+  min-height:80px;
+
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:8px;
+
+  margin-bottom:13px;
+}
+
+.slot{
+  width:64px;
+  height:64px;
+
   position:relative;
+
+  border-radius:11px;
+
   overflow:hidden;
+
+  border:1px dashed rgba(255,255,255,.2);
+
+  background:rgba(255,255,255,.025);
 }
 
 .slot img{
   width:100%;
   height:100%;
-  object-fit:cover;
+  object-fit:contain;
 }
 
-.slot-name{
+.remove{
   position:absolute;
-  bottom:0;
-  left:0;
-  right:0;
-  background:rgba(0,0,0,.78);
-  padding:4px;
-  font-size:9px;
-  text-align:center;
-  white-space:nowrap;
-  overflow:hidden;
-}
 
-.remove-slot{
-  position:absolute;
   top:3px;
   right:3px;
+
+  width:18px;
+  height:18px;
+
+  padding:0;
+
   border:0;
-  background:rgba(0,0,0,.75);
-  color:white;
-  width:19px;
-  height:19px;
   border-radius:50%;
-  z-index:2;
+
+  background:rgba(0,0,0,.8);
+  color:white;
+
+  font-size:12px;
 }
 
-/* SEARCH */
+/* =========================
+   BRAWLER GRID
+========================= */
 
 .search{
   width:100%;
-  border:1px solid var(--border);
-  background:#091625;
-  color:white;
-  border-radius:11px;
+
   padding:12px 14px;
-  outline:none;
+
   margin-bottom:12px;
+
+  background:#081523;
+
+  color:white;
+
+  border:1px solid var(--border);
+
+  border-radius:10px;
+
+  outline:none;
 }
 
 .search:focus{
-  border-color:rgba(255,216,61,.5);
+  border-color:rgba(255,216,61,.55);
 }
-
-/* BRAWLERS */
 
 .brawler-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(70px,1fr));
-  gap:7px;
-  max-height:540px;
+
+  grid-template-columns:
+    repeat(auto-fill,minmax(64px,1fr));
+
+  gap:6px;
+
+  max-height:390px;
+
   overflow-y:auto;
 }
 
-.brawler-card{
-  height:82px;
-  border:1px solid var(--border);
-  background:#0a1727;
-  border-radius:10px;
-  padding:4px;
-  transition:.15s;
+.brawler{
+  height:76px;
+
+  padding:3px;
+
   position:relative;
-  overflow:hidden;
+
+  background:#0a1727;
+
+  border:1px solid var(--border);
+
+  border-radius:9px;
+
+  transition:.15s;
 }
 
-.brawler-card:hover{
+.brawler:hover{
   transform:translateY(-2px);
   border-color:rgba(255,216,61,.55);
 }
 
-.brawler-card.selected-team{
-  border-color:var(--blue);
-}
-
-.brawler-card.selected-enemy{
-  border-color:var(--red);
-}
-
-.brawler-card.selected-ban{
-  border-color:var(--yellow);
-}
-
-.brawler-card img{
+.brawler img{
   width:100%;
-  height:58px;
+  height:52px;
+
   object-fit:contain;
 }
 
 .brawler-name{
-  font-size:9px;
-  text-align:center;
+  font-size:8px;
+
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
+
   color:#dce3ee;
 }
 
-.brawler-count{
-  color:var(--muted);
-  font-size:12px;
+.brawler.team{
+  border-color:var(--blue);
+  box-shadow:inset 0 0 0 1px var(--blue);
 }
 
-/* RESULTADOS */
-
-.results-panel{
-  position:sticky;
-  top:92px;
-  align-self:start;
+.brawler.enemy{
+  border-color:var(--red);
+  box-shadow:inset 0 0 0 1px var(--red);
 }
 
-.context{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-bottom:16px;
+.brawler.ban{
+  border-color:var(--yellow);
+  box-shadow:inset 0 0 0 1px var(--yellow);
 }
 
-.context-box{
-  background:#091625;
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:10px;
+.brawler.disabled{
+  opacity:.28;
+  pointer-events:none;
 }
 
-.context-box small{
-  display:block;
-  color:var(--muted);
-  margin-bottom:4px;
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:1200px){
+
+  .top10{
+    grid-template-columns:
+      repeat(5,1fr);
+  }
+
 }
 
-.context-box strong{
-  font-size:13px;
-}
+@media(max-width:850px){
 
-.recommendations{
-  display:flex;
-  flex-direction:column;
-  gap:9px;
-}
-
-.recommendation{
-  border:1px solid var(--border);
-  background:#091625;
-  border-radius:13px;
-  padding:9px;
-  display:grid;
-  grid-template-columns:30px 48px 1fr auto;
-  align-items:center;
-  gap:9px;
-}
-
-.rank{
-  font-size:14px;
-  font-weight:900;
-  color:var(--muted);
-  text-align:center;
-}
-
-.rec-image{
-  width:48px;
-  height:48px;
-  object-fit:contain;
-}
-
-.rec-info strong{
-  display:block;
-  font-size:13px;
-}
-
-.reason{
-  color:var(--muted);
-  font-size:9px;
-  margin-top:3px;
-  line-height:1.3;
-}
-
-.score{
-  font-size:17px;
-  font-weight:900;
-  color:var(--yellow);
-}
-
-.score-label{
-  display:block;
-  color:var(--muted);
-  font-size:8px;
-  text-align:right;
-}
-
-.loading{
-  color:var(--muted);
-  text-align:center;
-  padding:25px 10px;
-}
-
-.empty{
-  color:var(--muted);
-  padding:20px 0;
-}
-
-.error{
-  color:var(--red);
-  background:rgba(255,83,100,.08);
-  border:1px solid rgba(255,83,100,.2);
-  border-radius:10px;
-  padding:12px;
-  font-size:13px;
-}
-
-@media(max-width:1050px){
-  .layout{
+  .draft-layout{
     grid-template-columns:1fr;
   }
 
-  .results-panel{
-    position:static;
+  .top10{
+    grid-template-columns:
+      repeat(5,1fr);
   }
+
 }
 
-@media(max-width:600px){
-  .header{
-    padding:0 15px;
+@media(max-width:550px){
+
+  .container{
+    padding:22px 12px 50px;
   }
 
   .players{
     display:none;
   }
 
-  .container{
-    padding:25px 12px 50px;
+  .header{
+    padding:0 14px;
   }
 
-  .panel{
-    padding:14px;
+  .top10{
+    grid-template-columns:
+      repeat(2,1fr);
   }
 
-  .brawler-grid{
-    grid-template-columns:repeat(5,1fr);
+  .ai-image{
+    height:100px;
   }
 
-  .brawler-card{
-    height:76px;
-  }
-
-  .brawler-card img{
-    height:52px;
-  }
 }
+
 </style>
 </head>
 
@@ -547,195 +631,250 @@ button{cursor:pointer}
       👥 <span id="playerCount">0</span> jugadores
     </div>
 
-    <button class="back" onclick="location.href='index.html'">
+    <button
+      class="back"
+      onclick="location.href='index.html'">
+
       ← Volver
+
     </button>
 
   </div>
 
 </header>
 
+
 <main class="container">
 
-<section class="hero">
+  <section class="hero">
 
-  <h1>Ranked Assistant</h1>
+    <h1>Ranked Assistant</h1>
 
-  <p>
-    Analiza el mapa y el draft para encontrar las 10 mejores opciones.
-  </p>
+    <p>
+      Encuentra los mejores picks según el modo,
+      mapa y draft actual.
+    </p>
 
-  <div class="status">
-    ● Motor de análisis activo
-  </div>
-
-</section>
-
-<div class="layout">
-
-<div>
-
-<!-- MODO -->
-
-<section class="panel">
-
-  <div class="panel-title">
-    <h2>🎮 Modo de juego</h2>
-    <small id="modeStatus">Selecciona un modo</small>
-  </div>
-
-  <div id="modeGrid" class="mode-grid">
-    <div class="loading">Cargando modos...</div>
-  </div>
-
-</section>
-
-<!-- MAPA -->
-
-<section class="panel">
-
-  <div class="panel-title">
-    <h2>🗺️ Mapa</h2>
-    <small id="mapStatus">Selecciona un mapa</small>
-  </div>
-
-  <div id="mapGrid" class="map-grid">
-    <div class="empty">
-      Selecciona primero un modo.
-    </div>
-  </div>
-
-</section>
-
-<!-- DRAFT -->
-
-<section class="panel">
-
-  <div class="panel-title">
-
-    <h2>⚔️ Draft</h2>
-
-    <small>
-      Introduce solo la información que conozcas
-    </small>
-
-  </div>
-
-  <div class="draft-tabs">
-
-    <button
-      id="tabTeam"
-      class="draft-tab active team"
-      onclick="setSelectionMode('team')">
-      🔵 Mi equipo
-    </button>
-
-    <button
-      id="tabEnemy"
-      class="draft-tab enemy"
-      onclick="setSelectionMode('enemy')">
-      🔴 Rivales
-    </button>
-
-    <button
-      id="tabBan"
-      class="draft-tab ban"
-      onclick="setSelectionMode('ban')">
-      🚫 Bans
-    </button>
-
-  </div>
-
-  <div id="slots" class="slots"></div>
-
-  <input
-    id="search"
-    class="search"
-    type="text"
-    placeholder="🔎 Buscar brawler..."
-    oninput="renderBrawlers()"
-  >
-
-  <div class="panel-title">
-
-    <h2 style="font-size:14px">
-      Brawlers
-    </h2>
-
-    <span id="brawlerCount" class="brawler-count">
-      Cargando...
-    </span>
-
-  </div>
-
-  <div id="brawlerGrid" class="brawler-grid">
-
-    <div class="loading">
-      Cargando brawlers...
+    <div class="status">
+      ● Motor de análisis activo
     </div>
 
-  </div>
+  </section>
 
-</section>
 
-</div>
+  <!-- ======================
+       MODO
+  ======================= -->
 
-<!-- TOP 10 -->
+  <section class="panel">
 
-<aside class="panel results-panel">
+    <div class="panel-title">
 
-  <div class="panel-title">
+      <h2>🎮 Modo de juego</h2>
 
-    <h2>🏆 Top 10</h2>
-
-    <small>
-      Mejor elección
-    </small>
-
-  </div>
-
-  <div class="context">
-
-    <div class="context-box">
-
-      <small>Modo</small>
-
-      <strong id="resultMode">
-        —
-      </strong>
+      <small id="modeStatus">
+        Selecciona un modo
+      </small>
 
     </div>
 
-    <div class="context-box">
+    <div
+      id="modeGrid"
+      class="mode-grid">
 
-      <small>Mapa</small>
-
-      <strong id="resultMap">
-        —
-      </strong>
+      <div>
+        Cargando modos...
+      </div>
 
     </div>
 
-  </div>
+  </section>
 
-  <div id="recommendations" class="recommendations">
 
-    <div class="loading">
-      Selecciona un modo y un mapa.
+  <!-- ======================
+       MAPA
+  ======================= -->
+
+  <section class="panel">
+
+    <div class="panel-title">
+
+      <h2>🗺️ Mapa competitivo</h2>
+
+      <small id="mapStatus">
+        Selecciona un mapa
+      </small>
+
     </div>
 
-  </div>
+    <div
+      id="mapGrid"
+      class="map-grid">
 
-</aside>
+      <div>
+        Selecciona primero un modo.
+      </div>
 
-</div>
+    </div>
+
+  </section>
+
+
+  <!-- ======================
+       TOP 10
+  ======================= -->
+
+  <section class="panel ai-panel">
+
+    <div class="ai-header">
+
+      <h2>🏆 Top 10 recomendados</h2>
+
+      <span>
+        Recomendación de IA
+      </span>
+
+    </div>
+
+    <div
+      id="top10"
+      class="top10">
+
+      <div style="color:#91a0b5">
+        Selecciona modo y mapa.
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ======================
+       DRAFT
+  ======================= -->
+
+  <section class="panel">
+
+    <div class="panel-title">
+
+      <h2>⚔️ Draft</h2>
+
+      <small>
+        Selecciona solo lo que conozcas
+      </small>
+
+    </div>
+
+
+    <div class="draft-layout">
+
+
+      <!-- TU EQUIPO -->
+
+      <section class="draft-section team">
+
+        <div class="draft-title">
+
+          <strong>
+            🔵 Tu equipo
+          </strong>
+
+          <span>
+            <span id="teamCount">0</span>/2
+          </span>
+
+        </div>
+
+        <div
+          id="teamSlots"
+          class="selected-slots">
+        </div>
+
+        <div
+          id="teamGrid"
+          class="brawler-grid">
+        </div>
+
+      </section>
+
+
+      <!-- RIVAL -->
+
+      <section class="draft-section enemy">
+
+        <div class="draft-title">
+
+          <strong>
+            🔴 Rival
+          </strong>
+
+          <span>
+            <span id="enemyCount">0</span>/3
+          </span>
+
+        </div>
+
+        <div
+          id="enemySlots"
+          class="selected-slots">
+        </div>
+
+        <div
+          id="enemyGrid"
+          class="brawler-grid">
+        </div>
+
+      </section>
+
+
+      <!-- BANEADOS -->
+
+      <section class="draft-section ban">
+
+        <div class="draft-title">
+
+          <strong>
+            🚫 Baneados
+          </strong>
+
+          <span>
+            <span id="banCount">0</span>/3
+          </span>
+
+        </div>
+
+        <div
+          id="banSlots"
+          class="selected-slots">
+        </div>
+
+        <div
+          id="banGrid"
+          class="brawler-grid">
+        </div>
+
+      </section>
+
+    </div>
+
+  </section>
 
 </main>
 
+
 <script>
+
+/* =====================================================
+   API
+===================================================== */
 
 const API =
   "https://api.brawlapi.com/v1";
+
+
+/* =====================================================
+   DATOS
+===================================================== */
 
 let brawlers = [];
 let modes = [];
@@ -744,119 +883,108 @@ let maps = [];
 let selectedMode = null;
 let selectedMap = null;
 
-let selectionMode = "team";
+
+/* =====================================================
+   DRAFT
+===================================================== */
 
 const draft = {
+
   team: [],
   enemy: [],
   ban: []
+
 };
 
 
-/* =========================
-   POOLS COMPETITIVOS
-========================= */
+/* =====================================================
+   ROTACIÓN COMPETITIVA ACTUAL
+===================================================== */
 
 const competitivePools = {
 
-  "Brawl Ball": [
-    "Spiraling Out",
+  "Gem Grab":[
+
+    "Crystal Arcade",
+    "Double Swoosh",
+    "Gem Fort",
+    "Hard Rock Mine",
+    "Rustic Arcade",
+    "Undermine"
+
+  ],
+
+  "Heist":[
+
+    "Bridge Too Far",
+    "Hot Potato",
+    "Kaboom Canyon",
+    "Pit Stop",
+    "Safe Zone"
+
+  ],
+
+  "Bounty":[
+
+    "Dry Season",
+    "Hideout",
+    "Layer Cake",
+    "Shooting Star"
+
+  ],
+
+  "Brawl Ball":[
+
     "Beach Ball",
-    "In Demand",
-    "Pump It Up"
+    "Center Stage",
+    "Pinball Dreams",
+    "Sneaky Fields",
+    "Spiraling Out",
+    "Triple Dribble"
+
   ],
 
-  "Hot Zone": [
-    "In the Liminal",
-    "Quick Travel",
-    "Tread Carefully"
+  "Hot Zone":[
+
+    "Dueling Beetles",
+    "Open Business",
+    "Parallel Plays",
+    "Ring of Fire"
+
   ],
 
-  "Gem Grab": [
-    "Dungeon Train"
+  "Knockout":[
+
+    "Belle's Rock",
+    "Flaring Phoenix",
+    "New Horizons",
+    "Out in the Open"
+
   ]
 
 };
 
 
-/* =========================
-   DATOS
-========================= */
+/* =====================================================
+   NORMALIZAR NOMBRES
+===================================================== */
 
-async function loadData(){
+function normalize(text){
 
-  try{
-
-    const [
-      brawlerResponse,
-      modeResponse,
-      mapResponse
-    ] = await Promise.all([
-
-      fetch(`${API}/brawlers`),
-
-      fetch(`${API}/gamemodes`),
-
-      fetch(`${API}/maps`)
-
-    ]);
-
-    if(
-      !brawlerResponse.ok ||
-      !modeResponse.ok ||
-      !mapResponse.ok
-    ){
-
-      throw new Error("Error API");
-
-    }
-
-    const brawlerData =
-      await brawlerResponse.json();
-
-    const modeData =
-      await modeResponse.json();
-
-    const mapData =
-      await mapResponse.json();
-
-    brawlers =
-      brawlerData.list || [];
-
-    modes =
-      modeData.list || [];
-
-    maps =
-      mapData.list || [];
-
-    document.getElementById("brawlerCount")
-      .textContent =
-      `${brawlers.length} brawlers`;
-
-    renderModes();
-    renderBrawlers();
-    renderSlots();
-
-  }catch(error){
-
-    console.error(error);
-
-    document.getElementById("brawlerGrid")
-      .innerHTML =
-      `<div class="error">
-        No se pudieron cargar los brawlers.
-      </div>`;
-
-  }
+  return String(text || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[’']/g,"'")
+    .replace(/\s+/g," ");
 
 }
 
 
-/* =========================
-   HELPERS
-========================= */
+/* =====================================================
+   NOMBRE MODO
+===================================================== */
 
-function modeName(mode){
+function getModeName(mode){
 
   return (
     mode.name ||
@@ -867,7 +995,12 @@ function modeName(mode){
 
 }
 
-function modeImage(mode){
+
+/* =====================================================
+   IMAGEN MODO
+===================================================== */
+
+function getModeImage(mode){
 
   return (
     mode.imageUrl ||
@@ -878,7 +1011,12 @@ function modeImage(mode){
 
 }
 
-function mapName(map){
+
+/* =====================================================
+   NOMBRE MAPA
+===================================================== */
+
+function getMapName(map){
 
   return (
     map.name ||
@@ -888,7 +1026,12 @@ function mapName(map){
 
 }
 
-function mapImage(map){
+
+/* =====================================================
+   IMAGEN MAPA
+===================================================== */
+
+function getMapImage(map){
 
   return (
     map.imageUrl ||
@@ -899,111 +1042,235 @@ function mapImage(map){
 }
 
 
-/* =========================
+/* =====================================================
+   IMAGEN BRAWLER
+===================================================== */
+
+function getBrawlerImage(brawler){
+
+  return (
+    brawler.imageUrl ||
+    brawler.image ||
+    ""
+  );
+
+}
+
+
+/* =====================================================
+   CARGAR DATOS
+===================================================== */
+
+async function loadData(){
+
+  try{
+
+    const responses =
+      await Promise.all([
+
+        fetch(`${API}/brawlers`),
+
+        fetch(`${API}/gamemodes`),
+
+        fetch(`${API}/maps`)
+
+      ]);
+
+
+    if(
+      !responses[0].ok ||
+      !responses[1].ok ||
+      !responses[2].ok
+    ){
+
+      throw new Error(
+        "No se pudieron cargar los datos."
+      );
+
+    }
+
+
+    const brawlerData =
+      await responses[0].json();
+
+    const modeData =
+      await responses[1].json();
+
+    const mapData =
+      await responses[2].json();
+
+
+    brawlers =
+      brawlerData.list || [];
+
+    modes =
+      modeData.list || [];
+
+    maps =
+      mapData.list || [];
+
+
+    renderModes();
+
+    renderAllDrafts();
+
+    updateTop10();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    document.getElementById("modeGrid")
+      .innerHTML =
+      `<div style="color:#ff5364">
+        Error cargando los modos.
+      </div>`;
+
+  }
+
+}
+
+
+/* =====================================================
    MODOS
-========================= */
+===================================================== */
 
 function renderModes(){
 
   const container =
     document.getElementById("modeGrid");
 
-  const wanted =
-    Object.keys(competitivePools);
-
-  const result =
-    wanted
-      .map(name =>
-        modes.find(mode =>
-          modeName(mode).toLowerCase() ===
-          name.toLowerCase()
-        )
-      )
-      .filter(Boolean);
-
   container.innerHTML = "";
 
-  result.forEach(mode => {
 
-    const card =
-      document.createElement("button");
+  Object.keys(competitivePools)
+    .forEach(poolName => {
 
-    card.className =
-      "mode-card";
+      const mode =
+        modes.find(m =>
+          normalize(getModeName(m)) ===
+          normalize(poolName)
+        );
 
-    const name =
-      modeName(mode);
 
-    const image =
-      modeImage(mode);
+      const card =
+        document.createElement("button");
 
-    card.innerHTML = `
+      card.className =
+        "mode-card";
 
-      ${
-        image
-        ? `<img src="${image}" alt="">`
-        : ""
-      }
 
-      <div class="mode-overlay">
-        ${name}
-      </div>
+      const image =
+        mode
+          ? getModeImage(mode)
+          : "";
 
-    `;
 
-    card.onclick = () =>
-      selectMode(name,card);
+      card.innerHTML = `
 
-    container.appendChild(card);
+        ${
+          image
+            ? `<img
+                src="${image}"
+                alt="">`
+            : ""
+        }
 
-  });
+        <div class="mode-overlay">
+          ${poolName}
+        </div>
+
+      `;
+
+
+      card.onclick = () => {
+
+        selectMode(poolName);
+
+      };
+
+
+      container.appendChild(card);
+
+    });
 
 }
 
 
-/* =========================
+/* =====================================================
    SELECCIONAR MODO
-========================= */
+===================================================== */
 
-function selectMode(name,card){
+function selectMode(modeName){
 
-  selectedMode = name;
-  selectedMap = null;
+  selectedMode =
+    modeName;
+
+  selectedMap =
+    null;
+
 
   document
     .querySelectorAll(".mode-card")
-    .forEach(x =>
-      x.classList.remove("selected")
+    .forEach(card => {
+
+      card.classList.remove("selected");
+
+    });
+
+
+  const cards =
+    [...document.querySelectorAll(".mode-card")];
+
+
+  const selected =
+    cards.find(card =>
+      normalize(card.innerText) ===
+      normalize(modeName)
     );
 
-  card.classList.add("selected");
+
+  if(selected){
+
+    selected.classList.add("selected");
+
+  }
+
 
   document.getElementById("modeStatus")
-    .textContent = name;
+    .textContent =
+    modeName;
+
 
   document.getElementById("mapStatus")
     .textContent =
     "Selecciona un mapa";
 
+
   renderMaps();
-  updateResults();
+
+  updateTop10();
 
 }
 
 
-/* =========================
+/* =====================================================
    MAPAS
-========================= */
+===================================================== */
 
 function renderMaps(){
 
   const container =
     document.getElementById("mapGrid");
 
+  container.innerHTML = "";
+
+
   if(!selectedMode){
 
     container.innerHTML =
-      `<div class="empty">
+      `<div>
         Selecciona primero un modo.
       </div>`;
 
@@ -1011,37 +1278,19 @@ function renderMaps(){
 
   }
 
+
   const pool =
     competitivePools[selectedMode] || [];
 
-  const available =
-    maps.filter(map => {
 
-      const name =
-        mapName(map).toLowerCase();
+  pool.forEach(poolMapName => {
 
-      return pool.some(
-        x =>
-          x.toLowerCase() === name
+    const map =
+      maps.find(m =>
+        normalize(getMapName(m)) ===
+        normalize(poolMapName)
       );
 
-    });
-
-  container.innerHTML = "";
-
-  if(!available.length){
-
-    container.innerHTML =
-      `<div class="empty">
-        No se encontraron los mapas
-        competitivos de este modo.
-      </div>`;
-
-    return;
-
-  }
-
-  available.forEach(map => {
 
     const card =
       document.createElement("button");
@@ -1049,29 +1298,35 @@ function renderMaps(){
     card.className =
       "map-card";
 
-    const name =
-      mapName(map);
 
     const image =
-      mapImage(map);
+      map
+        ? getMapImage(map)
+        : "";
+
 
     card.innerHTML = `
 
       ${
         image
-        ? `<img src="${image}" alt="">`
-        : ""
+          ? `<img
+              src="${image}"
+              alt="">`
+          : ""
       }
 
       <div class="map-overlay">
-        ${name}
+        ${poolMapName}
       </div>
 
     `;
 
+
     card.onclick = () => {
 
-      selectedMap = name;
+      selectedMap =
+        poolMapName;
+
 
       document
         .querySelectorAll(".map-card")
@@ -1079,122 +1334,19 @@ function renderMaps(){
           x.classList.remove("selected")
         );
 
+
       card.classList.add("selected");
 
-      document.getElementById("mapStatus")
-        .textContent = name;
 
-      updateResults();
+      document.getElementById("mapStatus")
+        .textContent =
+        poolMapName;
+
+
+      updateTop10();
 
     };
 
-    container.appendChild(card);
-
-  });
-
-}
-
-
-/* =========================
-   TABS
-========================= */
-
-function setSelectionMode(mode){
-
-  selectionMode = mode;
-
-  document
-    .querySelectorAll(".draft-tab")
-    .forEach(x =>
-      x.classList.remove("active")
-    );
-
-  document
-    .getElementById(
-      mode === "team"
-        ? "tabTeam"
-        : mode === "enemy"
-          ? "tabEnemy"
-          : "tabBan"
-    )
-    .classList.add("active");
-
-  renderBrawlers();
-
-}
-
-
-/* =========================
-   BRAWLERS
-========================= */
-
-function renderBrawlers(){
-
-  const container =
-    document.getElementById("brawlerGrid");
-
-  const search =
-    document.getElementById("search")
-      .value
-      .toLowerCase();
-
-  const filtered =
-    brawlers.filter(brawler => {
-
-      const name =
-        (brawler.name || "")
-          .toLowerCase();
-
-      return name.includes(search);
-
-    });
-
-  container.innerHTML = "";
-
-  filtered.forEach(brawler => {
-
-    const card =
-      document.createElement("button");
-
-    card.className =
-      "brawler-card";
-
-    const id =
-      brawler.id;
-
-    const name =
-      brawler.name || "Brawler";
-
-    const image =
-      brawler.imageUrl ||
-      brawler.image ||
-      "";
-
-    if(draft.team.includes(id))
-      card.classList.add("selected-team");
-
-    if(draft.enemy.includes(id))
-      card.classList.add("selected-enemy");
-
-    if(draft.ban.includes(id))
-      card.classList.add("selected-ban");
-
-    card.innerHTML = `
-
-      ${
-        image
-        ? `<img src="${image}" alt="${name}">`
-        : ""
-      }
-
-      <div class="brawler-name">
-        ${name}
-      </div>
-
-    `;
-
-    card.onclick = () =>
-      addBrawler(brawler);
 
     container.appendChild(card);
 
@@ -1203,26 +1355,32 @@ function renderBrawlers(){
 }
 
 
-/* =========================
-   AÑADIR BRAWLER
-========================= */
+/* =====================================================
+   BRAWLER SELECCIONADO
+===================================================== */
 
-function addBrawler(brawler){
+function isSelected(id){
 
-  const id =
-    brawler.id;
-
-  if(
+  return (
     draft.team.includes(id) ||
     draft.enemy.includes(id) ||
     draft.ban.includes(id)
-  ){
+  );
 
+}
+
+
+/* =====================================================
+   AÑADIR
+===================================================== */
+
+function addBrawler(id,type){
+
+  if(isSelected(id))
     return;
 
-  }
 
-  if(selectionMode === "team"){
+  if(type === "team"){
 
     if(draft.team.length >= 2)
       return;
@@ -1231,7 +1389,8 @@ function addBrawler(brawler){
 
   }
 
-  if(selectionMode === "enemy"){
+
+  if(type === "enemy"){
 
     if(draft.enemy.length >= 3)
       return;
@@ -1240,7 +1399,8 @@ function addBrawler(brawler){
 
   }
 
-  if(selectionMode === "ban"){
+
+  if(type === "ban"){
 
     if(draft.ban.length >= 3)
       return;
@@ -1249,343 +1409,633 @@ function addBrawler(brawler){
 
   }
 
-  renderSlots();
-  renderBrawlers();
-  updateResults();
+
+  renderAllDrafts();
+
+  updateTop10();
 
 }
 
 
-/* =========================
-   SLOTS
-========================= */
+/* =====================================================
+   ELIMINAR
+===================================================== */
 
-function renderSlots(){
+function removeBrawler(type,id){
+
+  draft[type] =
+    draft[type].filter(
+      x => String(x) !== String(id)
+    );
+
+
+  renderAllDrafts();
+
+  updateTop10();
+
+}
+
+
+/* =====================================================
+   RENDER SLOTS
+===================================================== */
+
+function renderSlots(type){
 
   const container =
-    document.getElementById("slots");
+    document.getElementById(
+      type === "team"
+        ? "teamSlots"
+        : type === "enemy"
+          ? "enemySlots"
+          : "banSlots"
+    );
+
 
   container.innerHTML = "";
 
-  const groups = [
 
-    ["team","Equipo"],
+  draft[type].forEach(id => {
 
-    ["enemy","Rivales"],
+    const brawler =
+      brawlers.find(
+        b =>
+          String(b.id) ===
+          String(id)
+      );
 
-    ["ban","Bans"]
 
-  ];
+    if(!brawler)
+      return;
 
-  groups.forEach(([group,label]) => {
 
-    draft[group].forEach(id => {
+    const slot =
+      document.createElement("div");
 
-      const brawler =
-        brawlers.find(
-          x => x.id === id
+    slot.className =
+      "slot";
+
+
+    slot.innerHTML = `
+
+      <img
+        src="${getBrawlerImage(brawler)}"
+        alt="${brawler.name}">
+
+      <button
+        class="remove"
+        data-type="${type}"
+        data-id="${id}">
+        ×
+      </button>
+
+    `;
+
+
+    slot
+      .querySelector(".remove")
+      .onclick = () => {
+
+        removeBrawler(
+          type,
+          id
         );
 
-      if(!brawler)
-        return;
+      };
 
-      const image =
-        brawler.imageUrl ||
-        brawler.image ||
-        "";
 
-      const slot =
-        document.createElement("div");
+    container.appendChild(slot);
 
-      slot.className =
-        "slot";
+  });
 
-      slot.innerHTML = `
 
-        ${
-          image
-          ? `<img src="${image}" alt="">`
-          : ""
-        }
+}
 
-        <button
-          class="remove-slot"
-          onclick="removeBrawler('${group}',${id})">
-          ×
-        </button>
 
-        <div class="slot-name">
-          ${brawler.name}
-        </div>
+/* =====================================================
+   RENDER BRAWLERS
+===================================================== */
 
-      `;
+function renderBrawlerGrid(type){
 
-      container.appendChild(slot);
+  const container =
+    document.getElementById(
+      type === "team"
+        ? "teamGrid"
+        : type === "enemy"
+          ? "enemyGrid"
+          : "banGrid"
+    );
 
-    });
+
+  container.innerHTML = "";
+
+
+  brawlers.forEach(brawler => {
+
+    const card =
+      document.createElement("button");
+
+    card.className =
+      "brawler";
+
+
+    const id =
+      brawler.id;
+
+
+    if(draft.team.includes(id))
+      card.classList.add("team");
+
+
+    if(draft.enemy.includes(id))
+      card.classList.add("enemy");
+
+
+    if(draft.ban.includes(id))
+      card.classList.add("ban");
+
+
+    if(isSelected(id))
+      card.classList.add("disabled");
+
+
+    card.innerHTML = `
+
+      <img
+        src="${getBrawlerImage(brawler)}"
+        alt="${brawler.name}">
+
+      <div class="brawler-name">
+        ${brawler.name}
+      </div>
+
+    `;
+
+
+    card.onclick = () => {
+
+      addBrawler(
+        id,
+        type
+      );
+
+    };
+
+
+    container.appendChild(card);
 
   });
 
 }
 
 
-/* =========================
-   ELIMINAR
-========================= */
+/* =====================================================
+   RENDER TODO EL DRAFT
+===================================================== */
 
-function removeBrawler(group,id){
+function renderAllDrafts(){
 
-  draft[group] =
-    draft[group].filter(
-      x => x !== id
-    );
+  renderSlots("team");
+  renderSlots("enemy");
+  renderSlots("ban");
 
-  renderSlots();
-  renderBrawlers();
-  updateResults();
+  renderBrawlerGrid("team");
+  renderBrawlerGrid("enemy");
+  renderBrawlerGrid("ban");
+
+
+  document.getElementById("teamCount")
+    .textContent =
+    draft.team.length;
+
+
+  document.getElementById("enemyCount")
+    .textContent =
+    draft.enemy.length;
+
+
+  document.getElementById("banCount")
+    .textContent =
+    draft.ban.length;
 
 }
 
 
-/* =========================
-   MOTOR DE RECOMENDACIÓN
-========================= */
+/* =====================================================
+   SCORE
+===================================================== */
 
 function calculateScore(brawler){
 
-  /*
-    Esta es la base del motor.
+  const id =
+    brawler.id;
 
-    El mapa tiene peso.
-    Los rivales modifican el resultado.
-    El equipo modifica el resultado.
-    Los bans eliminan opciones.
-  */
 
-  if(
-    draft.ban.includes(brawler.id) ||
-    draft.team.includes(brawler.id) ||
-    draft.enemy.includes(brawler.id)
-  ){
-
+  if(isSelected(id))
     return -1;
 
-  }
 
-  let score = 70;
+  let score = 60;
+
 
   const name =
-    (brawler.name || "")
-      .toLowerCase();
+    normalize(brawler.name);
+
 
   const map =
-    (selectedMap || "")
-      .toLowerCase();
+    normalize(selectedMap);
 
-  /* MAPA */
 
-  if(map.includes("spiraling")){
+  const mode =
+    normalize(selectedMode);
 
-    if(
-      ["max","stu","gene","spike"]
-        .includes(name)
-    )
-      score += 13;
 
-  }
+  /* =====================
+     MAPA
+  ===================== */
 
-  if(map.includes("beach ball")){
+  const mapBonuses = {
 
-    if(
-      ["max","stu","rico","spike"]
-        .includes(name)
-    )
-      score += 12;
+    "spiraling out":
+      ["max","stu","spike","gene"],
 
-  }
+    "beach ball":
+      ["max","stu","rico","spike"],
+
+    "center stage":
+      ["max","bibi","stu","fang"],
+
+    "pinball dreams":
+      ["rico","colt","stu","max"],
+
+    "sneaky fields":
+      ["mortis","max","stu","spike"],
+
+    "triple dribble":
+      ["max","stu","bibi","fang"],
+
+    "crystal arcade":
+      ["gene","spike","tara","sandy"],
+
+    "double swoosh":
+      ["gene","spike","sandy","max"],
+
+    "gem fort":
+      ["gene","spike","rico","max"],
+
+    "hard rock mine":
+      ["spike","gene","rico","colt"],
+
+    "rustic arcade":
+      ["spike","gene","sandy","max"],
+
+    "undermine":
+      ["spike","gene","rico","colt"],
+
+    "bridge too far":
+      ["colt","piper","nani","brock"],
+
+    "hot potato":
+      ["rico","colt","spike","nani"],
+
+    "kaboom canyon":
+      ["piper","nani","colt","brock"],
+
+    "pit stop":
+      ["rico","colt","griff","chuck"],
+
+    "safe zone":
+      ["colt","piper","nani","rico"],
+
+    "dry season":
+      ["piper","nani","belle","mandy"],
+
+    "hideout":
+      ["piper","belle","nani","brock"],
+
+    "layer cake":
+      ["piper","belle","mandy","angelo"],
+
+    "shooting star":
+      ["piper","nani","belle","mandy"],
+
+    "dueling beetles":
+      ["lou","spike","sandy","gene"],
+
+    "open business":
+      ["lou","spike","sandy","gene"],
+
+    "parallel plays":
+      ["lou","spike","gene","sandy"],
+
+    "ring of fire":
+      ["lou","spike","sandy","gene"],
+
+    "belle's rock":
+      ["piper","belle","nani","gene"],
+
+    "flaring phoenix":
+      ["piper","belle","nani","angelo"],
+
+    "new horizons":
+      ["piper","belle","nani","mandy"],
+
+    "out in the open":
+      ["piper","belle","nani","brock"]
+
+  };
+
 
   if(
-    map.includes("liminal") ||
-    map.includes("quick travel") ||
-    map.includes("tread")
+    mapBonuses[map] &&
+    mapBonuses[map].includes(name)
   ){
 
-    if(
-      ["spike","lou","sandy","gene"]
-        .includes(name)
-    )
-      score += 13;
-
-  }
-
-  if(map.includes("dungeon train")){
-
-    if(
-      ["rico","spike","gene","colt"]
-        .includes(name)
-    )
-      score += 12;
+    score += 18;
 
   }
 
 
-  /* SINERGIA */
+  /* =====================
+     MODO
+  ===================== */
+
+  if(
+    mode === "brawl ball" &&
+    ["max","stu","bibi","fang","mortis"]
+      .includes(name)
+  ){
+
+    score += 6;
+
+  }
+
+
+  if(
+    mode === "gem grab" &&
+    ["gene","spike","sandy","tara"]
+      .includes(name)
+  ){
+
+    score += 6;
+
+  }
+
+
+  if(
+    mode === "heist" &&
+    ["colt","rico","piper","nani"]
+      .includes(name)
+  ){
+
+    score += 6;
+
+  }
+
+
+  if(
+    mode === "bounty" &&
+    ["piper","belle","nani","mandy"]
+      .includes(name)
+  ){
+
+    score += 6;
+
+  }
+
+
+  if(
+    mode === "hot zone" &&
+    ["lou","spike","sandy","gene"]
+      .includes(name)
+  ){
+
+    score += 6;
+
+  }
+
+
+  if(
+    mode === "knockout" &&
+    ["piper","belle","nani","angelo"]
+      .includes(name)
+  ){
+
+    score += 6;
+
+  }
+
+
+  /* =====================
+     SINERGIA
+  ===================== */
 
   draft.team.forEach(id => {
 
     const teammate =
       brawlers.find(
-        x => x.id === id
+        b =>
+          String(b.id) ===
+          String(id)
       );
+
 
     if(!teammate)
       return;
 
-    const t =
-      teammate.name
-        .toLowerCase();
+
+    const teammateName =
+      normalize(teammate.name);
+
 
     if(
-      t === "max" &&
-      ["spike","gene","stu"]
+      teammateName === "max" &&
+      ["spike","stu","gene"]
         .includes(name)
-    )
+    ){
+
+      score += 8;
+
+    }
+
+
+    if(
+      teammateName === "gene" &&
+      ["spike","max","sandy"]
+        .includes(name)
+    ){
+
       score += 7;
 
-    if(
-      t === "gene" &&
-      ["spike","max"]
-        .includes(name)
-    )
-      score += 6;
+    }
+
 
     if(
-      t === "spike" &&
-      ["gene","max","stu"]
+      teammateName === "spike" &&
+      ["gene","max","sandy"]
         .includes(name)
-    )
+    ){
+
       score += 6;
+
+    }
 
   });
 
 
-  /* COUNTERS */
+  /* =====================
+     CONTRA RIVAL
+  ===================== */
 
   draft.enemy.forEach(id => {
 
     const enemy =
       brawlers.find(
-        x => x.id === id
+        b =>
+          String(b.id) ===
+          String(id)
       );
+
 
     if(!enemy)
       return;
 
-    const e =
-      enemy.name
-        .toLowerCase();
+
+    const enemyName =
+      normalize(enemy.name);
+
 
     if(
-      e === "mortis" &&
-      ["shelly","surge","cordelius","otis"]
+      enemyName === "mortis" &&
+      ["shelly","surge","otis","cordelius"]
         .includes(name)
-    )
+    ){
+
       score += 10;
 
-    if(
-      e === "frank" &&
-      ["colette","spike","colt"]
-        .includes(name)
-    )
-      score += 9;
+    }
+
 
     if(
-      e === "edgar" &&
+      enemyName === "edgar" &&
       ["shelly","surge","otis"]
         .includes(name)
-    )
+    ){
+
       score += 10;
+
+    }
+
+
+    if(
+      enemyName === "frank" &&
+      ["colette","spike","colt"]
+        .includes(name)
+    ){
+
+      score += 9;
+
+    }
+
+  });
+
+
+  /* =====================
+     BANS
+  ===================== */
+
+  draft.ban.forEach(id => {
+
+    const banned =
+      brawlers.find(
+        b =>
+          String(b.id) ===
+          String(id)
+      );
+
+
+    if(!banned)
+      return;
+
+
+    const bannedName =
+      normalize(banned.name);
+
+
+    /*
+      Si se conoce un ban,
+      el motor reajusta ligeramente
+      la valoración del resto.
+    */
+
+    if(
+      ["max","gene","spike","piper"]
+        .includes(bannedName)
+    ){
+
+      score += 1.5;
+
+    }
 
   });
 
 
   /*
-    Pequeña variación determinista para
-    evitar que todos tengan exactamente
-    la misma puntuación.
+    Variación determinista para evitar
+    empates constantes.
   */
 
   score +=
-    ((brawler.id * 13) % 8) / 10;
+    ((Number(id) * 17) % 7) / 10;
+
 
   return Math.min(
     99,
-    Math.max(1,score)
+    Math.max(
+      1,
+      score
+    )
   );
 
 }
 
 
-/* =========================
-   RAZÓN
-========================= */
-
-function getReason(){
-
-  if(draft.enemy.length && draft.team.length){
-
-    return "Mapa + matchup + sinergia";
-
-  }
-
-  if(draft.enemy.length){
-
-    return "Mapa + matchup";
-
-  }
-
-  if(draft.team.length){
-
-    return "Mapa + sinergia";
-
-  }
-
-  return "Adaptación al mapa y modo";
-
-}
-
-
-/* =========================
+/* =====================================================
    TOP 10
-========================= */
+===================================================== */
 
-function updateResults(){
-
-  document.getElementById("resultMode")
-    .textContent =
-    selectedMode || "—";
-
-  document.getElementById("resultMap")
-    .textContent =
-    selectedMap || "—";
+function updateTop10(){
 
   const container =
-    document.getElementById("recommendations");
+    document.getElementById("top10");
+
 
   if(
     !selectedMode ||
     !selectedMap
   ){
 
-    container.innerHTML =
-      `<div class="loading">
-        Selecciona modo y mapa para
-        generar el Top 10.
-      </div>`;
+    container.innerHTML = `
+
+      <div style="
+        grid-column:1/-1;
+        color:#91a0b5;
+        text-align:center;
+        padding:25px;
+      ">
+
+        Selecciona un modo y un mapa
+        para generar las recomendaciones.
+
+      </div>
+
+    `;
 
     return;
 
   }
+
 
   const results =
     brawlers
@@ -1599,12 +2049,13 @@ function updateResults(){
 
       }))
 
-      .filter(x =>
-        x.score > 0
+      .filter(result =>
+        result.score > 0
       )
 
-      .sort((a,b) =>
-        b.score - a.score
+      .sort(
+        (a,b) =>
+          b.score - a.score
       )
 
       .slice(0,10);
@@ -1613,77 +2064,49 @@ function updateResults(){
   container.innerHTML = "";
 
 
-  results.forEach((result,index) => {
+  results.forEach(
+    (result,index) => {
 
-    const brawler =
-      result.brawler;
+      const brawler =
+        result.brawler;
 
-    const image =
-      brawler.imageUrl ||
-      brawler.image ||
-      "";
 
-    const score =
-      Math.round(result.score);
+      const card =
+        document.createElement("div");
 
-    const item =
-      document.createElement("div");
+      card.className =
+        "ai-card";
 
-    item.className =
-      "recommendation";
 
-    item.innerHTML = `
+      card.innerHTML = `
 
-      <div class="rank">
-        #${index + 1}
-      </div>
-
-      ${
-        image
-        ? `<img
-            class="rec-image"
-            src="${image}"
-            alt="${brawler.name}">
-          `
-        : ""
-      }
-
-      <div class="rec-info">
-
-        <strong>
-          ${brawler.name}
-        </strong>
-
-        <div class="reason">
-          ${getReason()}
+        <div class="ai-rank">
+          #${index + 1}
         </div>
 
-      </div>
+        <img
+          class="ai-image"
+          src="${getBrawlerImage(brawler)}"
+          alt="${brawler.name}">
 
-      <div>
-
-        <div class="score">
-          ${score}/100
+        <div class="ai-score">
+          ${Math.round(result.score)}/100
         </div>
 
-        <span class="score-label">
-          elección
-        </span>
+      `;
 
-      </div>
 
-    `;
+      container.appendChild(card);
 
-    container.appendChild(item);
-
-  });
+    }
+  );
 
 }
 
 
-/* =========================
-   START
-========================= */
+/* =====================================================
+   INICIAR
+===================================================== */
 
 loadData();
 
