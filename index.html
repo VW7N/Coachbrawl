@@ -212,18 +212,11 @@
       transform: translateY(-2px);
     }
 
-    .stats-button {
-      background: #10b981;
-      color: white;
-      margin-top: 10px;
-    }
-
-    .stats-button:hover {
-      background: #059669;
-      transform: translateY(-2px);
-    }
-
     .courses-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       background: #0284c7;
       color: white;
       margin-top: 10px;
@@ -410,11 +403,8 @@
             🎯 Ranked Assistant
           </button>
 
-          <button class="button stats-button" onclick="openStats()">
-            📊 Mis Stats
-          </button>
-
           <a href="./cursos.html" class="button courses-button">
+            <svg class="discord-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h2v2H6V6Z"></path><path d="M6 10h2v2H6v-2Z"></path></svg>
             Cursos y Servicios
           </a>
 
@@ -518,18 +508,6 @@
       window.location.href = "./ranked.html";
     } else {
       showMessage("loginMessage", "Debes iniciar sesión para usar el Ranked Assistant.");
-      showScreen("login");
-    }
-  }
-
-  /* ACCESO PROTEGIDO A MIS STATS */
-  async function openStats() {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-
-    if (session) {
-      window.location.href = "./stats.html";
-    } else {
-      showMessage("loginMessage", "Debes iniciar sesión para ver tus estadísticas.");
       showScreen("login");
     }
   }
@@ -722,7 +700,6 @@
 
   /* INICIALIZACIÓN Y VALIDACIÓN DE CORREO */
   async function init() {
-    // 1. Comprobar si hay un token directamente en el hash de la URL (#access_token=...)
     const hash = window.location.hash;
     if (hash && hash.includes('access_token')) {
       const params = new URLSearchParams(hash.substring(1));
@@ -748,7 +725,6 @@
       }
     }
 
-    // 2. Comprobar si hay un código de verificación estándar en los parámetros (?code=...)
     const urlParams = new URLSearchParams(window.location.search);
     const authCode = urlParams.get('code');
 
@@ -767,7 +743,6 @@
       }
     }
 
-    // 3. Carga normal si ya hay una sesión guardada previamente
     const { data } = await supabaseClient.auth.getSession();
     if (data.session) {
       renderAuthState(data.session);
