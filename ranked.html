@@ -210,11 +210,15 @@ button{
 
   background:
     linear-gradient(
-      transparent,
-      rgba(0,0,0,.9)
+      180deg,
+      transparent 30%,
+      rgba(4, 10, 18, 0.85) 70%,
+      rgba(4, 10, 18, 0.98) 100%
     );
 
   font-weight:800;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.9);
 }
 
 /* =========================
@@ -241,20 +245,24 @@ button{
   border-radius:14px;
 
   background:var(--panel2);
+  transition:.18s;
 }
 
 .map-card:hover{
+  transform:translateY(-2px);
   border-color:rgba(255,216,61,.5);
 }
 
 .map-card.selected{
   border-color:var(--yellow);
+  box-shadow: 0 0 0 2px rgba(255,216,61,.12);
 }
 
 .map-card img{
   width:100%;
   height:100%;
   object-fit:cover;
+  opacity:.8;
 }
 
 .map-overlay{
@@ -268,12 +276,16 @@ button{
 
   background:
     linear-gradient(
-      transparent,
-      rgba(0,0,0,.9)
+      180deg,
+      transparent 25%,
+      rgba(4, 10, 18, 0.85) 65%,
+      rgba(4, 10, 18, 0.98) 100%
     );
 
   font-size:13px;
   font-weight:800;
+  color: #ffffff;
+  text-shadow: 0 2px 5px rgba(0,0,0,0.95), 0 0 2px rgba(0,0,0,0.9);
 }
 
 /* =========================
@@ -897,7 +909,7 @@ button{
           </strong>
 
           <span>
-            <span id="banCount">0</span>/3
+            <span id="banCount">0</span>/6
           </span>
 
         </div>
@@ -1128,10 +1140,48 @@ function getMapImage(map){
 function getBrawlerImage(brawler){
 
   return (
+    brawler.imageUrl2 ||
     brawler.imageUrl ||
-    brawler.image ||
-    ""
+    brawler.imageUrl3 ||
+    (brawler.id
+      ? `https://cdn.brawlify.com/brawlers/borderless/${brawler.id}.png`
+      : "")
   );
+
+}
+
+function getBrawlerImageFallbacks(brawler){
+
+  const id = brawler.id;
+
+  return [
+    brawler.imageUrl2,
+    brawler.imageUrl,
+    brawler.imageUrl3,
+    id ? `https://cdn.brawlify.com/brawlers/borderless/${id}.png` : "",
+    id ? `https://cdn.brawlify.com/brawlers/borders/${id}.png` : "",
+    id ? `https://cdn.brawlify.com/brawlers/emoji/${id}.png` : ""
+  ].filter(Boolean);
+
+}
+
+function applyImageFallback(img, brawler){
+
+  const sources = getBrawlerImageFallbacks(brawler);
+  let index = 0;
+
+  img.onerror = function(){
+
+    index++;
+
+    if(index < sources.length){
+      this.src = sources[index];
+    }else{
+      this.onerror = null;
+      this.style.display = "none";
+    }
+
+  };
 
 }
 
@@ -1548,7 +1598,7 @@ function addBrawler(id,type){
 
   if(type === "ban"){
 
-    if(draft.ban.length >= 3)
+    if(draft.ban.length >= 6)
       return;
 
     draft.ban.push(id);
@@ -1636,6 +1686,11 @@ function renderSlots(type){
       </button>
 
     `;
+
+    applyImageFallback(
+      slot.querySelector("img"),
+      brawler
+    );
 
 
     slot
@@ -1725,6 +1780,11 @@ function renderBrawlerGrid(type){
         </div>
 
       `;
+
+      applyImageFallback(
+        card.querySelector("img"),
+        brawler
+      );
 
 
       card.onclick = () => {
@@ -2254,6 +2314,11 @@ function updateTop10(){
         </div>
 
       `;
+
+      applyImageFallback(
+        card.querySelector(".ai-image"),
+        brawler
+      );
 
 
       container.appendChild(card);
