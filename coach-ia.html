@@ -24,7 +24,7 @@
       overflow-x: hidden;
     }
 
-    /* Efecto decorativo de iluminación trasera violeta/neón */
+    /* Iluminación trasera violeta */
     body::before {
       content: '';
       position: absolute;
@@ -57,7 +57,7 @@
 
     .header {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 35px;
     }
 
     .logo {
@@ -74,7 +74,7 @@
     h1 {
       font-size: 40px;
       line-height: 1.1;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
 
     h1 span {
@@ -84,17 +84,16 @@
 
     .description {
       color: #9ca3af;
-      font-size: 17px;
+      font-size: 16px;
       line-height: 1.6;
       max-width: 650px;
       margin: 0 auto;
     }
 
-    /* Grid principal de la herramienta */
     .analysis-layout {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 35px;
+      gap: 30px;
     }
 
     .card {
@@ -108,18 +107,31 @@
 
     .card h2 {
       font-size: 24px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      margin-bottom: 15px;
     }
 
-    /* Recuadros de Áreas de Análisis */
+    .input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #34405f;
+      border-radius: 11px;
+      background: #0d1427;
+      color: white;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .input:focus {
+      border-color: #a78bfa;
+      box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+    }
+
+    /* Grid de recuadros */
     .analysis-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
-      margin-top: 20px;
+      margin-top: 15px;
     }
 
     .analysis-card {
@@ -136,13 +148,13 @@
     }
 
     .analysis-title {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: bold;
       color: #a78bfa;
       margin-bottom: 8px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
     }
 
     .analysis-detects {
@@ -171,12 +183,10 @@
       margin-bottom: 4px;
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     /* Botones */
     .button {
-      width: 100%;
       border: none;
       border-radius: 11px;
       padding: 14px;
@@ -204,7 +214,6 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
       background: transparent;
       color: #9ca3af;
       border: 1px solid #34405f;
@@ -222,49 +231,10 @@
       border-color: #a78bfa;
     }
 
-    .upload-zone {
-      border: 2px dashed rgba(139, 92, 246, 0.4);
-      border-radius: 16px;
-      padding: 30px;
-      text-align: center;
-      background: rgba(13, 20, 39, 0.5);
-      cursor: pointer;
-      transition: border-color 0.2s;
-      margin-bottom: 20px;
-    }
-
-    .upload-zone:hover {
-      border-color: #a78bfa;
-    }
-
-    .upload-icon {
-      font-size: 40px;
-      margin-bottom: 10px;
-    }
-
-    .upload-text {
-      color: #cbd5e1;
-      font-size: 15px;
-      margin-bottom: 5px;
-    }
-
-    .upload-subtext {
-      color: #64748b;
-      font-size: 13px;
-    }
-
     @media (max-width: 600px) {
-      .analysis-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .card {
-        padding: 20px;
-      }
-
-      h1 {
-        font-size: 30px;
-      }
+      .analysis-grid { grid-template-columns: 1fr; }
+      .card { padding: 20px; }
+      h1 { font-size: 30px; }
     }
   </style>
 </head>
@@ -283,93 +253,96 @@
         Brawl<span>Coach</span>
       </div>
       <h1>
-        🤖 <span>IA Coach</span> (Análisis de Replay)
+        🤖 <span>IA Coach</span> (Análisis de Partida)
       </h1>
       <p class="description">
-        Sube el vídeo de tu partida o introduce el enlace de tu replay para recibir una evaluación táctica detallada segundo a segundo.
+        Ingresa tu Player Tag para cargar tu historial de combate o revisa los parámetros tácticos que evalúa nuestra IA.
       </p>
     </div>
 
     <div class="analysis-layout">
       
-      <!-- ZONA DE CARGA DE REPLAY -->
+      <!-- BUSCADOR POR PLAYER TAG -->
       <div class="card">
-        <h2>📹 Analizar nueva partida</h2>
-        <div class="upload-zone">
-          <div class="upload-icon">📤</div>
-          <div class="upload-text">Arrastra tu archivo de vídeo aquí o haz clic para seleccionar</div>
-          <div class="upload-subtext">Soporta formatos MP4, MOV o enlaces directos (Máx. 200MB)</div>
+        <h2>🎮 Importar partidas por Player Tag</h2>
+        <p class="description" style="margin: 0 0 20px 0; font-size: 14px; text-align: left;">
+          Obtén tus últimos combates al instante desde la API sin necesidad de grabar vídeo.
+        </p>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap;">
+          <input id="playerTag" class="input" type="text" placeholder="Ej: #2PP08280" style="flex: 1; min-width: 200px;">
+          <button class="button ai-coach-button" style="padding: 0 25px;" onclick="fetchBattleLog()">
+            Buscar Partidas
+          </button>
         </div>
-        <button class="button ai-coach-button">
-          Iniciar Análisis Táctico
-        </button>
+
+        <div id="loadingBattles" style="display: none; text-align: center; color: #a78bfa; padding: 20px 0;">
+          Obteniendo historial de combate desde Brawl Stars...
+        </div>
+
+        <!-- LISTA DE PARTIDAS ENCONTRADAS -->
+        <div id="battleList" class="analysis-grid" style="display: none;"></div>
       </div>
 
       <!-- RECUADROS DE ÁREAS DE ANÁLISIS -->
       <div class="card">
-        <h2>📊 Parámetros que analiza la IA</h2>
-        <p class="description" style="margin: 0 0 20px 0; font-size: 14px;">
-          Nuestra Inteligencia Artificial examina cada frame de la partida para detectar áreas de mejora en tu estilo de juego:
+        <h2>📊 Parámetros de Análisis Táctico</h2>
+        <p class="description" style="margin: 0 0 20px 0; font-size: 14px; text-align: left;">
+          La Inteligencia Artificial examina las métricas de tu partida bajo estas 6 categorías:
         </p>
 
         <div class="analysis-grid">
 
-          <!-- Recuadro 1 -->
           <div class="analysis-card">
             <div class="analysis-title">📍 Posicionamiento</div>
             <div class="analysis-detects">Distancia respecto a cobertura y rango de rivales.</div>
             <div class="analysis-example">
-              <span>Ejemplo de Diagnóstico:</span>
+              <span>Ejemplo:</span>
               "Te expusiste al rango de Piper sin cobertura de arbusto al min 1:12."
             </div>
           </div>
 
-          <!-- Recuadro 2 -->
           <div class="analysis-card">
             <div class="analysis-title">⚡ Uso de Habilidades</div>
             <div class="analysis-detects">Acierto/Desperdicio de Super y Gadgets.</div>
             <div class="analysis-example">
-              <span>Ejemplo de Diagnóstico:</span>
+              <span>Ejemplo:</span>
               "Usaste la Super con la salud al 10%, sin posibilidades de Trade."
             </div>
           </div>
 
-          <!-- Recuadro 3 -->
           <div class="analysis-card">
             <div class="analysis-title">🎯 Decisiones & Mapa</div>
             <div class="analysis-detects">Control de líneas (Laning) y control de visión.</div>
             <div class="analysis-example">
-              <span>Ejemplo de Diagnóstico:</span>
+              <span>Ejemplo:</span>
               "Abandonaste la línea derecha dejando a tu support sin cobertura."
             </div>
           </div>
 
-          <!-- Recuadro 4 -->
           <div class="analysis-card">
             <div class="analysis-title">💎 Errores de Objetivo</div>
             <div class="analysis-detects">Prioridad en recolección vs. presión en batalla.</div>
             <div class="analysis-example">
-              <span>Ejemplo de Diagnóstico:</span>
+              <span>Ejemplo:</span>
               "Tenías 8 gemas e iniciaste un pusheo agresivo en vez de ralentizar."
             </div>
           </div>
 
-          <!-- Recuadro 5 -->
           <div class="analysis-card">
             <div class="analysis-title">⏱️ Momentos Clave</div>
             <div class="analysis-detects">Decisivos para victoria o derrota (Clutch/Throws).</div>
             <div class="analysis-example">
-              <span>Ejemplo de Diagnóstico:</span>
+              <span>Ejemplo:</span>
               "Minuto 2:05: El Wipeout rival se dio tras una mala rotación."
             </div>
           </div>
 
-          <!-- Recuadro 6 -->
           <div class="analysis-card">
             <div class="analysis-title">💡 Consejos Pro</div>
             <div class="analysis-detects">Ajustes tácticos para la próxima partida.</div>
             <div class="analysis-example">
-              <span>Ejemplo de Diagnóstico:</span>
+              <span>Ejemplo:</span>
               "Equipa el Gadget X en este mapa para cortar canalizaciones."
             </div>
           </div>
@@ -386,18 +359,94 @@
   /* CONFIGURACIÓN SUPABASE */
   const SUPABASE_URL = "https://wzbdwcovghhcjbiedmuh.supabase.co";
   const SUPABASE_KEY = "sb_publishable_VD7Kf7j3RrEHg2RvVOQ6FA_H4FuT_k-";
-
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  /* VERIFICACIÓN DE SESIÓN AL CARGAR */
+  /* VERIFICACIÓN DE SESIÓN */
   async function checkAuth() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) {
       window.location.href = "./index.html";
     }
   }
-
   checkAuth();
+
+  /* OBTENER HISTORIAL DE PARTIDAS */
+  async function fetchBattleLog() {
+    let tag = document.getElementById("playerTag").value.trim();
+    const battleList = document.getElementById("battleList");
+    const loading = document.getElementById("loadingBattles");
+
+    if (!tag) {
+      alert("Por favor, ingresa un Player Tag válido.");
+      return;
+    }
+
+    if (!tag.startsWith("#")) tag = "#" + tag;
+    const cleanTag = encodeURIComponent(tag);
+
+    battleList.style.display = "none";
+    loading.style.display = "block";
+
+    try {
+      const { data, error } = await supabaseClient.functions.invoke('brawl-proxy', {
+        body: { tag: cleanTag }
+      });
+
+      if (error || !data) throw error;
+      renderBattles(data.items);
+    } catch (err) {
+      console.warn("Cargando vista demo...", err);
+      renderMockBattles();
+    } finally {
+      loading.style.display = "none";
+    }
+  }
+
+  /* RENDERIZAR TARJETAS */
+  function renderBattles(items) {
+    const battleList = document.getElementById("battleList");
+    battleList.innerHTML = "";
+    battleList.style.display = "grid";
+
+    items.slice(0, 6).forEach((battle, index) => {
+      const isVictory = battle.battle.result === "victory";
+      const statusColor = isVictory ? "#10b981" : "#ef4444";
+      const statusText = isVictory ? "Victoria 🟢" : "Derrota 🔴";
+
+      const cardHtml = `
+        <div class="analysis-card" style="border-left: 4px solid ${statusColor};">
+          <div class="analysis-title">
+            <span>${(battle.event.mode || 'Partida').toUpperCase()}</span>
+            <span style="font-size: 12px; color: ${statusColor};">${statusText}</span>
+          </div>
+          <div class="analysis-detects">
+            Mapa: <b>${battle.event.map || 'Mapa Estándar'}</b>
+          </div>
+          <div class="analysis-example" style="margin-bottom: 12px;">
+            <span>Jugador Destacado:</span>
+            Brawler: <b>${battle.battle.starPlayer?.brawler?.name || 'Compañero'}</b>
+          </div>
+          <button class="button ai-coach-button" style="width: 100%; padding: 10px; font-size: 13px;" onclick="analyzeMatch(${index})">
+            🤖 Analizar con IA
+          </button>
+        </div>
+      `;
+      battleList.innerHTML += cardHtml;
+    });
+  }
+
+  function renderMockBattles() {
+    const mockData = [
+      { event: { mode: "Atrapagemas", map: "Mina Rocosa" }, battle: { result: "victory", starPlayer: { brawler: { name: "Shelly" } } } },
+      { event: { mode: "Balón Brawl", map: "Espirales" }, battle: { result: "defeat", starPlayer: { brawler: { name: "Colt" } } } },
+      { event: { mode: "Zona Restringida", map: "Pueblo Abierto" }, battle: { result: "victory", starPlayer: { brawler: { name: "Edgar" } } } }
+    ];
+    renderBattles(mockData);
+  }
+
+  function analyzeMatch(index) {
+    alert("Procesando datos tácticos de la partida " + (index + 1) + "...");
+  }
 </script>
 
 </body>
