@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cursos - BrawlCoach</title>
+  <title>Cursos y Servicios - BrawlCoach</title>
 
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -36,6 +36,10 @@
     }
 
     .screen {
+      display: none;
+    }
+
+    .screen.active {
       display: block;
     }
 
@@ -118,24 +122,6 @@
     .card-description {
       color: #8f9ab2;
       margin-bottom: 28px;
-    }
-
-    .user-badge {
-      background: #0d1427;
-      border: 1px solid #34405f;
-      padding: 12px;
-      border-radius: 11px;
-      margin-bottom: 20px;
-      font-size: 14px;
-      color: #ffd43b;
-      word-break: break-all;
-    }
-
-    .counter-badge {
-      margin-top: 15px;
-      font-size: 13px;
-      color: #8f9ab2;
-      text-align: center;
     }
 
     .button {
@@ -240,59 +226,51 @@
 <div class="page">
   <div class="container">
 
-    <section class="screen active">
+    <!-- PANTALLA PRINCIPAL DE CURSOS Y SERVICIOS -->
+    <section id="mainCoursesScreen" class="screen active">
       <div class="main-grid">
 
-        <!-- Columna Izquierda (Información) -->
+        <!-- Columna Izquierda -->
         <div class="hero">
           <div class="logo">
             Brawl<span>Coach</span>
           </div>
 
           <h1>
-            Aprende y mejora.<br>
-            <span>Domina tus partidas.</span>
+            Mejora tu nivel.<br>
+            <span>Alcanza tu rango ideal.</span>
           </h1>
 
           <p class="description">
-            Accede a nuestros cursos especializados diseñados para entender las mecánicas avanzadas, el control de mapas y la toma de decisiones en Brawl Stars.
+            Elige entre nuestras clases personalizadas con entrenadores o contrata el servicio de Rank Boost para subir de categoría rápidamente.
           </p>
 
           <div class="features">
             <div class="feature">
-              <div class="feature-icon">🎯</div>
-              <h3>Estrategia</h3>
-              <p>Comprende las rotaciones y el posicionamiento clave en cada modo.</p>
+              <div class="feature-icon">🎓</div>
+              <h3>Clases 1v1</h3>
+              <p>Sesiones de 1 hora enfocadas en corregir tus fallos y potenciar tus brawlers.</p>
             </div>
 
             <div class="feature">
-              <div class="feature-icon">📈</div>
-              <h3>Progreso</h3>
-              <p>Constancia y mentalidad para escalar copas con solidez.</p>
+              <div class="feature-icon">🚀</div>
+              <h3>Rank Boost</h3>
+              <p>ProGRESA de forma segura hasta Mítico, Legendario o Master.</p>
             </div>
           </div>
         </div>
 
-        <!-- Columna Derecha (Panel de Cursos) -->
+        <!-- Columna Derecha (Selección de Apartados) -->
         <div class="card">
-          <h2>Sección de Cursos</h2>
-          <p class="card-description">Selecciona un curso disponible para comenzar.</p>
+          <h2>Sección de Servicios</h2>
+          <p class="card-description">¿Qué te gustaría hacer hoy?</p>
 
-          <div id="authMessage" class="message">
-            Inicia sesión para desbloquear el contenido completo de los cursos.
-          </div>
-
-          <!-- Listado de Cursos como accesos rápidos -->
-          <button class="button primary" onclick="accessCourse('Fundamentos de Ranked')">
-            🎯 Fundamentos de Ranked
+          <button class="button primary" onclick="showSection('classesSection')">
+            🎓 Clases de Coaching
           </button>
 
-          <button class="button secondary" onclick="accessCourse('Control de Zonas y Mapas')">
-            🗺️ Control de Zonas y Mapas
-          </button>
-
-          <button class="button secondary" onclick="accessCourse('Mentalidad y Progreso')">
-            📈 Mentalidad y Progreso
+          <button class="button secondary" onclick="showSection('boostSection')">
+            🚀 Rank Boost
           </button>
 
           <a href="./index.html" class="back">
@@ -300,6 +278,114 @@
           </a>
         </div>
 
+      </div>
+    </section>
+
+    <!-- SECCIÓN DE CLASES -->
+    <section id="classesSection" class="screen">
+      <div class="main-grid">
+        <div class="hero">
+          <div class="logo">
+            Brawl<span>Coach</span>
+          </div>
+          <h1>Clases de <span>Coaching</span></h1>
+          <p class="description">
+            Aprende directamente de expertos. Cada clase tiene una duración de <strong>1 hora</strong> y puedes escoger el pack que mejor se adapte a ti. ¡Recuerda que la primera clase es totalmente <strong>gratis</strong>!
+          </p>
+          <div class="features">
+            <div class="feature">
+              <div class="feature-icon">💡</div>
+              <h3>¡Primera clase gratis!</h3>
+              <p>Pruébanos sin compromiso y descubre cómo podemos ayudarte a mejorar.</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">⏱️</div>
+              <h3>1 hora por sesión</h3>
+              <p>Análisis de partidas, revisión de picks y consejos prácticos en directo.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Elige tu pack</h2>
+          <p class="card-description">Selecciona una opción para reservar:</p>
+
+          <button class="button primary" onclick="selectService('Clase de prueba (¡Gratis! - 1 hora / 1 clase)')">
+            🎁 1ª Clase (Gratis - 1 hora)
+          </button>
+
+          <button class="button secondary" onclick="selectService('Pack de 2 Clases - 5€ / 2 horas')">
+            💵 5€ — 2 Clases (2 horas)
+          </button>
+
+          <button class="button secondary" onclick="selectService('Pack de 3 Clases - 10€ / 3 horas')">
+            💵 10€ — 3 Clases (3 horas)
+          </button>
+
+          <button class="button secondary" onclick="selectService('Pack de 4 Clases - 15€ / 4 horas')">
+            💵 15€ — 4 Clases (4 horas)
+          </button>
+
+          <button class="button secondary" onclick="selectService('Pack Master de Clases - 20€ / 4+ clases')">
+            💵 20€ — Pack Completo Avanzado
+          </button>
+
+          <div id="classMessage" class="message"></div>
+
+          <button class="back" onclick="showSection('mainCoursesScreen')">
+            ← Volver a servicios
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN DE RANK BOOST -->
+    <section id="boostSection" class="screen">
+      <div class="main-grid">
+        <div class="hero">
+          <div class="logo">
+            Brawl<span>Coach</span>
+          </div>
+          <h1>Rank <span>Boost</span></h1>
+          <p class="description">
+            ¿Atascado en competitivo? Deja que nuestros expertos te lleven al rango que mereces de forma rápida, eficiente y segura.
+          </p>
+          <div class="features">
+            <div class="feature">
+              <div class="feature-icon">🛡️</div>
+              <h3>100% Seguro</h3>
+              <p>Profesionales altamente cualificados para subir tu cuenta sin riesgos.</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">⚡</div>
+              <h3>Rapidez</h3>
+              <p>Progreso inmediato desde el momento de la contratación.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Elige tu Rango</h2>
+          <p class="card-description">Selecciona el nivel al que deseas llegar:</p>
+
+          <button class="button primary" onclick="selectService('Rank Boost: Mítico (5€)')">
+            ⭐ Mítico — 5€
+          </button>
+
+          <button class="button secondary" onclick="selectService('Rank Boost: Legendario (15€)')">
+            🌟 Legendario — 15€
+          </button>
+
+          <button class="button secondary" onclick="selectService('Rank Boost: Master (25€)')">
+            👑 Master — 25€
+          </button>
+
+          <div id="boostMessage" class="message"></div>
+
+          <button class="back" onclick="showSection('mainCoursesScreen')">
+            ← Volver a servicios
+          </button>
+        </div>
       </div>
     </section>
 
@@ -313,15 +399,23 @@
 
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  async function accessCourse(courseName) {
+  /* NAVEGACIÓN ENTRE PANTALLAS INTERNAS */
+  function showSection(sectionId) {
+    const screens = document.querySelectorAll(".screen");
+    screens.forEach(s => s.classList.remove("active"));
+    document.getElementById(sectionId).classList.add("active");
+    window.scrollTo(0, 0);
+  }
+
+  /* SELECCIÓN Y VALIDACIÓN DE SESIÓN */
+  async function selectService(serviceName) {
     const { data: { session } } = await supabaseClient.auth.getSession();
 
     if (session) {
-      alert(`¡Acceso concedido al curso: ${courseName}!`);
+      alert(`Has seleccionado: "${serviceName}". (Próximamente pasarela de pago o contacto directo).`);
     } else {
-      const msg = document.getElementById("authMessage");
-      msg.textContent = "Debes iniciar sesión en la página principal para acceder a los cursos.";
-      msg.style.display = "block";
+      alert("Debes iniciar sesión en la página principal para contratar este servicio.");
+      window.location.href = "./index.html";
     }
   }
 </script>
