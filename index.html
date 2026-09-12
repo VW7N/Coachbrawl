@@ -720,9 +720,35 @@
     return error.message;
   }
 
-  /* INICIALIZACIÓN Y VALIDACIÓN DE CÓDIGO DE CORREO */
+  /* INICIALIZACIÓN Y VALIDACIÓN DE CORREO */
   async function init() {
-    // Intercambia el código de verificación por sesión si viene en la URL
+    // 1. Comprobar si hay un token directamente en el hash de la URL (#access_token=...)
+    const hash = window.location.hash;
+    if (hash && hash.includes('access_token')) {
+      const params = new URLSearchParams(hash.substring(1));
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+
+      if (accessToken) {
+        try {
+          const { data, error } = await supabaseClient.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken
+          });
+          if (!error && data.session) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+            renderAuthState(data.session);
+            showScreen("home");
+            updatePlayerCount();
+            return;
+          }
+        } catch (e) {
+          console.error("Error al establecer la sesión desde el hash:", e);
+        }
+      }
+    }
+
+    // 2. Comprobar si hay un código de verificación estándar en los parámetros (?code=...)
     const urlParams = new URLSearchParams(window.location.search);
     const authCode = urlParams.get('code');
 
@@ -737,11 +763,11 @@
           return;
         }
       } catch (e) {
-        console.error("Error al procesar la verificación:", e);
+        console.error("Error al procesar el código de sesión:", e);
       }
     }
 
-    // Carga normal de sesión existente
+    // 3. Carga normal si ya hay una sesión guardada previamente
     const { data } = await supabaseClient.auth.getSession();
     if (data.session) {
       renderAuthState(data.session);
