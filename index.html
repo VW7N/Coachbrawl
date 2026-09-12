@@ -241,7 +241,7 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Noticias (Dorado / Ámbar) */
+    /* Botón Noticias */
     .news-button {
       display: flex;
       align-items: center;
@@ -665,12 +665,15 @@
     button.textContent = "Creando cuenta...";
 
     try {
+      // Redirige eliminando cualquier parámetro residual
+      const redirectUrl = window.location.origin + window.location.pathname;
+      
       const { data, error } = await supabaseClient.auth.signUp({
         email: email,
         password: password,
         options: { 
           data: { username: name },
-          emailRedirectTo: window.location.href
+          emailRedirectTo: redirectUrl
         }
       });
 
@@ -729,6 +732,7 @@
   /* CERRAR SESIÓN */
   async function logout() {
     await supabaseClient.auth.signOut();
+    renderAuthState(null);
     showScreen("home");
   }
 
@@ -775,7 +779,7 @@
   /* SUBSCRIPCIÓN A CAMBIOS DE AUTH */
   supabaseClient.auth.onAuthStateChange((event, session) => {
     renderAuthState(session);
-    if (event === 'SIGNED_IN') {
+    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
       showScreen("home");
     }
   });
@@ -796,6 +800,9 @@
 
   /* INICIALIZACIÓN Y VALIDACIÓN DE CORREO */
   async function init() {
+    const cleanUrl = window.location.origin + window.location.pathname;
+
+    // Detectar enlaces de confirmación por hash (#access_token=...)
     const hash = window.location.hash;
     if (hash && hash.includes('access_token')) {
       const params = new URLSearchParams(hash.substring(1));
@@ -809,18 +816,19 @@
             refresh_token: refreshToken
           });
           if (!error && data.session) {
-            window.history.replaceState({}, document.title, window.location.pathname);
+            window.history.replaceState({}, document.title, cleanUrl);
             renderAuthState(data.session);
             showScreen("home");
             updatePlayerCount();
             return;
           }
         } catch (e) {
-          console.error("Error al establecer la sesión desde el hash:", e);
+          console.error("Error procesando sesión desde hash:", e);
         }
       }
     }
 
+    // Detectar enlaces por parámetro (?code=...)
     const urlParams = new URLSearchParams(window.location.search);
     const authCode = urlParams.get('code');
 
@@ -828,21 +836,20 @@
       try {
         const { data, error } = await supabaseClient.auth.exchangeCodeForSession(authCode);
         if (!error && data.session) {
-          window.history.replaceState({}, document.title, window.location.pathname);
+          window.history.replaceState({}, document.title, cleanUrl);
           renderAuthState(data.session);
           showScreen("home");
           updatePlayerCount();
           return;
         }
       } catch (e) {
-        console.error("Error al procesar el código de sesión:", e);
+        console.error("Error intercambiando código de sesión:", e);
       }
     }
 
+    // Comprobar sesión activa habitual
     const { data } = await supabaseClient.auth.getSession();
-    if (data.session) {
-      renderAuthState(data.session);
-    }
+    renderAuthState(data?.session || null);
     updatePlayerCount();
   }
 
