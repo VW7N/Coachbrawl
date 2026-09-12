@@ -275,7 +275,7 @@
 
     try {
       const targetUrl = `https://api.brawlify.com/v1/player/%23${cleanTag}`;
-      const proxyUrl = `https://api.allorigins.win/get?url=` + encodeURIComponent(targetUrl);
+      const proxyUrl = `https://api.allorigins.win/raw?url=` + encodeURIComponent(targetUrl);
 
       const response = await fetch(proxyUrl);
 
@@ -283,13 +283,7 @@
         throw new Error("No se ha podido conectar con el servidor.");
       }
 
-      const proxyData = await response.json();
-      
-      if (!proxyData.contents) {
-        throw new Error("Jugador no encontrado.");
-      }
-
-      const data = JSON.parse(proxyData.contents);
+      const data = await response.json();
 
       // Renderizado dinámico de los campos devueltos por el servidor
       document.getElementById("resName").textContent = data.name || "Sin Nombre";
