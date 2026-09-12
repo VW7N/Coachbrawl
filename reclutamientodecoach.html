@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrawlCoach - Solicitud de Coach (AI Hard Evaluation System)</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b1020;
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* BARRA SUPERIOR */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .logo span {
+      color: #ffd43b;
+    }
+
+    .btn-nav {
+      background: #151c32;
+      border: 1px solid #27314d;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    .btn-nav:hover {
+      background: #1f2942;
+    }
+
+    /* TARJETA CONTENEDORA */
+    .card {
+      background: #151c32;
+      border: 1px solid #27314d;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      margin-bottom: 30px;
+    }
+
+    .card h1 {
+      font-size: 26px;
+      margin-bottom: 10px;
+      color: #ffd43b;
+    }
+
+    .card p {
+      color: #8f9ab2;
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 25px;
+    }
+
+    /* PREGUNTAS DEL EXAMEN */
+    .question-card {
+      background: #0d1427;
+      border: 1px solid #27314d;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: border-color 0.3s;
+    }
+
+    .question-card.error-q {
+      border-color: #ef4444;
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .question-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #ffffff;
+      padding-right: 10px;
+      line-height: 1.4;
+    }
+
+    .diff-badge {
+      font-size: 11px;
+      font-weight: bold;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      background: #991b1b; 
+      color: #fecaca;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #151c32;
+      padding: 12px 15px;
+      border-radius: 10px;
+      border: 1px solid #27314d;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .option-item:hover {
+      border-color: #ffd43b;
+      background: #1c2643;
+    }
+
+    .option-item input[type="radio"] {
+      accent-color: #ffd43b;
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+    }
+
+    .option-item label {
+      cursor: pointer;
+      font-size: 14px;
+      color: #e2e8f0;
+      width: 100%;
+      line-height: 1.3;
+    }
+
+    /* FORMULARIO DE PERFIL Y DATOS */
+    .input-group {
+      margin-bottom: 18px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #cbd5e1;
+    }
+
+    .input, textarea {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #34405f;
+      border-radius: 11px;
+      background: #0d1427;
+      color: white;
+      font-size: 15px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .input:focus, textarea:focus {
+      border-color: #ffd43b;
+    }
+
+    .button {
+      width: 100%;
+      border: none;
+      border-radius: 11px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .primary {
+      background: #ffd43b;
+      color: #111827;
+    }
+
+    .primary:hover {
+      background: #e5bd33;
+    }
+
+    .button:disabled {
+      background: #374151;
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    /* BANNER DE IA */
+    .ai-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #1e1b4b;
+      border: 1px solid #6366f1;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+    }
+
+    .ai-badge {
+      background: #6366f1;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .ai-status {
+      display: none;
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 15px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .ai-status.rejected {
+      background: #451a1a;
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+    }
+
+    .ai-status.approved {
+      background: #064e3b;
+      border: 1px solid #10b981;
+      color: #6ee7b7;
+    }
+
+    /* CAJA DE SANCIÓN (7 DÍAS) */
+    .cooldown-box {
+      display: none;
+      background: #270e0e;
+      border: 2px solid #ef4444;
+      padding: 25px;
+      border-radius: 16px;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .cooldown-box h2 {
+      color: #f87171;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .cooldown-timer {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ffd43b;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ENCABEZADO -->
+  <header class="top-bar">
+    <div class="logo">Brawl<span>Coach</span></div>
+    <a href="index.html" class="btn-nav">← Menú Principal</a>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="ai-banner">
+        <span class="ai-badge">Evaluación Ponderada IA</span>
+        <span style="font-size: 13px; color: #c7d2fe;">Examen de Máxima Dificultad. Al ser preguntas avanzadas, la IA concede un <strong>9/10 Aprobado con 1 fallo</strong>. Si fallas 2 o más preguntas, quedarás bloqueado durante 7 días.</span>
+      </div>
+
+      <h1>🎓 Examen Competitivo Avanzado y Solicitud</h1>
+      <p>
+        Responde al cuestionario de nivel técnico superior para certificar tus conocimientos de Coach.
+      </p>
+
+      <!-- MENSAJE DE BLOQUEO DE 7 DÍAS -->
+      <div id="cooldownBox" class="cooldown-box">
+        <h2>🔒 Examen Bloqueado Temporalmene</h2>
+        <p style="color: #cbd5e1;">Has superado el límite de errores permitido. La IA ha aplicado una sanción de 7 días de espera antes del siguiente intento.</p>
+        <div id="timerText" class="cooldown-timer">Calculando tiempo...</div>
+      </div>
+
+      <!-- FORMULARIO -->
+      <form id="coachForm" action="https://formspree.io/f/xyzaebjr" method="POST">
+        
+        <!-- DATOS DEL SOLICITANTE -->
+        <h1>👤 Datos del Solicitante</h1>
+        <br>
+        <div class="input-group">
+          <label for="username">Nombre de Usuario de BrawlCoach:</label>
+          <input type="text" id="username" name="Usuario" class="input" placeholder="Tu usuario" required>
+        </div>
+
+        <div class="input-group">
+          <label for="email">Correo Electrónico (Gmail):</label>
+          <input type="email" id="email" name="Email" class="input" placeholder="tu-correo@gmail.com" required>
+        </div>
+
+        <div class="input-group">
+          <label for="specialties">Especialidades (Brawlers, Modos, Macro-Game):</label>
+          <input type="text" id="specialties" name="Especialidades" class="input" placeholder="Ej: Drafting competitivo, Micro-rotaciones, Control de Choke-points" required>
+        </div>
+
+        <div class="input-group">
+          <label for="experience">Experiencia / Rango alcanzado:</label>
+          <textarea id="experience" name="Experiencia" rows="3" placeholder="Ej: Rango Maestros en Ranked, 65k copas, Coach previo de equipo en torneos." required></textarea>
+        </div>
+
+        <div id="quizSection">
+          <hr style="border: 0; border-top: 1px solid #27314d; margin: 30px 0;">
+
+          <!-- EXAMEN TEÓRICO (10 PREGUNTAS COMPLEJAS) -->
+          <h1>📝 Examen Competitivo (Todas Preguntas de Dificultad Alta)</h1>
+          <br>
+
+          <!-- PREGUNTA 1 -->
+          <div class="question-card" id="qc1">
+            <div class="question-header">
+              <div class="question-title">1. En Atrapagemas, ante una línea enemiga con un 'Controller' de área amplia y dos 'Aggro', ¿cuál es la gestión óptima del espacio para el Gem Carrier?</div>
+              <span class="diff-badge">Alta Dificultad</span>
+            </div>
+            <div class="options-list">
+              <div class="option-item"><input type="radio" id="q1_1" name="P1" value="A" required><label for="q1_1">Mantener el rango en carril opuesto para obligar al Controller a dividirse</label></div>
+              <div class="option-item"><input type="radio" id="q1_2" name="P1" value="B"><label for="q1_2">Mantener línea pasiva sobre la zona defensiva, cediendo la gema inicial para forzar over-extension del rival</label></div>
+              <div class="option-item"><input type="radio" id="q1_3" name="P1" value="C"><label for="q1_3">Avanzar en línea recta con un Tanker para recoger rápido las primeras 5 gemas</label></div>
+              <div class="option-item"><input type="radio" id="q1_4" name="P1" value="D"><label for="q1_4">Rotar constantemente con los laterales sin tocar el centro del mapa</label></div>
+            </div>
+          </div>
+
+          <!-- PREGUNTA 2 -->
+          <div class="question-card" id="qc2">
+            <div class="question-header">
+              <div class="question-title">2. En la fase de Drafting de Ranked, si el rival pickea un 'Soft Counter' en Pick 3, ¿qué estrategia aplica el 'Counter-Drafting' avanzado en Pick 4 y 5?</div>
+              <span class="diff-badge">Alta Dificultad</span>
+            </div>
+            <div class="options-list">
+              <div class="option-item"><input type="radio" id="q2_1" name="P2" value="A" required><label for="q2_1">Asegurar un brawler independiente para neutralizar al Pick 3 y un Enabler para potenciar el First Pick propio</label></div>
+              <div class="option-item"><input type="radio" id="q2_2" name="P2" value="B"><label for="q2_2">Elegir automáticamente dos tanques para forzar al rival a usar todos sus gadgets defensivos</label></div>
+              <div class="option-item"><input type="radio" id="q2_3" name="P2" value="C"><label for="q2_3">Banquear el carril central y Pickear dos Snipers para mantener tiro a larga distancia</label></div>
+              <div class="option-item"><input type="radio" id="q2_4" name="P2" value="D"><label for="q2_4">Repetir la categoría del pick enemigo para igualar estadísticas base</label></div>
+            </div>
+          </div>
+
+          <!-- PREGUNTA 3 -->
+          <div class="question-card" id="qc3">
+            <div class="question-header">
+              <div class="question-title">3. Frente a un 'Last Pick' de Mortis contra 2 francotiradores, ¿cuál es la micro-rotación y posicionamiento defensivo correcto (Pinching)?</div>
+              <span class="diff-badge">Alta Dificultad</span>
+            </div>
+            <div class="options-list">
+              <div class="option-item"><input type="radio" id="q3_1" name="P3" value="A" required><label for="q3_1">Separarse hacia los bordes extremos del mapa para abarcar mayor ángulo de tiro</label></div>
+              <div class="option-item"><input type="radio" id="q3_2" name="P3" value="B"><label for="q3_2">Formar una línea de fuego cruzado cercana con cobertura mutua evitando el aislamiento individual</label></div>
+              <div class="option-item"><input type="radio" id="q3_3" name="P3" value="C"><label for="q3_3">Avanzar al arbusto central antes de que el asesino cargue su primer básico</label></div>
+              <div class="option-item"><input type="radio" id="q3_4" name="P3" value="D"><label for="q3_4">Ignorar su posición y enfocar todo el daño en el brawler de apoyo enemigo</label></div>
+            </div>
+          </div>
+
+          <!-- PREGUNTA 4 -->
+          <div class="question-card" id="qc4">
+            <div class="question-header">
+              <div class="question-title">4. En Noqueo (Knockout) en situación de 3v2 a favor, ¿cómo se gestiona la ventaja de 'Choke-Point' sin riesgo de simetría de bajas?</div>
+              <span class="diff-badge">Alta Dificultad</span>
+            </div>
+            <div class="options-list">
+              <div class="option-item"><input type="radio" id="q4_1" name="P4" value="A" required><label for="q4_1">Lanzarse en grupo al respawn enemigo para forzar la eliminación final</label></div>
+              <div class="option-item"><input type="radio" id="q4_2" name="P4" value="B"><label for="q4_2">Bloquear los ángulos de escape, cortar la regeneración y presionar sin cruzar la línea de visión del rival</label></div>
+              <div class="option-item"><input type="radio" id="q4_3" name="P4" value="C"><label for="q4_3">Retroceder a la zona propia hasta que el veneno cierre por completo el mapa</label></div>
+              <div class="option-item"><input type="radio" id="q4_4" name="P4" value="D"><label for="q4_4">Gastar todos los gadgets acumulados para asustar a los supervivientes</label></div>
+            </div>
+          </div>
+
+          <!-- PREGUNTA 5 -->
+          <div class="question-card" id="qc5">
+            <div class="question-header">
+              <div class="question-title">5. ¿En qué consiste la maniobra avanzada de 'Cooldown Baiting' en ligas profesionales?</div>
+              <span class="diff-badge">Alta Dificultad</span>
+            </div>
+            <div class="options-list">
+              <div class="option-item"><input type="radio" id="q5_1" name="P5" value="A" required><label for="q5_1">Simular un fallo de posicionamiento para obligar al rival a malgastar gadgets defensivos o Súpers</label></div>
+              <div class="option-item"><input type="radio" id="q5_2" name="P5" value="B"><label for="q5_2">Vaciar la munición para que la recarga automática otorgue un escudo de aceleración</label></div>
+              <div class="option-item"><input type="radio" id="q5_3" name="P5" value="C"><label for="q5_3">Disparar continuamente a la pared para atraer la atención de los tres brawlers enemigos</label></div>
+              <div class="option-item"><input type="radio" id="q5_4" name="P5" value="D"><label for="q5_4">Permanecer en el respawn hasta que el temporizador del mapa entre en fase crítica</label></div>
+            </div>
+          </div>
+
+          <!-- PREGUNTA 6 -->
+          <div class="question-card" id="qc6">
+            <div class="question-header">
+              <div class="question-title">6. ¿Qué técnica de 'Tempo' se aplica tras realizar un Wipe (3 eliminados) en Balón Brawl competitivo?</div>
+              <span class="diff-badge">Alta Dificultad</span>
+            </div>
+            <div class="options-list">
+              <div class="option-item"><input type="radio" id="q6_1" name="P6" value="A" required><label for="q6_1">Pase rápido al brawler de mayor movilidad mientras los otros dos sellan las líneas de spawn rival</label></div>
+              <div class="option-item"><input type="radio" id="q6_2" name="P6" value="B"><label for="q6_2">Avanzar juntos los tres brawlers pegados al balón para asegurar el tiro directo</label></div>
+              <div class="option-item"><input type="radio" id="q6_3" name="P6" value="C"><label for="q6_3">Retener el balón en el centro para recargar las tres habilidades súper antes de anotar</label></div>
+              <div class="option-item"><input type="radio" id="q6_4" name="P6" value="D"><label for="q6_4">Destruir con la Súper todos los muros de la base rival antes de ingresar la pelota</label></div>
+            </div>
+          </div>
+
+          <!-- PREGUNTA 7 -->
+          <div class="question-card" id="qc7">
+            <div class="question-header">
+              <div class="question-title">7. En mapas de Heist (Atraco) asimétricos, ¿cómo se ejecuta correctamente una 'Base Race' con desventaja de DPS?</div>
+              <span class="diff-badge">Alta Dificultad</span>
+            </div>
+            <div class="options-list">
+              <div class="option-item"><input type="radio" id="q7_1" name="P7" value="A" required><label for="q7_1">Asignar un brawler de alto CC a ralentizar el avance enemigo mientras dos realizan DPS directo</label></div>
+              <div class="option-item"><input type="radio" id="q7_2" name="P7" value="B"><label for="q7_2">Atacar todos a la caja rival ignorando completamente la defensa, confiando en el daño crítico</label></div>
+              <div class="option-item"><input type="radio" id="q7_3" name="P7" value="C"><label for="q7_3">Volver los tres brawlers a defender la caja propia hasta eliminar a la primera oleada</label></div>
+              <div class="option-item"><input type="radio" id="q7_4" name="P7" value="D"><label for="q7_4">Usar los gadgets únicamente para curar a los compañeros durante el trayecto</label></div>
+            </div>
+          </div>
+
+          <!-- PREGUNTA 8 -->
+          <div class="question-card" id="qc8">
+            <div class="question-header">
+              <div class="question-title">8. En Zona Restringida de doble zona, tras dominar al 100% la Zona A, ¿cuál es el movimiento táctico del carrilero?</div>
+              <span class="diff-badge">Alta Dificultad</span>
+            </div>
+            <div class="options-list">
+              <div class="option-item"><input type="radio" id="q8_1" name="P8" value="A" required><label for="q8_1">Rotar inmediatamente a establecer el control del Choke-Point de la Zona B antes de que el rival se posicione</label></div>
+              <div class="option-item"><input type="radio" id="q8_2" name="P8" value="B"><label for="q8_2">Quedarse resguardando la Zona A para prevenir un reconteo del rival</label></div>
+              <div class="option-item"><input type="radio" id="q8_3" name="P8" value="C"><label for="q8_3">Esperar a que el equipo enemigo capture el 50% de la Zona B para contraatacar</label></div>
+              <div class="option-item"><input type="radio" id="q8_4" name="P8" value="D"><label for="q8_4">Ponerse en la zona de respawn enemiga para evitar que salgan</label></div>
+            </div>
+          </div>
+
+          <!-- PREGUNTA 9 -->
+          <div class="question-card" id="qc9">
+            <div class="question-header">
+              <div class="question-title">9. ¿Cómo se define y aplica la 'Prioridad de Carril' (Lane Priority) para habilitar asistencias al centro?</div>
+              <span class="diff-badge">Alta Dificultad</span>
+            </div>
+            <div class="options-list">
+              <div class="option-item"><input type="radio" id="q9_1" name="P9" value="A" required><label for="q9_1">Forzar el retroceso del rival de carril para crear un ángulo de disparo hacia el carril central (Pincer Attack)</label></div>
+              <div class="option-item"><input type="radio" id="q9_2" name="P9" value="B"><label for="q9_2">Eliminar obligatoriamente al rival aunque signifique un intercambio de bajas simultáneo</label></div>
+              <div class="option-item"><input type="radio" id="q9_3" name="P9" value="C"><label for="q9_3">Estar escondido en el arbusto lateral esperando a que el centro gane su duelo</label></div>
+              <div class="option-item"><input type="radio" id="q9_4" name="P9" value="D"><label for="q9_4">Cambiar de carril constantemente con el compañero cada 15 segundos</label></div>
+            </div>
+          </div>
+
+          <!-- PREGUNTA 10 -->
+          <div class="question-card" id="qc10">
+            <div class="question-header">
+              <div class="question-title">10. En el control de rango contra tanques de velocidad 'Very Fast', ¿cuál es la distancia de zondeo (Kiting) efectiva?</div>
+              <span class="diff-badge">Alta Dificultad</span>
+            </div>
+            <div class="options-list">
+              <div class="option-item"><input type="radio" id="q10_1" name="P10" value="A" required><label for="q10_1">Mantener la distancia al límite exacto del rango de amenaza del tanque considerando su velocidad e hitboxes</label></div>
+              <div class="option-item"><input type="radio" id="q10_2" name="P10" value="B"><label for="q10_2">Atacar desde el rango máximo sin importar si se pierde la visión dentro de los arbustos</label></div>
+              <div class="option-item"><input type="radio" id="q10_3" name="P10" value="C"><label for="q10_3">Esperar a que el tanque gaste sus tres básicos antes de iniciar los disparos</label></div>
+              <div class="option-item"><input type="radio" id="q10_4" name="P10" value="D"><label for="q10_4">Disparar los proyectiles en rafaga continua sin guardar munición defensiva</label></div>
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" id="aiRatingInput" name="Puntuacion_IA" value="">
+
+        <div id="aiStatusBox" class="ai-status"></div>
+
+        <button type="submit" id="submitBtn" class="button primary" style="margin-top: 15px;">Evaluación Avanzada por IA y Enviar</button>
+
+      </form>
+    </div>
+  </main>
+
+</div>
+
+<script>
+  // TODAS LAS PREGUNTAS TIENEN NIVEL 'hard' (ALTA DIFICULTAD)
+  const QUIZ_DATA = {
+    P1:  { correct: "B", diff: "hard" },
+    P2:  { correct: "A", diff: "hard" },
+    P3:  { correct: "B", diff: "hard" },
+    P4:  { correct: "B", diff: "hard" },
+    P5:  { correct: "A", diff: "hard" },
+    P6:  { correct: "A", diff: "hard" },
+    P7:  { correct: "A", diff: "hard" },
+    P8:  { correct: "A", diff: "hard" },
+    P9:  { correct: "A", diff: "hard" },
+    P10: { correct: "A", diff: "hard" }
+  };
+
+  const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+  const form = document.getElementById("coachForm");
+  const aiStatusBox = document.getElementById("aiStatusBox");
+  const cooldownBox = document.getElementById("cooldownBox");
+  const quizSection = document.getElementById("quizSection");
+  const submitBtn = document.getElementById("submitBtn");
+  const timerText = document.getElementById("timerText");
+  const aiRatingInput = document.getElementById("aiRatingInput");
+
+  // COMPROBAR SI EXISTE BLOQUEO DE 7 DÍAS
+  function checkCooldown() {
+    const lastFailedAttempt = localStorage.getItem("coach_quiz_cooldown");
+    if (lastFailedAttempt) {
+      const now = new Date().getTime();
+      const timePassed = now - parseInt(lastFailedAttempt);
+
+      if (timePassed < ONE_WEEK_MS) {
+        const timeRemaining = ONE_WEEK_MS - timePassed;
+        showCooldownState(timeRemaining);
+        return true;
+      } else {
+        localStorage.removeItem("coach_quiz_cooldown");
+      }
+    }
+    return false;
+  }
+
+  function showCooldownState(timeRemaining) {
+    quizSection.style.display = "none";
+    submitBtn.disabled = true;
+    cooldownBox.style.display = "block";
+
+    updateTimerDisplay(timeRemaining);
+
+    const interval = setInterval(() => {
+      timeRemaining -= 1000;
+      if (timeRemaining <= 0) {
+        clearInterval(interval);
+        localStorage.removeItem("coach_quiz_cooldown");
+        location.reload();
+      } else {
+        updateTimerDisplay(timeRemaining);
+      }
+    }, 1000);
+  }
+
+  function updateTimerDisplay(ms) {
+    const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+
+    timerText.innerHTML = `⏳ Faltan: <strong>${days}d ${hours}h ${minutes}m ${seconds}s</strong>`;
+  }
+
+  // EVALUACIÓN DE LA IA CON COMPLEJIDAD ELEVADA
+  form.addEventListener("submit", function(e) {
+    if (checkCooldown()) {
+      e.preventDefault();
+      return;
+    }
+
+    let correctCount = 0;
+    let failedQuestions = [];
+    document.querySelectorAll(".question-card").forEach(card => card.classList.remove("error-q"));
+
+    for (let i = 1; i <= 10; i++) {
+      const key = "P" + i;
+      const selected = document.querySelector(`input[name="${key}"]:checked`);
+      
+      if (selected && selected.value === QUIZ_DATA[key].correct) {
+        correctCount++;
+      } else {
+        failedQuestions.push(i);
+        document.getElementById("qc" + i).classList.add("error-q");
+      }
+    }
+
+    const expText = document.getElementById("experience").value.trim();
+    if (expText.length < 15) {
+      e.preventDefault();
+      aiStatusBox.className = "ai-status rejected";
+      aiStatusBox.innerHTML = "🤖 <strong>EVALUACIÓN DE IA: RECHAZADO</strong><br>La descripción de tu experiencia es demasiado breve.";
+      aiStatusBox.style.display = "block";
+      return;
+    }
+
+    // LÓGICA DE LA IA DE EVALUACIÓN PONDERADA:
+    // - 10 de 10: Aprobado (10/10)
+    // - 9 de 10 (1 fallo): Al ser TODAS las preguntas difíciles, la IA valora un 9/10 y APRUEBA EL ENVÍO.
+    // - 8 o menos (2 o más fallos): RECHAZADO y Bloqueo de 7 días.
+
+    let isApproved = false;
+    let finalNote = "";
+    let aiReason = "";
+
+    if (correctCount === 10) {
+      isApproved = true;
+      finalNote = "10/10 PERFECTO (Examen Complejo Cumplido)";
+      aiReason = "🤖 <strong>EVALUACIÓN DE IA (10/10 EXCELENTE):</strong> Examen de alta dificultad completado sin errores. Solicitud aprobada.";
+    } 
+    else if (correctCount === 9) {
+      isApproved = true;
+      finalNote = "9/10 APROBADO (Ponderación IA por Pregunta Compleja)";
+      aiReason = `🤖 <strong>EVALUACIÓN DINÁMICA DE IA (VALORACIÓN 9/10):</strong> Has fallado la pregunta #${failedQuestions[0]}. La IA reconoce la alta dificultad del test y concede la **aprobación ponderada con nota 9/10**. Solicitud enviada correctamente.`;
+    } 
+    else {
+      isApproved = false;
+      aiReason = `🤖 <strong>EVALUACIÓN DE IA: SOLICITUD RECHAZADA (Nota: ${correctCount}/10):</strong> Has fallado ${failedQuestions.length} preguntas de alta dificultad. La IA establece el límite máximo en 1 solo error. Sanción aplicada de 7 días sin poder repetir el examen.`;
+    }
+
+    aiRatingInput.value = finalNote;
+
+    if (!isApproved) {
+      e.preventDefault(); // BLOQUEA ENVÍO DE FORMSPREE
+      
+      const now = new Date().getTime();
+      localStorage.setItem("coach_quiz_cooldown", now.toString());
+
+      aiStatusBox.className = "ai-status rejected";
+      aiStatusBox.innerHTML = aiReason;
+      aiStatusBox.style.display = "block";
+
+      setTimeout(() => {
+        showCooldownState(ONE_WEEK_MS);
+      }, 4000);
+    } else {
+      aiStatusBox.className = "ai-status approved";
+      aiStatusBox.innerHTML = aiReason;
+      aiStatusBox.style.display = "block";
+    }
+  });
+
+  checkCooldown();
+</script>
+
+</body>
+</html>
