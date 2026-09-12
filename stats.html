@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BrawlCoach - Estadísticas Avanzadas</title>
+  <title>BrawlCoach - Estadísticas Profesionales</title>
 
   <style>
     * {
@@ -235,7 +235,7 @@
   <!-- FORMULARIO DE CONSULTA -->
   <section class="search-card">
     <h2>🔍 Buscador de Perfil Pro</h2>
-    <p>Introduce el Tag de jugador de Brawl Stars (puedes poner o quitar el #, corregimos automáticamente errores comunes).</p>
+    <p>Introduce el Tag de jugador de Brawl Stars (se conecta directamente a los servidores oficiales mediante Token).</p>
     
     <div class="search-box">
       <div class="input-wrapper">
@@ -301,6 +301,9 @@
 </div>
 
 <script>
+  // Tu Token Oficial de Supercell integrado de forma estricta
+  const SUPERCELL_API_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjczMzM4NGYwLWY0OWMtNDljOS1hODUyLTA0OTJiNDkzY2QxYyIsImlhdCI6MTc4OTIyMDgyNSwic3ViIjoiZGV2ZWxvcGVyLzg5OWMwYmQ5LThkZGEtNGRmNC1hZmNiLWI1ODcyNDljMzk2YiIsInNjb3BlcyI6WyJicmF3bHN0YXJzIl0sImxpbWl0cyI6W3sidGllciI6ImRldmVsb3Blci9zaWx2ZXIiLCJ0eXBlIjoidGhyb3R0bGluZyJ9LHsiY2lkcnMiOiJbODEuMzIuMzcuMTI0Il0sInR5cGUiOiJjbGllbnQifV19.kGThvQCXU8ev_q6-9nNTaCw6fZmmE-K0C-gIiuJpInMKBOUjaL1RoNEpzC5lA82cWdx7Rr6zxoJ-bFY2HUUrgA";
+
   async function loadPlayerData() {
     let rawTag = document.getElementById("tagInput").value.trim().toUpperCase();
     const searchButton = document.getElementById("btnFetch");
@@ -310,73 +313,72 @@
       return;
     }
 
-    // Búsqueda mejorada: Quita el '#' inicial si lo tiene, limpia espacios y soluciona la confusión típica de la 'O' por el '0'
+    // Limpieza estricta del tag: quita '#' y corrige automáticamente confusión de 'O' por '0'
     let cleanTag = rawTag.replace("#", "").trim().replace(/O/g, '0');
 
-    showStatus("⏳ Consultando datos en los servidores de Brawl Stars...", "loading");
+    showStatus("⏳ Conectando con los servidores oficiales de Brawl Stars...", "loading");
     searchButton.disabled = true;
 
     try {
-      const targetUrl = `https://api.brawlify.com/v1/player/%23${cleanTag}`;
+      // URL oficial del endpoint de jugadores (requiere codificar el '#' como %23)
+      const targetUrl = `https://api.brawlstars.com/v1/players/%23${cleanTag}`;
+      
+      // Pasarela proxy segura para enviar las cabeceras de autorización exigidas por Supercell desde el navegador
       const proxyUrl = `https://api.allorigins.win/raw?url=` + encodeURIComponent(targetUrl);
 
-      const response = await fetch(proxyUrl, { signal: AbortSignal.timeout(6000) });
+      const response = await fetch(proxyUrl, {
+        method: "GET",
+        headers: {
+          "Accept": "application/json",
+          "Authorization": `Bearer ${SUPERCELL_API_TOKEN}`
+        }
+      });
 
       if (!response.ok) {
-        throw new Error("Error de conexión");
+        if (response.status === 404) {
+          throw new Error("El jugador no existe o el Tag es incorrecto.");
+        } else if (response.status === 403) {
+          throw new Error("Acceso denegado: Verifica que tu IP pública actual coincida con la registrada.");
+        } else {
+          throw new Error("Error en la conexión con los servidores oficiales.");
+        }
       }
 
       const data = await response.json();
 
-      // Mapeo correcto de datos oficiales devueltos por la API
-      renderData({
-        name: data.name || "Jugador Sin Nombre",
-        tag: cleanTag,
-        trophies: data.trophies ?? 0,
-        highestTrophies: data.highestTrophies ?? 0,
-        expLevel: data.expLevel ?? "--",
-        v33: data["3vs3Victories"] ?? 0,
-        solo: data.soloVictories ?? 0,
-        duo: data.duoVictories ?? 0,
-        clubName: data.club ? data.club.name : "Sin Club"
-      });
+      // Pintar los datos reales obtenidos directamente de la API oficial
+      document.getElementById("resName").textContent = data.name || "Sin Nombre";
+      document.getElementById("resTag").textContent = "#" + (data.tag || cleanTag);
+      document.getElementById("resTrophies").textContent = (data.trophies ?? 0).toLocaleString();
+      document.getElementById("resMaxTrophies").textContent = (data.highestTrophies ?? 0).toLocaleString();
+      document.getElementById("resExp").textContent = data.expLevel ?? "--";
+
+      document.getElementById("res3v3").textContent = (data["3vs3Victories"] ?? 0).toLocaleString();
+      document.getElementById("resSolo").textContent = (data.soloVictories ?? 0).toLocaleString();
+      document.getElementById("resDuo").textContent = (data.duoVictories ?? 0).toLocaleString();
+      document.getElementById("resClub").textContent = data.club ? data.club.name : "Sin Club";
+
+      showStatus("✅ ¡Datos sincronizados con éxito desde Supercell!", "success");
+      setTimeout(() => {
+        document.getElementById("statusInfo").style.display = "none";
+      }, 4000);
 
     } catch (error) {
-      // Sistema de respaldo inteligente: simula datos perfectamente estructurados si la red bloquea la API externa
-      setTimeout(() => {
-        renderData({
-          name: "BrawlCoach_" + cleanTag.substring(0, 4),
-          tag: cleanTag,
-          trophies: 24850,
-          highestTrophies: 29100,
-          expLevel: 172,
-          v33: 3840,
-          solo: 910,
-          duo: 630,
-          clubName: "BrawlElite ES"
-        });
-      }, 500);
+      showStatus("❌ " + error.message, "error");
+      
+      // Limpiar campos si falla la consulta real para no mostrar información incorrecta
+      document.getElementById("resName").textContent = "--";
+      document.getElementById("resTag").textContent = "--";
+      document.getElementById("resTrophies").textContent = "--";
+      document.getElementById("resMaxTrophies").textContent = "--";
+      document.getElementById("resExp").textContent = "--";
+      document.getElementById("res3v3").textContent = "--";
+      document.getElementById("resSolo").textContent = "--";
+      document.getElementById("resDuo").textContent = "--";
+      document.getElementById("resClub").textContent = "--";
     } finally {
       searchButton.disabled = false;
     }
-  }
-
-  function renderData(player) {
-    document.getElementById("resName").textContent = player.name;
-    document.getElementById("resTag").textContent = "#" + player.tag;
-    document.getElementById("resTrophies").textContent = Number(player.trophies).toLocaleString();
-    document.getElementById("resMaxTrophies").textContent = Number(player.highestTrophies).toLocaleString();
-    document.getElementById("resExp").textContent = player.expLevel;
-
-    document.getElementById("res3v3").textContent = Number(player.v33).toLocaleString();
-    document.getElementById("resSolo").textContent = Number(player.solo).toLocaleString();
-    document.getElementById("resDuo").textContent = Number(player.duo).toLocaleString();
-    document.getElementById("resClub").textContent = player.clubName;
-
-    showStatus("✅ ¡Perfil consultado y cargado con éxito!", "success");
-    setTimeout(() => {
-      document.getElementById("statusInfo").style.display = "none";
-    }, 4000);
   }
 
   function showStatus(text, type) {
