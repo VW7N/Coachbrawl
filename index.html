@@ -178,10 +178,20 @@
       color: #111827;
     }
 
+    .primary:hover {
+      background: #e5bd33;
+      transform: translateY(-2px);
+    }
+
     .secondary {
       background: #27314d;
       color: white;
       margin-top: 10px;
+    }
+
+    .secondary:hover {
+      background: #34405f;
+      transform: translateY(-2px);
     }
 
     .danger {
@@ -190,7 +200,6 @@
       margin-top: 10px;
     }
 
-    /* BOTÓN ASSISTANT (AMARILLO) */
     .ranked-button {
       background: #ffd43b;
       color: #111827;
@@ -203,7 +212,6 @@
       transform: translateY(-2px);
     }
 
-    /* BOTÓN MIS STATS */
     .stats-button {
       background: #10b981;
       color: white;
@@ -215,7 +223,6 @@
       transform: translateY(-2px);
     }
 
-    /* BOTÓN CURSOS */
     .courses-button {
       background: #0284c7;
       color: white;
@@ -228,7 +235,6 @@
       transform: translateY(-2px);
     }
 
-    /* BOTÓN RECLUTAMIENTO DE COACHES */
     .coach-button {
       background: #8b5cf6;
       color: white;
@@ -241,7 +247,6 @@
       transform: translateY(-2px);
     }
 
-    /* BOTÓN DISCORD (MORADO) */
     .discord-button {
       display: flex;
       align-items: center;
@@ -330,11 +335,9 @@
 
     <!-- PANTALLA PRINCIPAL -->
     <section id="home" class="screen active">
-
       <div class="main-grid">
 
         <div class="hero">
-
           <div class="logo">
             Brawl<span>Coach</span>
           </div>
@@ -345,57 +348,41 @@
           </h1>
 
           <p class="description">
-            Una plataforma para jugadores de Brawl Stars:
-            mejores picks, estadísticas, compañeros,
-            coaches y mucho más.
+            Una plataforma para jugadores de Brawl Stars: mejores picks, estadísticas, compañeros, coaches y mucho más.
           </p>
 
           <div class="features">
-
             <div class="feature">
               <div class="feature-icon">🏆</div>
               <h3>Ranked Assistant</h3>
-              <p>
-                Descubre qué brawler elegir según
-                el mapa y la composición.
-              </p>
+              <p>Descubre qué brawler elegir según el mapa y la composición.</p>
             </div>
 
             <div class="feature">
               <div class="feature-icon">📊</div>
               <h3>Mis Stats</h3>
-              <p>
-                Analiza tu rendimiento y tu progreso.
-              </p>
+              <p>Analiza tu rendimiento y tu progreso.</p>
             </div>
 
             <div class="feature">
               <div class="feature-icon">👥</div>
               <h3>Jugadores</h3>
-              <p>
-                Encuentra compañeros para jugar.
-              </p>
+              <p>Encuentra compañeros para jugar.</p>
             </div>
 
             <div class="feature">
               <div class="feature-icon">🎓</div>
               <h3>Coaches</h3>
-              <p>
-                Aprende de jugadores experimentados.
-              </p>
+              <p>Aprende de jugadores experimentados.</p>
             </div>
-
           </div>
         </div>
 
         <div class="card">
-
           <!-- ESTADO: SIN SESIÓN -->
           <div id="loggedOutView">
             <h2>Bienvenido 👋</h2>
-            <p class="card-description">
-              Inicia sesión para entrar en BrawlCoach.
-            </p>
+            <p class="card-description">Inicia sesión para entrar en BrawlCoach.</p>
 
             <button class="button primary" onclick="showScreen('login')">
               Iniciar sesión
@@ -427,9 +414,8 @@
             📊 Mis Stats
           </button>
 
-          <!-- BOTÓN CURSOS -->
           <a href="./cursos.html" class="button courses-button">
-            Cursos
+            Cursos y Servicios
           </a>
 
           <button class="button coach-button" onclick="openCoachRecruitment()">
@@ -446,11 +432,9 @@
           <div class="counter-badge">
             👥 Jugadores registrados: <strong id="playerCount" style="color: white;">-</strong>
           </div>
-
         </div>
 
       </div>
-
     </section>
 
     <!-- LOGIN -->
@@ -510,7 +494,13 @@
   const SUPABASE_URL = "https://wzbdwcovghhcjbiedmuh.supabase.co";
   const SUPABASE_KEY = "sb_publishable_VD7Kf7j3RrEHg2RvVOQ6FA_H4FuT_k-";
 
-  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  });
 
   /* NAVEGACIÓN PANTALLAS */
   function showScreen(screenId) {
@@ -559,14 +549,18 @@
   /* GESTIÓN DE MENSAJES */
   function showMessage(elementId, text) {
     const msg = document.getElementById(elementId);
-    msg.textContent = text;
-    msg.style.display = "block";
+    if (msg) {
+      msg.textContent = text;
+      msg.style.display = "block";
+    }
   }
 
   function hideMessage(elementId) {
     const msg = document.getElementById(elementId);
-    msg.textContent = "";
-    msg.style.display = "none";
+    if (msg) {
+      msg.textContent = "";
+      msg.style.display = "none";
+    }
   }
 
   /* REGISTRO REAL */
@@ -600,13 +594,16 @@
       const { data, error } = await supabaseClient.auth.signUp({
         email: email,
         password: password,
-        options: { data: { username: name } }
+        options: { 
+          data: { username: name },
+          emailRedirectTo: window.location.href
+        }
       });
 
       if (error) throw error;
 
       if (data.user) {
-        showMessage("registerMessage", "Cuenta creada. Si requiere confirmación, revisa tu correo.");
+        showMessage("registerMessage", "¡Cuenta creada! Revisa tu correo para verificarla.");
         document.getElementById("registerPassword").value = "";
         updatePlayerCount();
       }
@@ -667,6 +664,8 @@
     const loggedInView = document.getElementById("loggedInView");
     const userInfo = document.getElementById("userInfo");
 
+    if (!loggedOutView || !loggedInView || !userInfo) return;
+
     if (session && session.user) {
       const username = session.user.user_metadata?.username || session.user.email;
       userInfo.textContent = `👤 ${username}`;
@@ -685,19 +684,26 @@
         .from('profiles')
         .select('*', { count: 'exact', head: true });
 
-      if (!error && count !== null) {
-        document.getElementById("playerCount").textContent = count;
-      } else {
-        document.getElementById("playerCount").textContent = "1+";
+      const counterEl = document.getElementById("playerCount");
+      if (counterEl) {
+        if (!error && count !== null) {
+          counterEl.textContent = count;
+        } else {
+          counterEl.textContent = "1+";
+        }
       }
     } catch (e) {
-      document.getElementById("playerCount").textContent = "1+";
+      const counterEl = document.getElementById("playerCount");
+      if (counterEl) counterEl.textContent = "1+";
     }
   }
 
   /* SUBSCRIPCIÓN A CAMBIOS DE AUTH */
   supabaseClient.auth.onAuthStateChange((event, session) => {
     renderAuthState(session);
+    if (event === 'SIGNED_IN') {
+      showScreen("home");
+    }
   });
 
   /* TRADUCCIÓN DE ERRORES */
@@ -717,7 +723,9 @@
   /* INICIALIZACIÓN */
   async function init() {
     const { data } = await supabaseClient.auth.getSession();
-    renderAuthState(data.session);
+    if (data.session) {
+      renderAuthState(data.session);
+    }
     updatePlayerCount();
   }
 
