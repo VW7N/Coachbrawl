@@ -258,28 +258,38 @@
 
 <script>
   async function loadPlayerData() {
-    const rawTag = document.getElementById("tagInput").value.trim().toUpperCase();
-    const cleanTag = rawTag.replace("#", "");
+    let rawTag = document.getElementById("tagInput").value.trim().toUpperCase();
     const statusDiv = document.getElementById("statusInfo");
     const searchButton = document.getElementById("btnFetch");
 
-    if (!cleanTag) {
+    if (!rawTag) {
       showStatus("Introduce un Tag válido.", "error");
       return;
     }
+
+    // Limpiar espacios, quitar '#' y corregir automáticamente la letra 'O' por el número '0'
+    let cleanTag = rawTag.replace("#", "").trim().replace(/O/g, '0');
 
     showStatus("Obteniendo datos de la API...", "loading");
     searchButton.disabled = true;
 
     try {
-      // Petición directa a la API pública
-      const response = await fetch(`https://api.brawlify.com/v1/player/${cleanTag}`);
+      const targetUrl = `https://api.brawlify.com/v1/player/%23${cleanTag}`;
+      const proxyUrl = `https://api.allorigins.win/get?url=` + encodeURIComponent(targetUrl);
+
+      const response = await fetch(proxyUrl);
 
       if (!response.ok) {
-        throw new Error("No se ha podido encontrar el jugador o la API no está disponible.");
+        throw new Error("No se ha podido conectar con el servidor.");
       }
 
-      const data = await response.json();
+      const proxyData = await response.json();
+      
+      if (!proxyData.contents) {
+        throw new Error("Jugador no encontrado.");
+      }
+
+      const data = JSON.parse(proxyData.contents);
 
       // Renderizado dinámico de los campos devueltos por el servidor
       document.getElementById("resName").textContent = data.name || "Sin Nombre";
