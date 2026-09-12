@@ -204,7 +204,7 @@
       transition: all 0.2s ease;
     }
 
-    /* Botón Iniciar sesión (Intacto) */
+    /* Botón Iniciar sesión */
     .primary {
       background: linear-gradient(135deg, #ffd43b, #f59e0b);
       color: #111827;
@@ -216,7 +216,7 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Crear una cuenta (Verde esmeralda) */
+    /* Botón Crear una cuenta */
     .secondary {
       background: linear-gradient(135deg, #10b981, #059669);
       color: white;
@@ -229,7 +229,7 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Cerrar sesión (Intacto) */
+    /* Botón Cerrar sesión */
     .danger {
       background: #ef4444;
       color: white;
@@ -241,11 +241,28 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Ranked Assistant (Fucsia neón) */
+    /* Botón Noticias (Dorado / Ámbar) */
+    .news-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #eab308, #ca8a04);
+      color: white;
+      margin-top: 12px;
+      box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+    }
+
+    .news-button:hover {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+    }
+
+    /* Botón Ranked Assistant */
     .ranked-button {
       background: linear-gradient(135deg, #ec4899, #be185d);
       color: white;
-      margin-top: 12px;
+      margin-top: 10px;
       box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
     }
 
@@ -254,7 +271,7 @@
       transform: translateY(-2px);
     }
 
-    /* Botón IA Coach (Morado / Violeta Neón) */
+    /* Botón IA Coach */
     .ai-coach-button {
       background: linear-gradient(135deg, #8b5cf6, #6d28d9);
       color: white;
@@ -267,7 +284,7 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Cursos y Servicios (Azul cian) */
+    /* Botón Cursos y Servicios */
     .courses-button {
       display: flex;
       align-items: center;
@@ -284,7 +301,7 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Reclutamiento de Coaches (Naranja / Ámbar) */
+    /* Botón Reclutamiento de Coaches */
     .coach-button {
       background: linear-gradient(135deg, #f97316, #c2410c);
       color: white;
@@ -297,7 +314,7 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Discord (Intacto) */
+    /* Botón Discord */
     .discord-button {
       display: flex;
       align-items: center;
@@ -400,10 +417,16 @@
           </h1>
 
           <p class="description">
-            Una plataforma para jugadores de Brawl Stars: mejores picks, estadísticas, compañeros, coaches y mucho más.
+            Una plataforma para jugadores de Brawl Stars: mejores picks, estadísticas, compañeros, noticias, coaches y mucho más.
           </p>
 
           <div class="features">
+            <div class="feature">
+              <div class="feature-icon">📰</div>
+              <h3>Noticias & Meta</h3>
+              <p>Mantente al día con balances, buffs, nerfs y novedades.</p>
+            </div>
+
             <div class="feature">
               <div class="feature-icon">🏆</div>
               <h3>Ranked Assistant</h3>
@@ -420,12 +443,6 @@
               <div class="feature-icon">👥</div>
               <h3>Jugadores</h3>
               <p>Encuentra compañeros para jugar.</p>
-            </div>
-
-            <div class="feature">
-              <div class="feature-icon">🎓</div>
-              <h3>Coaches</h3>
-              <p>Aprende de jugadores experimentados.</p>
             </div>
           </div>
         </div>
@@ -458,6 +475,10 @@
           </div>
 
           <!-- ACCESOS RÁPIDOS -->
+          <a href="./noticias-ia.html" class="button news-button">
+            📰 Noticias
+          </a>
+
           <button class="button ranked-button" onclick="openRanked()">
             🎯 Ranked Assistant
           </button>
