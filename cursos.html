@@ -1,126 +1,247 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cursos de Coaching - Brawl Stars</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cursos - BrawlCoach</title>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b1020;
+      color: white;
+      min-height: 100vh;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .logo {
+      font-size: 38px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .logo span {
+      color: #ffd43b;
+    }
+
+    h1 {
+      font-size: 36px;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+
+    h1 span {
+      color: #ffd43b;
+    }
+
+    .description {
+      color: #9ca3af;
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: #151c32;
+      border: 1px solid #27314d;
+      border-radius: 24px;
+      padding: 35px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .course-card {
+      background: #0d1427;
+      border: 1px solid #34405f;
+      border-radius: 16px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .course-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .course-card h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: white;
+    }
+
+    .course-card p {
+      color: #8f9ab2;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .button {
+      width: 100%;
+      border: none;
+      border-radius: 11px;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .primary {
+      background: #ffd43b;
+      color: #111827;
+    }
+
+    .primary:hover {
+      background: #e5bd33;
+      transform: translateY(-2px);
+    }
+
+    .back {
+      background: transparent;
+      color: #9ca3af;
+      border: none;
+      cursor: pointer;
+      margin-top: 15px;
+      font-size: 14px;
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .back:hover {
+      color: white;
+    }
+
+    .message {
+      display: none;
+      background: #172033;
+      border: 1px solid #33415f;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 20px;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+  </style>
 </head>
+
 <body>
 
-    <header>
-        <h1>Cursos y Entrenamiento de Brawl Stars</h1>
-        <p>Mejora tu nivel de juego con nuestros entrenadores. ¡La primera clase de cualquier curso es totalmente GRATIS!</p>
-    </header>
+<div class="page">
+  <div class="container">
 
-    <main>
-        <!-- Sección informativa principal -->
-        <section class="info-general">
-            <h2>¿Cómo funcionan nuestros cursos?</h2>
-            <ul>
-                <li><strong>En función de tu Rango Objetivo:</strong> Eliges el curso según el rango al que quieras llegar (Bronce, Diamante, Mítico, Legendario o Maestro). Los cursos superiores incluyen la preparación específica para los rangos más exigentes.</li>
-                <li><strong>Clase de prueba gratis:</strong> En todos los cursos, la 1.ª clase (1 hora) es gratuita para probar y evaluar tu nivel actual.</li>
-                <li><strong>Duración:</strong> Todas las clases individuales duran exactamente 1 hora.</li>
-                <li><strong>Proceso de reserva:</strong> Haz clic en "Solicitar Curso" para enviar un correo a <strong>BrawlCoach@gmail.com</strong> indicando tu rango actual y el rango al que quieres subir. Nos pondremos en contacto contigo para agendar la clase.</li>
-            </ul>
-        </section>
+    <div class="card">
+      <div class="logo">
+        Brawl<span>Coach</span>
+      </div>
+      <h1>Cursos de <span>Mejora</span></h1>
+      <p class="description">
+        Aprende conceptos clave, rotaciones de mapa y cómo sacar el máximo provecho a tus brawlers favoritos para subir de copas de forma constante.
+      </p>
 
-        <!-- Grid de Cursos -->
-        <section class="cursos-grid">
+      <div id="authMessage" class="message">
+        Debes iniciar sesión para acceder al contenido completo de los cursos.
+      </div>
 
-            <!-- Curso 1 -->
-            <article class="curso-card">
-                <h3>Curso Básico</h3>
-                <p class="precio">5 €</p>
-                <p class="duracion">1 Clase (1 Hora)</p>
-                <p class="prueba-tag">1.ª clase de prueba incluida</p>
-                
-                <div class="detalles">
-                    <h4>Rango Objetivo:</h4>
-                    <p><strong>Para subir a:</strong> Bronce / Plata / Oro</p>
-                    
-                    <h4>¿Qué incluye?</h4>
-                    <p>Análisis inicial de tu estilo de juego, ajustes de configuración y conceptos básicos de posicionamiento en el mapa.</p>
-                    
-                    <h4>Nivel de Entrenador:</h4>
-                    <p><strong>Coach Promesa:</strong> Jugadores experimentados en trofeos medios/altos con gran capacidad pedagógica.</p>
-                </div>
+      <div class="courses-grid">
 
-                <button class="btn-solicitar" onclick="solicitarCurso('Curso Básico', '5€', 'Bronce / Plata / Oro')">Solicitar Curso</button>
-            </article>
+        <!-- Curso 1 -->
+        <div class="course-card">
+          <div>
+            <div class="course-icon">🎯</div>
+            <h3>Fundamentos de Ranked</h3>
+            <p>Domina el meta actual, aprende a banear con cabeza y comprende qué composiciones funcionan mejor en cada mapa.</p>
+          </div>
+          <button class="button primary" onclick="accessCourse('Fundamentos de Ranked')">
+            Ver curso
+          </button>
+        </div>
 
-            <!-- Curso 2 -->
-            <article class="curso-card destacado">
-                <h3>Curso Avanzado</h3>
-                <p class="precio">10 €</p>
-                <p class="duracion">2 Clases (1 Hora c/u)</p>
-                <p class="prueba-tag">1.ª clase de prueba + 1 de pago</p>
-                
-                <div class="detalles">
-                    <h4>Rango Objetivo:</h4>
-                    <p><strong>Para subir a:</strong> Platino / Diamante</p>
-                    
-                    <h4>¿Qué incluye?</h4>
-                    <p>Estrategias por brawler, draft en Competitivo y corrección de errores comunes en partidas reales.</p>
-                    
-                    <h4>Nivel de Entrenador:</h4>
-                    <p><strong>Coach Avanzado:</strong> Jugadores posicionados en rangos altos competitivos con experiencia en torneos comunitarios.</p>
-                </div>
+        <!-- Curso 2 -->
+        <div class="course-card">
+          <div>
+            <div class="course-icon">🗺️</div>
+            <h3>Control de Zonas y Mapas</h3>
+            <p>Estrategias de posicionamiento, control de líneas y rotaciones inteligentes para ganar partidas en modos 3v3.</p>
+          </div>
+          <button class="button primary" onclick="accessCourse('Control de Zonas y Mapas')">
+            Ver curso
+          </button>
+        </div>
 
-                <button class="btn-solicitar" onclick="solicitarCurso('Curso Avanzado', '10€', 'Platino / Diamante')">Solicitar Curso</button>
-            </article>
+        <!-- Curso 3 -->
+        <div class="course-card">
+          <div>
+            <div class="course-icon">📈</div>
+            <h3>Mentalidad y Progreso</h3>
+            <p>Evita el tilt, analiza tus propios errores tras una derrota y gestiona tu tiempo de juego de manera eficiente.</p>
+          </div>
+          <button class="button primary" onclick="accessCourse('Mentalidad y Progreso')">
+            Ver curso
+          </button>
+        </div>
 
-            <!-- Curso 3 -->
-            <article class="curso-card">
-                <h3>Curso Profesional</h3>
-                <p class="precio">15 €</p>
-                <p class="duracion">3 Clases (1 Hora c/u)</p>
-                <p class="prueba-tag">1.ª clase de prueba + 2 de pago</p>
-                
-                <div class="detalles">
-                    <h4>Rango Objetivo:</h4>
-                    <p><strong>Para subir a:</strong> Mítico / Legendario</p>
-                    
-                    <h4>¿Qué incluye?</h4>
-                    <p>Composiciones de equipo, control del tempo de partida, sincronización de ultis y análisis de replays en profundidad.</p>
-                    
-                    <h4>Nivel de Entrenador:</h4>
-                    <p><strong>Coach PRO:</strong> Entrenadores dedicados con amplio recorrido competitivo y dominio total de todos los roles.</p>
-                </div>
+      </div>
 
-                <button class="btn-solicitar" onclick="solicitarCurso('Curso Profesional', '15€', 'Mítico / Legendario')">Solicitar Curso</button>
-            </article>
+      <a href="./index.html" class="back">
+        ← Volver al inicio
+      </a>
+    </div>
 
-            <!-- Curso 4 -->
-            <article class="curso-card">
-                <h3>Curso Elite / Máster</h3>
-                <p class="precio">20 €</p>
-                <p class="duracion">4 Clases (1 Hora c/u)</p>
-                <p class="prueba-tag">1.ª clase de prueba + 3 de pago</p>
-                
-                <div class="detalles">
-                    <h4>Rango Objetivo:</h4>
-                    <p><strong>Para subir a:</strong> Maestro / Top Regional</p>
-                    
-                    <h4>¿Qué incluye?</h4>
-                    <p>Programa integral: macrogame, preparación para torneos, mentalidad competitiva, seguimiento personalizado y plan de entrenamiento semanal.</p>
-                    
-                    <h4>Nivel de Entrenador:</h4>
-                    <p><strong>Head Coach / Top Tier:</strong> Jugadores y entrenadores de máximo rango con experiencia directa en esports de Brawl Stars.</p>
-                </div>
+  </div>
+</div>
 
-                <button class="btn-solicitar" onclick="solicitarCurso('Curso Elite', '20€', 'Maestro / Top Regional')">Solicitar Curso</button>
-            </article>
+<script>
+  /* CONFIGURACIÓN SUPABASE */
+  const SUPABASE_URL = "https://wzbdwcovghhcjbiedmuh.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_VD7Kf7j3RrEHg2RvVOQ6FA_H4FuT_k-";
 
-        </section>
-    </main>
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    <footer>
-        <p>Contacto directo: <strong>BrawlCoach@gmail.com</strong></p>
-        <p>&copy; 2026 BrawlCoach. Todos los derechos reservados.</p>
-    </footer>
+  async function accessCourse(courseName) {
+    const { data: { session } } = await supabaseClient.auth.getSession();
 
-    <!-- Enlace al archivo de JavaScript externo -->
-    <script src="script.js"></script>
+    if (session) {
+      alert(`¡Acceso concedido al curso: ${courseName}! (Próximamente contenido en detalle)`);
+    } else {
+      const msg = document.getElementById("authMessage");
+      msg.style.display = "block";
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+</script>
+
 </body>
 </html>
