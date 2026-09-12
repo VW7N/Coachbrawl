@@ -720,8 +720,28 @@
     return error.message;
   }
 
-  /* INICIALIZACIÓN */
+  /* INICIALIZACIÓN Y VALIDACIÓN DE CÓDIGO DE CORREO */
   async function init() {
+    // Intercambia el código de verificación por sesión si viene en la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const authCode = urlParams.get('code');
+
+    if (authCode) {
+      try {
+        const { data, error } = await supabaseClient.auth.exchangeCodeForSession(authCode);
+        if (!error && data.session) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+          renderAuthState(data.session);
+          showScreen("home");
+          updatePlayerCount();
+          return;
+        }
+      } catch (e) {
+        console.error("Error al procesar la verificación:", e);
+      }
+    }
+
+    // Carga normal de sesión existente
     const { data } = await supabaseClient.auth.getSession();
     if (data.session) {
       renderAuthState(data.session);
