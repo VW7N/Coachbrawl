@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -216,7 +216,7 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Crear una cuenta (Cambiado de tono gris a verde esmeralda vibrante) */
+    /* Botón Crear una cuenta (Verde esmeralda) */
     .secondary {
       background: linear-gradient(135deg, #10b981, #059669);
       color: white;
@@ -241,7 +241,7 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Ranked Assistant (Cambiado a un tono neón/fucsia para máxima distinción) */
+    /* Botón Ranked Assistant (Fucsia neón) */
     .ranked-button {
       background: linear-gradient(135deg, #ec4899, #be185d);
       color: white;
@@ -254,7 +254,20 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Cursos y Servicios (Cambiado a azul cian brillante) */
+    /* Botón IA Coach (Morado / Violeta Neón) */
+    .ai-coach-button {
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: white;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+
+    .ai-coach-button:hover {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+    }
+
+    /* Botón Cursos y Servicios (Azul cian) */
     .courses-button {
       display: flex;
       align-items: center;
@@ -271,7 +284,7 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Reclutamiento de Coaches (Cambiado a un tono ámbar/naranja cálido y llamativo) */
+    /* Botón Reclutamiento de Coaches (Naranja / Ámbar) */
     .coach-button {
       background: linear-gradient(135deg, #f97316, #c2410c);
       color: white;
@@ -398,9 +411,9 @@
             </div>
 
             <div class="feature">
-              <div class="feature-icon">📊</div>
-              <h3>Mis Stats</h3>
-              <p>Analiza tu rendimiento y tu progreso.</p>
+              <div class="feature-icon">🤖</div>
+              <h3>IA Coach</h3>
+              <p>Analiza tus replays y recibe feedback táctico en segundos.</p>
             </div>
 
             <div class="feature">
@@ -447,6 +460,10 @@
           <!-- ACCESOS RÁPIDOS -->
           <button class="button ranked-button" onclick="openRanked()">
             🎯 Ranked Assistant
+          </button>
+
+          <button class="button ai-coach-button" onclick="openAICoach()">
+            🤖 IA Coach (Análisis Replay)
           </button>
 
           <a href="./cursos.html" class="button courses-button">
@@ -554,6 +571,18 @@
       window.location.href = "./ranked.html";
     } else {
       showMessage("loginMessage", "Debes iniciar sesión para usar el Ranked Assistant.");
+      showScreen("login");
+    }
+  }
+
+  /* ACCESO PROTEGIDO A IA COACH */
+  async function openAICoach() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (session) {
+      window.location.href = "./coach-ia.html";
+    } else {
+      showMessage("loginMessage", "Debes iniciar sesión para usar la IA Coach.");
       showScreen("login");
     }
   }
