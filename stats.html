@@ -235,7 +235,7 @@
   <!-- FORMULARIO DE CONSULTA -->
   <section class="search-card">
     <h2>🔍 Buscador de Perfil Pro</h2>
-    <p>Introduce el Tag de jugador de Brawl Stars (se conecta directamente a los servidores oficiales mediante Token).</p>
+    <p>Introduce el Tag de jugador de Brawl Stars para consultar sus estadísticas reales.</p>
     
     <div class="search-box">
       <div class="input-wrapper">
@@ -301,52 +301,29 @@
 </div>
 
 <script>
-  // Tu Token Oficial de Supercell integrado de forma estricta
-  const SUPERCELL_API_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjczMzM4NGYwLWY0OWMtNDljOS1hODUyLTA0OTJiNDkzY2QxYyIsImlhdCI6MTc4OTIyMDgyNSwic3ViIjoiZGV2ZWxvcGVyLzg5OWMwYmQ5LThkZGEtNGRmNC1hZmNiLWI1ODcyNDljMzk2YiIsInNjb3BlcyI6WyJicmF3bHN0YXJzIl0sImxpbWl0cyI6W3sidGllciI6ImRldmVsb3Blci9zaWx2ZXIiLCJ0eXBlIjoidGhyb3R0bGluZyJ9LHsiY2lkcnMiOiJbODEuMzIuMzcuMTI0Il0sInR5cGUiOiJjbGllbnQifV19.kGThvQCXU8ev_q6-9nNTaCw6fZmmE-K0C-gIiuJpInMKBOUjaL1RoNEpzC5lA82cWdx7Rr6zxoJ-bFY2HUUrgA";
-
   async function loadPlayerData() {
     let rawTag = document.getElementById("tagInput").value.trim().toUpperCase();
     const searchButton = document.getElementById("btnFetch");
 
     if (!rawTag) {
-      showStatus("⚠️ Por favor, introduce un Tag de jugador válido.", "error");
+      showStatus("⚠️ Introduce un Tag de jugador válido.", "error");
       return;
     }
 
-    // Limpieza estricta del tag: quita '#' y corrige automáticamente confusión de 'O' por '0'
     let cleanTag = rawTag.replace("#", "").trim().replace(/O/g, '0');
 
-    showStatus("⏳ Conectando con los servidores oficiales de Brawl Stars...", "loading");
+    showStatus("⏳ Consultando servidores oficiales...", "loading");
     searchButton.disabled = true;
 
     try {
-      // URL oficial del endpoint de jugadores (requiere codificar el '#' como %23)
-      const targetUrl = `https://api.brawlstars.com/v1/players/%23${cleanTag}`;
-      
-      // Pasarela proxy segura para enviar las cabeceras de autorización exigidas por Supercell desde el navegador
-      const proxyUrl = `https://api.allorigins.win/raw?url=` + encodeURIComponent(targetUrl);
-
-      const response = await fetch(proxyUrl, {
-        method: "GET",
-        headers: {
-          "Accept": "application/json",
-          "Authorization": `Bearer ${SUPERCELL_API_TOKEN}`
-        }
-      });
+      const response = await fetch(`/api/player?tag=${cleanTag}`);
 
       if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error("El jugador no existe o el Tag es incorrecto.");
-        } else if (response.status === 403) {
-          throw new Error("Acceso denegado: Verifica que tu IP pública actual coincida con la registrada.");
-        } else {
-          throw new Error("Error en la conexión con los servidores oficiales.");
-        }
+        throw new Error("No se ha encontrado el jugador o el Tag es incorrecto.");
       }
 
       const data = await response.json();
 
-      // Pintar los datos reales obtenidos directamente de la API oficial
       document.getElementById("resName").textContent = data.name || "Sin Nombre";
       document.getElementById("resTag").textContent = "#" + (data.tag || cleanTag);
       document.getElementById("resTrophies").textContent = (data.trophies ?? 0).toLocaleString();
@@ -358,15 +335,12 @@
       document.getElementById("resDuo").textContent = (data.duoVictories ?? 0).toLocaleString();
       document.getElementById("resClub").textContent = data.club ? data.club.name : "Sin Club";
 
-      showStatus("✅ ¡Datos sincronizados con éxito desde Supercell!", "success");
-      setTimeout(() => {
-        document.getElementById("statusInfo").style.display = "none";
-      }, 4000);
+      showStatus("✅ ¡Datos sincronizados con éxito!", "success");
+      setTimeout(() => { document.getElementById("statusInfo").style.display = "none"; }, 4000);
 
     } catch (error) {
       showStatus("❌ " + error.message, "error");
       
-      // Limpiar campos si falla la consulta real para no mostrar información incorrecta
       document.getElementById("resName").textContent = "--";
       document.getElementById("resTag").textContent = "--";
       document.getElementById("resTrophies").textContent = "--";
