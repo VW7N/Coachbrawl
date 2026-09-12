@@ -18,9 +18,10 @@
         <section class="info-general">
             <h2>¿Cómo funcionan nuestros cursos?</h2>
             <ul>
+                <li><strong>En función de tu Rango Objetivo:</strong> Eliges el curso según el rango al que quieras llegar (Bronce, Diamante, Mítico, Legendario o Maestro). Los cursos superiores incluyen la preparación específica para los rangos más exigentes.</li>
                 <li><strong>Clase de prueba gratis:</strong> En todos los cursos, la 1.ª clase (1 hora) es gratuita para probar y evaluar tu nivel actual.</li>
                 <li><strong>Duración:</strong> Todas las clases individuales duran exactamente 1 hora.</li>
-                <li><strong>Proceso de reserva:</strong> Haz clic en "Solicitar Curso" para enviar un correo directamente a <strong>BrawlCoach@gmail.com</strong> indicando el curso que deseas. Nos pondremos en contacto contigo para agendar la clase.</li>
+                <li><strong>Proceso de reserva:</strong> Haz clic en "Solicitar Curso" para enviar un correo a <strong>BrawlCoach@gmail.com</strong> indicando tu rango actual y el rango al que quieres subir. Nos pondremos en contacto contigo para agendar la clase.</li>
             </ul>
         </section>
 
@@ -35,6 +36,9 @@
                 <p class="prueba-tag">1.ª clase de prueba incluida</p>
                 
                 <div class="detalles">
+                    <h4>Rango Objetivo:</h4>
+                    <p><strong>Para subir a:</strong> Bronce / Plata / Oro</p>
+                    
                     <h4>¿Qué incluye?</h4>
                     <p>Análisis inicial de tu estilo de juego, ajustes de configuración y conceptos básicos de posicionamiento en el mapa.</p>
                     
@@ -42,7 +46,7 @@
                     <p><strong>Coach Promesa:</strong> Jugadores experimentados en trofeos medios/altos con gran capacidad pedagógica.</p>
                 </div>
 
-                <a href="mailto:BrawlCoach@gmail.com?subject=Solicitud%20Curso%20Basico%205€" class="btn-solicitar">Solicitar Curso</a>
+                <button class="btn-solicitar" onclick="solicitarCurso('Curso Básico', '5€', 'Bronce / Plata / Oro')">Solicitar Curso</button>
             </article>
 
             <!-- Curso 2 -->
@@ -53,14 +57,17 @@
                 <p class="prueba-tag">1.ª clase de prueba + 1 de pago</p>
                 
                 <div class="detalles">
+                    <h4>Rango Objetivo:</h4>
+                    <p><strong>Para subir a:</strong> Platino / Diamante</p>
+                    
                     <h4>¿Qué incluye?</h4>
-                    <p>Estrategias por brawler, draft en Liga Estelar/Competitivo y corrección de errores en partidas reales.</p>
+                    <p>Estrategias por brawler, draft en Competitivo y corrección de errores comunes en partidas reales.</p>
                     
                     <h4>Nivel de Entrenador:</h4>
                     <p><strong>Coach Avanzado:</strong> Jugadores posicionados en rangos altos competitivos con experiencia en torneos comunitarios.</p>
                 </div>
 
-                <a href="mailto:BrawlCoach@gmail.com?subject=Solicitud%20Curso%20Avanzado%2010€" class="btn-solicitar">Solicitar Curso</a>
+                <button class="btn-solicitar" onclick="solicitarCurso('Curso Avanzado', '10€', 'Platino / Diamante')">Solicitar Curso</button>
             </article>
 
             <!-- Curso 3 -->
@@ -71,6 +78,9 @@
                 <p class="prueba-tag">1.ª clase de prueba + 2 de pago</p>
                 
                 <div class="detalles">
+                    <h4>Rango Objetivo:</h4>
+                    <p><strong>Para subir a:</strong> Mítico / Legendario</p>
+                    
                     <h4>¿Qué incluye?</h4>
                     <p>Composiciones de equipo, control del tempo de partida, sincronización de ultis y análisis de replays en profundidad.</p>
                     
@@ -78,7 +88,7 @@
                     <p><strong>Coach PRO:</strong> Entrenadores dedicados con amplio recorrido competitivo y dominio total de todos los roles.</p>
                 </div>
 
-                <a href="mailto:BrawlCoach@gmail.com?subject=Solicitud%20Curso%20Profesional%2015€" class="btn-solicitar">Solicitar Curso</a>
+                <button class="btn-solicitar" onclick="solicitarCurso('Curso Profesional', '15€', 'Mítico / Legendario')">Solicitar Curso</button>
             </article>
 
             <!-- Curso 4 -->
@@ -89,6 +99,9 @@
                 <p class="prueba-tag">1.ª clase de prueba + 3 de pago</p>
                 
                 <div class="detalles">
+                    <h4>Rango Objetivo:</h4>
+                    <p><strong>Para subir a:</strong> Maestro / Top Regional</p>
+                    
                     <h4>¿Qué incluye?</h4>
                     <p>Programa integral: macrogame, preparación para torneos, mentalidad competitiva, seguimiento personalizado y plan de entrenamiento semanal.</p>
                     
@@ -96,7 +109,7 @@
                     <p><strong>Head Coach / Top Tier:</strong> Jugadores y entrenadores de máximo rango con experiencia directa en esports de Brawl Stars.</p>
                 </div>
 
-                <a href="mailto:BrawlCoach@gmail.com?subject=Solicitud%20Curso%20Elite%2020€" class="btn-solicitar">Solicitar Curso</a>
+                <button class="btn-solicitar" onclick="solicitarCurso('Curso Elite', '20€', 'Maestro / Top Regional')">Solicitar Curso</button>
             </article>
 
         </section>
@@ -107,5 +120,7 @@
         <p>&copy; 2026 BrawlCoach. Todos los derechos reservados.</p>
     </footer>
 
+    <!-- Enlace al archivo de JavaScript externo -->
+    <script src="script.js"></script>
 </body>
 </html>
