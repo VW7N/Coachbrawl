@@ -1,0 +1,105 @@
+<!-- SECCIÓN IA COACH -->
+<section id="ai-coach" class="screen">
+  <div class="card" style="max-width: 750px; margin: auto;">
+    <div class="logo" style="font-size: 36px; text-align: center;">
+      Brawl<span>Coach AI</span> 🤖
+    </div>
+    <h2 style="text-align: center; margin-bottom: 5px;">Análisis de Partida</h2>
+    <p class="card-description" style="text-align: center;">Suba el vídeo de tu replay para recibir un informe de rendimiento detallado.</p>
+
+    <!-- ZONA DE SUBIDA DE ARCHIVO -->
+    <div id="uploadBox" style="border: 2px dashed #ffd43b; border-radius: 16px; padding: 40px; text-align: center; background: rgba(13, 20, 39, 0.6); cursor: pointer; margin-bottom: 20px;">
+      <div style="font-size: 40px; margin-bottom: 10px;">📹</div>
+      <p style="font-weight: bold; margin-bottom: 5px;">Arrastra tu replay aquí o haz clic para explorar</p>
+      <p style="font-size: 13px; color: #8f9ab2;">Formatos soportados: MP4, MOV (Máx. 100MB)</p>
+      <input type="file" id="videoInput" accept="video/*" style="display: none;" onchange="handleVideoUpload(event)">
+    </div>
+
+    <!-- ESTADO DE PROCESAMIENTO -->
+    <div id="processingState" style="display: none; text-align: center; padding: 30px;">
+      <div class="loader" style="margin: 0 auto 15px auto; width: 40px; height: 40px; border: 4px solid #34405f; border-top: 4px solid #ffd43b; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+      <p id="processingStatus" style="color: #ffd43b; font-weight: bold;">Analizando posiciones y decisiones...</p>
+    </div>
+
+    <!-- INFORME DE RESULTADOS -->
+    <div id="coachReport" style="display: none;">
+      <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+        <h3 style="color: #10b981; margin-bottom: 5px;">Puntuación de Rendimiento: 78/100</h3>
+        <p style="font-size: 14px; color: #d1fae5;">Buen control del espacio general, pero con fallos críticos en la gestión de gemas/objetivos.</p>
+      </div>
+
+      <div style="display: grid; gap: 15px;">
+        <!-- Card Posicionamiento -->
+        <div style="background: #0d1427; border: 1px solid #34405f; border-radius: 12px; padding: 15px;">
+          <h4 style="color: #ffd43b; margin-bottom: 5px;">📍 Posicionamiento & Map Control</h4>
+          <p style="font-size: 14px; color: #cbd5e1;">En el minuto <b>1:15</b> te quedaste atrapado en la línea izquierda sin cobertura, permitiendo que el Spike rival te arrinconara.</p>
+        </div>
+
+        <!-- Card Habilidades -->
+        <div style="background: #0d1427; border: 1px solid #34405f; border-radius: 12px; padding: 15px;">
+          <h4 style="color: #ec4899; margin-bottom: 5px;">⚡ Uso de Habilidades y Súper</h4>
+          <p style="font-size: 14px; color: #cbd5e1;">Lanzaste la Súper en el minuto <b>2:02</b> a rango máximo sin predicción de movimiento. Guardarla para frenar la carga del rival habría cambiado el resultado.</p>
+        </div>
+
+        <!-- Card Decisiones -->
+        <div style="background: #0d1427; border: 1px solid #34405f; border-radius: 12px; padding: 15px;">
+          <h4 style="color: #06b6d4; margin-bottom: 5px;">🎯 Decisiones & Momentos Clave</h4>
+          <p style="font-size: 14px; color: #cbd5e1;"><b>Momento Clave (2:30):</b> Decidiste pushear teniendo ventaja de gemas en lugar de hacer retroceso táctico. Esto provocó el "Throw" de la partida.</p>
+        </div>
+      </div>
+
+      <button class="button primary" onclick="resetCoach()" style="margin-top: 20px;">Analizar otra partida</button>
+    </div>
+
+    <button class="back" onclick="showScreen('home')">← Volver al inicio</button>
+  </div>
+</section>
+
+<style>
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+
+<script>
+  const uploadBox = document.getElementById('uploadBox');
+  const videoInput = document.getElementById('videoInput');
+
+  uploadBox.addEventListener('click', () => videoInput.click());
+
+  function handleVideoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    document.getElementById('uploadBox').style.display = 'none';
+    document.getElementById('processingState').style.display = 'block';
+
+    // Simulación de estados de procesamiento backend
+    const statuses = [
+      "Extrayendo fotogramas de la partida...",
+      "Identificando Brawlers y composiciones...",
+      "Analizando métricas de posicionamiento...",
+      "Detectando momentos clave y errores...",
+      "Generando informe personalizado..."
+    ];
+
+    let step = 0;
+    const interval = setInterval(() => {
+      step++;
+      if (step < statuses.length) {
+        document.getElementById('processingStatus').textContent = statuses[step];
+      } else {
+        clearInterval(interval);
+        document.getElementById('processingState').style.display = 'none';
+        document.getElementById('coachReport').style.display = 'block';
+      }
+    }, 2000);
+  }
+
+  function resetCoach() {
+    document.getElementById('coachReport').style.display = 'none';
+    document.getElementById('uploadBox').style.display = 'block';
+    document.getElementById('videoInput').value = '';
+  }
+</script>
