@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BrawlCoach - Estadísticas Profesionales</title>
+  <title>BrawlCoach - Buscador de Perfil</title>
 
   <style>
     * {
@@ -147,7 +147,7 @@
     .status-loading { background: rgba(255, 212, 59, 0.15); color: #ffd43b; border: 1px solid rgba(255, 212, 59, 0.3); }
     .status-success { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
 
-    /* TARJETAS DE ESTADÍSTICAS GRANDES Y VISTOSAS */
+    /* TARJETAS INFORMATIVAS */
     .grid-stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -203,7 +203,8 @@
 
     .field-value {
       font-weight: 800;
-      font-size: 18px;
+      font-size: 15px;
+      color: #cbd5e1;
     }
 
     .accent-yellow { color: #ffd43b; text-shadow: 0 0 10px rgba(255, 212, 59, 0.3); }
@@ -235,64 +236,58 @@
   <!-- FORMULARIO DE CONSULTA -->
   <section class="search-card">
     <h2>🔍 Buscador de Perfil Pro</h2>
-    <p>Introduce el Tag de jugador de Brawl Stars para consultar sus estadísticas reales.</p>
-    
+    <p>Introduce el Tag de jugador de Brawl Stars y te llevamos directamente a su perfil real en Brawlytix.</p>
+
     <div class="search-box">
       <div class="input-wrapper">
-        <input id="tagInput" class="input-tag" type="text" placeholder="Ej: #GVYLPR90P o GVYLPR9OP" />
+        <input id="tagInput" class="input-tag" type="text" placeholder="Ej: #GVYLPR9PL" />
       </div>
       <button id="btnFetch" class="btn-search" onclick="loadPlayerData()">Consultar Perfil</button>
     </div>
-    
+
     <div id="statusInfo" class="status-message"></div>
   </section>
 
-  <!-- MOSTRADOR DE RESULTADOS -->
+  <!-- INFORMACIÓN -->
   <div class="grid-stats">
 
-    <!-- GENERAL -->
     <div class="card">
       <h3>🏆 Información General</h3>
       <div class="data-row">
         <span class="field-name">👤 Nombre</span>
-        <span id="resName" class="field-value">--</span>
-      </div>
-      <div class="data-row">
-        <span class="field-name">🏷️ Tag</span>
-        <span id="resTag" class="field-value accent-purple">--</span>
+        <span class="field-value">Visible en Brawlytix</span>
       </div>
       <div class="data-row">
         <span class="field-name">⭐ Copas Actuales</span>
-        <span id="resTrophies" class="field-value accent-yellow">--</span>
+        <span class="field-value accent-yellow">Visible en Brawlytix</span>
       </div>
       <div class="data-row">
         <span class="field-name">📈 Récord Copas</span>
-        <span id="resMaxTrophies" class="field-value">--</span>
+        <span class="field-value">Visible en Brawlytix</span>
       </div>
       <div class="data-row">
         <span class="field-name">⭐ Nivel de Cuenta</span>
-        <span id="resExp" class="field-value">--</span>
+        <span class="field-value">Visible en Brawlytix</span>
       </div>
     </div>
 
-    <!-- MODOS DE JUEGO -->
     <div class="card">
       <h3>⚔️ Histórico de Victorias</h3>
       <div class="data-row">
         <span class="field-name">🛡️ Victorias 3c3</span>
-        <span id="res3v3" class="field-value accent-green">--</span>
+        <span class="field-value accent-green">Visible en Brawlytix</span>
       </div>
       <div class="data-row">
         <span class="field-name">🎯 Victorias Solo</span>
-        <span id="resSolo" class="field-value accent-yellow">--</span>
+        <span class="field-value accent-yellow">Visible en Brawlytix</span>
       </div>
       <div class="data-row">
         <span class="field-name">👥 Victorias Dúo</span>
-        <span id="resDuo" class="field-value accent-blue">--</span>
+        <span class="field-value accent-blue">Visible en Brawlytix</span>
       </div>
       <div class="data-row">
         <span class="field-name">🛡️ Club Actual</span>
-        <span id="resClub" class="field-value">--</span>
+        <span class="field-value">Visible en Brawlytix</span>
       </div>
     </div>
 
@@ -301,66 +296,39 @@
 </div>
 
 <script>
-  async function loadPlayerData() {
+  function loadPlayerData() {
     let rawTag = document.getElementById("tagInput").value.trim().toUpperCase();
-    const searchButton = document.getElementById("btnFetch");
 
     if (!rawTag) {
       showStatus("⚠️ Introduce un Tag de jugador válido.", "error");
       return;
     }
 
-    let cleanTag = rawTag.replace("#", "").trim().replace(/O/g, '0');
+    // Los tags de Brawl Stars no usan la letra O (para no confundirla con el 0)
+    const cleanTag = rawTag.replace("#", "").trim().replace(/O/g, "0");
 
-    showStatus("⏳ Consultando servidores oficiales...", "loading");
-    searchButton.disabled = true;
-
-    try {
-      const response = await fetch(`/api/player?tag=${cleanTag}`);
-
-      if (!response.ok) {
-        throw new Error("No se ha encontrado el jugador o el Tag es incorrecto.");
-      }
-
-      const data = await response.json();
-
-      document.getElementById("resName").textContent = data.name || "Sin Nombre";
-      document.getElementById("resTag").textContent = "#" + (data.tag || cleanTag);
-      document.getElementById("resTrophies").textContent = (data.trophies ?? 0).toLocaleString();
-      document.getElementById("resMaxTrophies").textContent = (data.highestTrophies ?? 0).toLocaleString();
-      document.getElementById("resExp").textContent = data.expLevel ?? "--";
-
-      document.getElementById("res3v3").textContent = (data["3vs3Victories"] ?? 0).toLocaleString();
-      document.getElementById("resSolo").textContent = (data.soloVictories ?? 0).toLocaleString();
-      document.getElementById("resDuo").textContent = (data.duoVictories ?? 0).toLocaleString();
-      document.getElementById("resClub").textContent = data.club ? data.club.name : "Sin Club";
-
-      showStatus("✅ ¡Datos sincronizados con éxito!", "success");
-      setTimeout(() => { document.getElementById("statusInfo").style.display = "none"; }, 4000);
-
-    } catch (error) {
-      showStatus("❌ " + error.message, "error");
-      
-      document.getElementById("resName").textContent = "--";
-      document.getElementById("resTag").textContent = "--";
-      document.getElementById("resTrophies").textContent = "--";
-      document.getElementById("resMaxTrophies").textContent = "--";
-      document.getElementById("resExp").textContent = "--";
-      document.getElementById("res3v3").textContent = "--";
-      document.getElementById("resSolo").textContent = "--";
-      document.getElementById("resDuo").textContent = "--";
-      document.getElementById("resClub").textContent = "--";
-    } finally {
-      searchButton.disabled = false;
+    if (!/^[A-Z0-9]{3,12}$/.test(cleanTag)) {
+      showStatus("⚠️ Ese Tag no parece válido. Revisa que solo tenga letras y números.", "error");
+      return;
     }
+
+    showStatus("✅ Abriendo el perfil en Brawlytix...", "success");
+    window.open(`https://brawlytix.com/player/${cleanTag}`, "_blank");
+
+    setTimeout(() => { document.getElementById("statusInfo").style.display = "none"; }, 4000);
   }
 
   function showStatus(text, type) {
     const statusDiv = document.getElementById("statusInfo");
     statusDiv.textContent = text;
-    statusDiv.className = "status-message " + (type === "error" ? "status-error" : type === "success" ? "status-success" : "status-loading");
+    statusDiv.className = "status-message " + (type === "error" ? "status-error" : "status-success");
     statusDiv.style.display = "block";
   }
+
+  // Permite buscar pulsando Enter
+  document.getElementById("tagInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") loadPlayerData();
+  });
 </script>
 
 </body>
