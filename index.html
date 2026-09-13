@@ -24,7 +24,7 @@
       overflow-x: hidden;
     }
 
-    /* Foto de fondo usando logo BrawlCoach.png con overlay de ambiente */
+    /* Foto de fondo idéntica a la imagen original, fija y centrada */
     body::after {
       content: '';
       position: fixed;
@@ -32,26 +32,9 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: radial-gradient(circle at center, rgba(139, 92, 246, 0.15) 0%, rgba(7, 4, 13, 0.85) 75%),
-                  url('logo BrawlCoach.png') no-repeat center center fixed;
+      background: url('logo BrawlCoach.png') no-repeat center center fixed;
       background-size: cover;
-      opacity: 0.35;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    /* Glow de neón púrpura decorativo */
-    body::before {
-      content: '';
-      position: absolute;
-      top: -10%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 600px;
-      height: 300px;
-      background: rgba(168, 85, 247, 0.3);
-      filter: blur(120px);
-      border-radius: 50%;
+      opacity: 1;
       z-index: 0;
       pointer-events: none;
     }
@@ -90,32 +73,33 @@
       font-size: 52px;
       font-weight: 900;
       margin-bottom: 20px;
-      text-shadow: 0 0 25px rgba(168, 85, 247, 0.6);
+      text-shadow: 0 0 25px rgba(168, 85, 247, 0.8), 0 4px 10px rgba(0, 0, 0, 0.9);
       color: #ffffff;
     }
 
     .logo span {
       color: #a855f7;
-      text-shadow: 0 0 20px rgba(168, 85, 247, 0.8);
+      text-shadow: 0 0 20px rgba(168, 85, 247, 1);
     }
 
     h1 {
       font-size: 48px;
       line-height: 1.05;
       margin-bottom: 20px;
+      text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9);
     }
 
     h1 span {
       color: #c084fc;
-      text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+      text-shadow: 0 0 20px rgba(168, 85, 247, 0.8);
     }
 
     .description {
-      color: #c084fc;
+      color: #e9d5ff;
       font-size: 18px;
       line-height: 1.6;
       max-width: 560px;
-      opacity: 0.9;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
     }
 
     .features {
@@ -126,18 +110,19 @@
     }
 
     .feature {
-      background: rgba(22, 11, 38, 0.75);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(168, 85, 247, 0.25);
+      background: rgba(18, 9, 31, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(168, 85, 247, 0.4);
       border-radius: 16px;
       padding: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
       transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
     }
 
     .feature:hover {
       transform: translateY(-3px);
-      border-color: rgba(168, 85, 247, 0.7);
-      box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+      border-color: rgba(168, 85, 247, 0.8);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
     }
 
     .feature-icon {
@@ -147,35 +132,37 @@
 
     .feature h3 {
       margin-bottom: 7px;
-      color: #f3e8ff;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     }
 
     .feature p {
       color: #d8b4fe;
       font-size: 14px;
       line-height: 1.4;
-      opacity: 0.85;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
     }
 
     .card {
-      background: rgba(18, 9, 31, 0.82);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(168, 85, 247, 0.35);
+      background: rgba(18, 9, 31, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(168, 85, 247, 0.5);
       border-radius: 24px;
       padding: 35px;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(168, 85, 247, 0.15);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(168, 85, 247, 0.2);
     }
 
     .card h2 {
       font-size: 28px;
       margin-bottom: 8px;
       color: #ffffff;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
     }
 
     .card-description {
       color: #d8b4fe;
       margin-bottom: 28px;
-      opacity: 0.8;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
     }
 
     .user-badge {
@@ -194,14 +181,14 @@
       font-size: 13px;
       color: #d8b4fe;
       text-align: center;
-      opacity: 0.8;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
     }
 
     .input {
       width: 100%;
       padding: 14px;
       margin-bottom: 14px;
-      border: 1px solid rgba(168, 85, 247, 0.3);
+      border: 1px solid rgba(168, 85, 247, 0.4);
       border-radius: 11px;
       background: #0d0517;
       color: white;
@@ -212,12 +199,12 @@
 
     .input:focus {
       border-color: #a855f7;
-      box-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
     }
 
     .button {
       width: 100%;
-      border: 1px solid rgba(168, 85, 247, 0.4);
+      border: 1px solid rgba(168, 85, 247, 0.5);
       border-radius: 11px;
       padding: 14px;
       font-size: 16px;
@@ -231,44 +218,41 @@
       letter-spacing: 0.3px;
     }
 
-    /* ESTILOS DE BOTONES BASADOS EN LOS COLORES PURPURA DEL LOGO */
+    /* BOTONES BASADOS EN LA PALETA DE LA FOTO DE FONDO */
     
-    /* Botón Iniciar sesión (Púrpura neón principal) */
     .primary {
       background: linear-gradient(135deg, #a855f7, #6b21a8);
       color: #ffffff;
       border-color: #c084fc;
-      box-shadow: 0 4px 18px rgba(168, 85, 247, 0.4);
+      box-shadow: 0 4px 18px rgba(168, 85, 247, 0.5);
     }
 
     .primary:hover {
       filter: brightness(1.2);
       transform: translateY(-2px);
-      box-shadow: 0 6px 22px rgba(168, 85, 247, 0.6);
+      box-shadow: 0 6px 22px rgba(168, 85, 247, 0.7);
     }
 
-    /* Botón Crear una cuenta (Púrpura oscuro con borde neón brillante) */
     .secondary {
       background: linear-gradient(135deg, #3b0764, #1e0338);
       color: #f3e8ff;
       border-color: #a855f7;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.25);
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
     }
 
     .secondary:hover {
       background: linear-gradient(135deg, #581c87, #2e0854);
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
     }
 
-    /* Botón Cerrar sesión (Púrpura rojizo de advertencia) */
     .danger {
       background: linear-gradient(135deg, #9f1239, #4c0519);
       color: white;
       border-color: #f43f5e;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(225, 29, 72, 0.3);
+      box-shadow: 0 4px 15px rgba(225, 29, 72, 0.35);
     }
 
     .danger:hover {
@@ -276,7 +260,6 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Noticias (Púrpura violeta brillante) */
     .news-button {
       display: flex;
       align-items: center;
@@ -286,7 +269,7 @@
       color: white;
       border-color: #a78bfa;
       margin-top: 12px;
-      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.35);
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
     }
 
     .news-button:hover {
@@ -294,28 +277,26 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Ranked Assistant (Púrpura fucsia intenso) */
     .ranked-button {
       background: linear-gradient(135deg, #c084fc, #7e22ce);
       color: white;
       border-color: #e9d5ff;
       margin-top: 10px;
-      box-shadow: 0 4px 18px rgba(192, 132, 252, 0.4);
+      box-shadow: 0 4px 18px rgba(192, 132, 252, 0.45);
     }
 
     .ranked-button:hover {
       filter: brightness(1.15);
       transform: translateY(-2px);
-      box-shadow: 0 6px 22px rgba(192, 132, 252, 0.6);
+      box-shadow: 0 6px 22px rgba(192, 132, 252, 0.65);
     }
 
-    /* Botón IA Coach (Magenta púrpura neón) */
     .ai-coach-button {
       background: linear-gradient(135deg, #d946ef, #701a75);
       color: white;
       border-color: #f5d0fe;
       margin-top: 10px;
-      box-shadow: 0 4px 18px rgba(217, 70, 239, 0.35);
+      box-shadow: 0 4px 18px rgba(217, 70, 239, 0.4);
     }
 
     .ai-coach-button:hover {
@@ -323,7 +304,6 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Cursos y Servicios (Violeta profundo translúcido) */
     .courses-button {
       display: flex;
       align-items: center;
@@ -333,7 +313,7 @@
       color: white;
       border-color: #c084fc;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(147, 51, 234, 0.35);
+      box-shadow: 0 4px 15px rgba(147, 51, 234, 0.4);
     }
 
     .courses-button:hover {
@@ -341,7 +321,6 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Stats (Púrpura metálico) */
     .stats-button {
       display: flex;
       align-items: center;
@@ -351,7 +330,7 @@
       color: white;
       border-color: #a855f7;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(107, 33, 168, 0.35);
+      box-shadow: 0 4px 15px rgba(107, 33, 168, 0.4);
     }
 
     .stats-button:hover {
@@ -359,13 +338,12 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Reclutamiento de Coaches (Tono táctico púrpura oscuro) */
     .coach-button {
       background: linear-gradient(135deg, #581c87, #2a0845);
       color: white;
       border-color: #8b5cf6;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(88, 28, 135, 0.4);
+      box-shadow: 0 4px 15px rgba(88, 28, 135, 0.45);
     }
 
     .coach-button:hover {
@@ -373,7 +351,6 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Discord (Tono oficial adaptado al tema morado) */
     .discord-button {
       display: flex;
       align-items: center;
@@ -383,7 +360,7 @@
       color: white;
       margin-top: 10px;
       border-color: #8ea1f7;
-      box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
+      box-shadow: 0 4px 15px rgba(88, 101, 242, 0.35);
     }
 
     .discord-button:hover {
