@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BrawlCoach - Noticias & Cambios de Balance IA</title>
+  <title>BrawlCoach - Noticias & Cambios de Balance</title>
 
   <!-- Supabase JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -151,6 +151,12 @@
       border-radius: 50%;
       display: inline-block;
       box-shadow: 0 0 8px #10b981;
+      animation: pulse-dot 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
     }
 
     /* Grid de Noticias */
@@ -169,6 +175,15 @@
       display: flex;
       flex-direction: column;
       transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .news-card.is-new {
+      animation: highlight-new 2.5s ease-out;
+    }
+
+    @keyframes highlight-new {
+      0% { box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.9); }
+      100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0); }
     }
 
     .news-card:hover {
@@ -256,6 +271,13 @@
       justify-content: space-between;
     }
 
+    .empty-state {
+      text-align: center;
+      color: #94a3b8;
+      grid-column: 1 / -1;
+      padding: 40px 0;
+    }
+
     @media (max-width: 600px) {
       .news-grid { grid-template-columns: 1fr; }
       .card { padding: 20px; }
@@ -278,30 +300,24 @@
         Brawl<span>Coach</span>
       </div>
       <h1>
-        📰 <span>Noticias IA</span> & Cambios de Balance
+        📰 <span>Noticias</span> & Cambios de Balance
       </h1>
       <p class="description">
-        Información unificada y contrastada automáticamente por nuestra IA. Datos actualizados hora a hora con imágenes de fuentes veraces.
+        Notas de parche, eventos y ajustes de balance de Brawl Stars, actualizados automáticamente en cuanto se publican.
       </p>
     </div>
 
     <div class="card">
       <div class="news-header">
-        <h2>🔥 Últimas Novedades Contrastadas</h2>
+        <h2>🔥 Últimas Novedades</h2>
         <div class="status-badge">
-          Sincronizado cada 1 hora
+          En vivo
         </div>
       </div>
 
-      <p class="description" style="margin: 0 0 20px 0; font-size: 14px; text-align: left;">
-        Todas las publicaciones han sido verificadas combinando notas de parches oficiales, anuncios de Supercell y foros globales.
-      </p>
-
       <!-- CONTENEDOR DE NOTICIAS -->
       <div id="newsContainer" class="news-grid">
-        <div style="text-align: center; color: #a78bfa; grid-column: 1 / -1; padding: 40px 0;">
-          🤖 Consultando el motor de noticias unificado...
-        </div>
+        <div class="empty-state">Cargando las últimas noticias...</div>
       </div>
     </div>
 
@@ -314,31 +330,37 @@
   const SUPABASE_KEY = "sb_publishable_VD7Kf7j3RrEHg2RvVOQ6FA_H4FuT_k-";
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  /* OBTENER Y RENDERIZAR NOTICIAS */
-  async function loadNews() {
-    const newsContainer = document.getElementById("newsContainer");
+  const knownIds = new Set();
 
-    try {
-      // 1. Intentar obtener noticias guardadas por la IA central en Supabase
-      const { data: news, error } = await supabaseClient
-        .from('brawl_news')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(6);
+  /* OBTENER Y RENDERIZAR LAS NOTICIAS MÁS RECIENTES */
+  async function fetchLatestNews() {
+    const { data: news, error } = await supabaseClient
+      .from('brawl_news')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(6);
 
-      if (error || !news || news.length === 0) {
-        throw new Error("Mostrando publicaciones predeterminadas");
-      }
-
-      renderNewsList(news);
-    } catch (err) {
-      console.log(err.message);
-      // 2. Si aún no hay conexión con la tabla DB, carga los datos sincronizados estándar
-      renderMockNews();
+    if (error) {
+      console.error("Error consultando noticias:", error.message);
+      return null;
     }
+    return news;
   }
 
-  function renderNewsList(items) {
+  async function loadNews() {
+    const news = await fetchLatestNews();
+
+    if (!news || news.length === 0) {
+      document.getElementById("newsContainer").innerHTML =
+        `<div class="empty-state">No hay noticias publicadas todavía. Vuelve a comprobarlo en breve.</div>`;
+      return;
+    }
+
+    news.forEach(item => knownIds.add(item.id));
+    renderNewsList(news);
+  }
+
+  function renderNewsList(items, highlightNew = false) {
     const newsContainer = document.getElementById("newsContainer");
     newsContainer.innerHTML = "";
 
@@ -347,62 +369,63 @@
       if (item.category === 'BUFF') tagClass = "tag-buff";
       if (item.category === 'NERF') tagClass = "tag-nerf";
 
-      const cardHtml = `
-        <div class="news-card">
-          <img src="${item.image_url}" alt="${item.title}" class="news-image" onerror="this.src='https://cdn-old.brawlify.com/brawlers/borders/16000000.png'">
-          <div class="news-body">
-            <div>
-              <div class="news-meta">
-                <span class="news-tag ${tagClass}">${item.category}</span>
-                <span class="news-time">${item.formatted_time || 'Hace poco'}</span>
-              </div>
-              <h3 class="news-title">${item.title}</h3>
-              <p class="news-summary">${item.summary}</p>
+      const card = document.createElement("div");
+      card.className = "news-card" + (highlightNew ? " is-new" : "");
+      card.innerHTML = `
+        <img src="${item.image_url}" alt="${item.title}" class="news-image" onerror="this.src='https://cdn-old.brawlify.com/brawlers/borders/16000000.png'">
+        <div class="news-body">
+          <div>
+            <div class="news-meta">
+              <span class="news-tag ${tagClass}">${item.category}</span>
+              <span class="news-time">${item.formatted_time || 'Hace poco'}</span>
             </div>
-            <div class="news-footer">
-              <span>Verified IA Source</span>
-              <span>${item.sources_count || 3} Fuentes contrastadas</span>
-            </div>
+            <h3 class="news-title">${item.title}</h3>
+            <p class="news-summary">${item.summary}</p>
+          </div>
+          <div class="news-footer">
+            <span>Fuente verificada</span>
+            <span>${item.sources_count ? item.sources_count + ' fuentes' : ''}</span>
           </div>
         </div>
       `;
-      newsContainer.innerHTML += cardHtml;
+      newsContainer.appendChild(card);
     });
   }
 
-  /* DATOS ESTÁNDAR SINCRONIZADOS PARA TODOS LOS USUARIOS */
-  function renderMockNews() {
-    const mockData = [
-      {
-        title: "Ajuste Urgente: Buff a Frank y Nerf a Piper",
-        summary: "Supercell ajusta el metagame. Se incrementa un 8% la velocidad de movimiento de Frank mientras que el daño a larga distancia de Piper se reduce un 5%.",
-        category: "NERF / BUFF",
-        image_url: "https://images.squarespace-cdn.com/content/v1/5f1b21235b0b2e316d99611f/1614264627196-S00J1A9J8R146V5T5T5T/Brawl+Stars.jpg",
-        formatted_time: "Hace 25 min",
-        sources_count: 4
-      },
-      {
-        title: "Confirmadas las 6 Nuevas Hipercargas",
-        summary: "Se filtran y confirman los Brawlers que recibirán Hipercarga en la siguiente actualización. La IA verificó la coherencia de datos en 3 hilos oficiales.",
-        category: "EVENTO",
-        image_url: "https://cdn-old.brawlify.com/brawlers/borders/16000000.png",
-        formatted_time: "Hace 42 min",
-        sources_count: 3
-      },
-      {
-        title: "Corrección de Errores en Balón Brawl",
-        summary: "Se resuelve un fallo visual con el reaparecer de escudos y colisiones en los muros rompibles tras el último mantenimiento.",
-        category: "BUFF",
-        image_url: "https://cdn-old.brawlify.com/brawlers/borders/16000022.png",
-        formatted_time: "Hace 1 hora",
-        sources_count: 5
-      }
-    ];
-    renderNewsList(mockData);
+  /* Refresco periódico: por si el proyecto no tiene Realtime activado en la tabla,
+     esto garantiza que cualquiera que esté en la página vea las noticias más nuevas. */
+  async function pollForUpdates() {
+    const news = await fetchLatestNews();
+    if (!news) return;
+
+    const hasNew = news.some(item => !knownIds.has(item.id));
+    if (hasNew) {
+      news.forEach(item => knownIds.add(item.id));
+      renderNewsList(news, true);
+    }
   }
 
-  // Cargar noticias al entrar a la página
-  window.addEventListener("DOMContentLoaded", loadNews);
+  /* Actualización instantánea vía Supabase Realtime cuando se inserta una noticia nueva.
+     Requiere tener activado "Realtime" para la tabla brawl_news en el proyecto de Supabase. */
+  function subscribeToRealtimeUpdates() {
+    supabaseClient
+      .channel('brawl_news-changes')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'brawl_news' }, () => {
+        loadNews().then(() => {
+          const firstCard = document.querySelector('.news-card');
+          if (firstCard) firstCard.classList.add('is-new');
+        });
+      })
+      .subscribe();
+  }
+
+  // Al entrar a la página: cargar noticias, suscribirse a cambios en vivo,
+  // y además comprobar cada 60s como respaldo.
+  window.addEventListener("DOMContentLoaded", () => {
+    loadNews();
+    subscribeToRealtimeUpdates();
+    setInterval(pollForUpdates, 60000);
+  });
 </script>
 
 </body>
