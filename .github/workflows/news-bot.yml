@@ -1,0 +1,30 @@
+name: BrawlCoach News Bot
+
+on:
+  schedule:
+    # Se ejecuta cada 6 horas, sin que tengas que tocar nada
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+    # Esto añade un botón "Run workflow" en GitHub para probarlo a mano
+
+jobs:
+  fetch-and-publish-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Ejecutar el robot de noticias
+        run: node scrape-news.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
