@@ -528,6 +528,10 @@
           <div class="counter-badge">
             👥 Jugadores registrados: <strong id="playerCount" style="color: white;">-</strong>
           </div>
+
+          <div class="counter-badge">
+            👁️ Visitas totales: <strong id="visitCount" style="color: white;">-</strong>
+          </div>
         </div>
 
       </div>
@@ -810,6 +814,43 @@
     }
   }
 
+  /* CONTADOR DE VISITAS EN TIEMPO REAL */
+  async function initVisitCounter() {
+    const counterEl = document.getElementById("visitCount");
+    if (!counterEl) return;
+
+    // 1) Registrar esta visita incrementando el contador en Supabase
+    try {
+      const { data, error } = await supabaseClient.rpc('increment_site_visits');
+      if (!error && data !== null) {
+        counterEl.textContent = data;
+      } else {
+        // Si falla el incremento, al menos mostramos el valor actual sin sumar
+        const { data: current } = await supabaseClient
+          .from('site_visits')
+          .select('count')
+          .eq('id', 1)
+          .single();
+        if (current) counterEl.textContent = current.count;
+      }
+    } catch (e) {
+      console.error("Error al incrementar el contador de visitas:", e);
+    }
+
+    // 2) Suscribirse a cambios en tiempo real: cuando otra persona visite la
+    //    página, este número se actualizará solo, sin recargar.
+    supabaseClient
+      .channel('site_visits_realtime')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'site_visits' },
+        (payload) => {
+          counterEl.textContent = payload.new.count;
+        }
+      )
+      .subscribe();
+  }
+
   /* SUBSCRIPCIÓN A CAMBIOS DE AUTH */
   supabaseClient.auth.onAuthStateChange((event, session) => {
     renderAuthState(session);
@@ -854,6 +895,7 @@
             renderAuthState(data.session);
             showScreen("home");
             updatePlayerCount();
+            initVisitCounter();
             return;
           }
         } catch (e) {
@@ -874,6 +916,7 @@
           renderAuthState(data.session);
           showScreen("home");
           updatePlayerCount();
+          initVisitCounter();
           return;
         }
       } catch (e) {
@@ -885,6 +928,7 @@
     const { data } = await supabaseClient.auth.getSession();
     renderAuthState(data?.session || null);
     updatePlayerCount();
+    initVisitCounter();
   }
 
   init();
