@@ -12,10 +12,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const HF_TOKEN = process.env.HF_TOKEN;
 
-// Modelo gratuito vía Hugging Face Inference Providers, fijado al proveedor
-// Groq (rápido y fiable) para evitar timeouts. Si deja de funcionar, prueba
-// otro modelo/proveedor de la lista en https://huggingface.co/docs/inference-providers
-const HF_MODEL = "meta-llama/Llama-3.1-8B-Instruct:groq";
+const HF_MODEL = "meta-llama/Llama-3.1-8B-Instruct";
 
 const BLOG_URL = "https://supercell.com/en/games/brawlstars/blog/";
 
@@ -92,31 +89,43 @@ con este formato exacto:
 - "resumen": una frase de gancho (máx 25 palabras).
 - "contenido": el cuerpo de la noticia en español (150-250 palabras).`;
 
-  const res = await fetch("https://router.huggingface.co/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${HF_TOKEN}`,
-    },
-    body: JSON.stringify({
-      model: HF_MODEL,
-      messages: [{ role: "user", content: prompt }],
-    }),
-  });
+  const MAX_INTENTOS = 3;
 
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Error de Hugging Face (${res.status}): ${errText}`);
-  }
+  for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 90000);
 
-  const data = await res.json();
-  const rawText = data.choices?.[0]?.message?.content || "";
-  const cleaned = rawText.replace(/```json|```/g, "").trim();
+      const res = await fetch("https://router.huggingface.co/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${HF_TOKEN}`,
+        },
+        body: JSON.stringify({
+          model: HF_MODEL,
+          messages: [{ role: "user", content: prompt }],
+        }),
+        signal: controller.signal,
+      });
 
-  try {
-    return JSON.parse(cleaned);
-  } catch (e) {
-    throw new Error(`El modelo no devolvió un JSON válido:\n${rawText}`);
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Error de Hugging Face (${res.status}): ${errText}`);
+      }
+
+      const data = await res.json();
+      const rawText = data.choices?.[0]?.message?.content || "";
+      const cleaned = rawText.replace(/```json|```/g, "").trim();
+
+      return JSON.parse(cleaned);
+    } catch (e) {
+      console.log(`Intento ${intento} de ${MAX_INTENTOS} falló: ${e.message}`);
+      if (intento === MAX_INTENTOS) throw e;
+      await new Promise((r) => setTimeout(r, 3000));
+    }
   }
 }
 
