@@ -231,9 +231,10 @@
 
     /* Botón Cerrar sesión */
     .danger {
-      background: #ef4444;
+      background: linear-gradient(135deg, #f87171, #b91c1c);
       color: white;
       margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(248, 113, 113, 0.3);
     }
 
     .danger:hover {
@@ -247,10 +248,10 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      background: linear-gradient(135deg, #eab308, #ca8a04);
+      background: linear-gradient(135deg, #38bdf8, #0284c7);
       color: white;
       margin-top: 12px;
-      box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
     }
 
     .news-button:hover {
@@ -260,10 +261,10 @@
 
     /* Botón Ranked Assistant */
     .ranked-button {
-      background: linear-gradient(135deg, #ec4899, #be185d);
+      background: linear-gradient(135deg, #a855f7, #7e22ce);
       color: white;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
     }
 
     .ranked-button:hover {
@@ -273,10 +274,10 @@
 
     /* Botón IA Coach */
     .ai-coach-button {
-      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      background: linear-gradient(135deg, #d946ef, #a21caf);
       color: white;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+      box-shadow: 0 4px 15px rgba(217, 70, 239, 0.3);
     }
 
     .ai-coach-button:hover {
@@ -290,10 +291,10 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      background: linear-gradient(135deg, #06b6d4, #0e7490);
+      background: linear-gradient(135deg, #ff2fb0, #d6008a);
       color: white;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+      box-shadow: 0 4px 15px rgba(255, 47, 176, 0.4);
     }
 
     .courses-button:hover {
@@ -301,12 +302,29 @@
       transform: translateY(-2px);
     }
 
-    /* Botón Reclutamiento de Coaches */
-    .coach-button {
-      background: linear-gradient(135deg, #f97316, #c2410c);
+    /* Botón Stats */
+    .stats-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #fb923c, #c2410c);
       color: white;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+      box-shadow: 0 4px 15px rgba(251, 146, 60, 0.3);
+    }
+
+    .stats-button:hover {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+    }
+
+    /* Botón Reclutamiento de Coaches */
+    .coach-button {
+      background: linear-gradient(135deg, #ef4444, #991b1b);
+      color: white;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
     }
 
     .coach-button:hover {
@@ -479,18 +497,22 @@
             📰 Noticias
           </a>
 
-          <button class="button ranked-button" onclick="openRanked()">
-            🎯 Ranked Assistant
-          </button>
+          <a href="./cursos.html" class="button courses-button">
+            <svg class="discord-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h2v2H6V6Z"></path><path d="M6 10h2v2H6v-2Z"></path></svg>
+            Cursos y Servicios
+          </a>
 
           <button class="button ai-coach-button" onclick="openAICoach()">
             🤖 IA Coach (Análisis Replay)
           </button>
 
-          <a href="./cursos.html" class="button courses-button">
-            <svg class="discord-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h2v2H6V6Z"></path><path d="M6 10h2v2H6v-2Z"></path></svg>
-            Cursos y Servicios
-          </a>
+          <button class="button ranked-button" onclick="openRanked()">
+            🎯 Ranked Assistant
+          </button>
+
+          <button class="button stats-button" onclick="openStats()">
+            📊 Stats
+          </button>
 
           <button class="button coach-button" onclick="openCoachRecruitment()">
             💼 Reclutamiento de Coaches
@@ -604,6 +626,18 @@
       window.location.href = "./coach-ia.html";
     } else {
       showMessage("loginMessage", "Debes iniciar sesión para usar la IA Coach.");
+      showScreen("login");
+    }
+  }
+
+  /* ACCESO PROTEGIDO A STATS */
+  async function openStats() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (session) {
+      window.location.href = "./stats.html";
+    } else {
+      showMessage("loginMessage", "Debes iniciar sesión para ver las Stats.");
       showScreen("login");
     }
   }
