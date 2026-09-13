@@ -1,0 +1,14 @@
+{
+  "name": "brawlcoach-news-bot",
+  "version": "1.0.0",
+  "description": "Robot que lee el blog oficial de Brawl Stars y publica noticias en español usando Gemini",
+  "type": "module",
+  "main": "scrape-news.mjs",
+  "scripts": {
+    "start": "node scrape-news.mjs"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}
