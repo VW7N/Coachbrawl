@@ -118,7 +118,14 @@ con este formato exacto:
 
       const data = await res.json();
       const rawText = data.choices?.[0]?.message?.content || "";
-      const cleaned = rawText.replace(/```json|```/g, "").trim();
+      let cleaned = rawText.replace(/```json|```/g, "").trim();
+
+      cleaned = cleaned
+        .replace(/\r\n/g, "\\n")
+        .replace(/\n/g, "\\n")
+        .replace(/\r/g, "\\n")
+        .replace(/\t/g, " ")
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
 
       return JSON.parse(cleaned);
     } catch (e) {
