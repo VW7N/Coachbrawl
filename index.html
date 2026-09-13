@@ -16,25 +16,28 @@
     }
 
     body {
-      font-family: Arial, sans-serif;
-      background: radial-gradient(circle at top center, #1e1b4b 0%, #0b1020 60%, #05070d 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      /* Imagen de fondo temática de Brawl Stars */
+      background: linear-gradient(rgba(10, 15, 30, 0.75), rgba(10, 15, 30, 0.85)), 
+                  url('fondo-brawlstars.jpg') no-repeat center center fixed;
+      background-size: cover;
       color: white;
       min-height: 100vh;
       position: relative;
       overflow-x: hidden;
     }
 
-    /* Efecto decorativo de iluminación trasera */
+    /* Halo luminoso decorativo en tono oro neón */
     body::before {
       content: '';
       position: absolute;
       top: -10%;
       left: 50%;
       transform: translateX(-50%);
-      width: 600px;
-      height: 300px;
-      background: rgba(255, 212, 59, 0.12);
-      filter: blur(120px);
+      width: 700px;
+      height: 350px;
+      background: rgba(255, 200, 0, 0.15);
+      filter: blur(140px);
       border-radius: 50%;
       z-index: 0;
       pointer-events: none;
@@ -74,29 +77,32 @@
       font-size: 52px;
       font-weight: 900;
       margin-bottom: 20px;
-      text-shadow: 0 0 25px rgba(255, 212, 59, 0.2);
+      letter-spacing: 1px;
+      text-shadow: 0 0 25px rgba(255, 204, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.8);
     }
 
     .logo span {
-      color: #ffd43b;
+      color: #ffcc00;
     }
 
     h1 {
       font-size: 48px;
       line-height: 1.05;
       margin-bottom: 20px;
+      text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9);
     }
 
     h1 span {
-      color: #ffd43b;
-      text-shadow: 0 0 20px rgba(255, 212, 59, 0.3);
+      color: #ffcc00;
+      text-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
     }
 
     .description {
-      color: #9ca3af;
+      color: #e2e8f0;
       font-size: 18px;
       line-height: 1.6;
       max-width: 560px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     }
 
     .features {
@@ -107,17 +113,20 @@
     }
 
     .feature {
-      background: rgba(21, 28, 50, 0.8);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 16px;
       padding: 20px;
-      transition: transform 0.2s, border-color 0.2s;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
     }
 
     .feature:hover {
       transform: translateY(-3px);
-      border-color: rgba(255, 212, 59, 0.3);
+      border-color: rgba(255, 204, 0, 0.5);
+      box-shadow: 0 10px 25px rgba(255, 204, 0, 0.15);
     }
 
     .feature-icon {
@@ -130,45 +139,47 @@
     }
 
     .feature p {
-      color: #8f9ab2;
+      color: #cbd5e1;
       font-size: 14px;
       line-height: 1.4;
     }
 
     .card {
-      background: rgba(21, 28, 50, 0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 212, 59, 0.15);
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 204, 0, 0.25);
       border-radius: 24px;
       padding: 35px;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 212, 59, 0.05);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 204, 0, 0.1);
     }
 
     .card h2 {
       font-size: 28px;
       margin-bottom: 8px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     }
 
     .card-description {
-      color: #8f9ab2;
+      color: #cbd5e1;
       margin-bottom: 28px;
     }
 
     .user-badge {
-      background: #0d1427;
-      border: 1px solid #34405f;
+      background: rgba(10, 15, 30, 0.8);
+      border: 1px solid rgba(255, 204, 0, 0.4);
       padding: 12px;
       border-radius: 11px;
       margin-bottom: 20px;
       font-size: 14px;
-      color: #ffd43b;
+      color: #ffcc00;
       word-break: break-all;
     }
 
     .counter-badge {
       margin-top: 15px;
       font-size: 13px;
-      color: #8f9ab2;
+      color: #94a3b8;
       text-align: center;
     }
 
@@ -176,178 +187,187 @@
       width: 100%;
       padding: 14px;
       margin-bottom: 14px;
-      border: 1px solid #34405f;
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 11px;
-      background: #0d1427;
+      background: rgba(10, 15, 30, 0.7);
       color: white;
       font-size: 15px;
       outline: none;
+      transition: all 0.2s ease;
     }
 
     .input:focus {
-      border-color: #ffd43b;
-      box-shadow: 0 0 10px rgba(255, 212, 59, 0.2);
+      border-color: #ffcc00;
+      box-shadow: 0 0 12px rgba(255, 204, 0, 0.3);
     }
 
+    /* ESTILO GENERAL DE BOTONES CON TEMA DE BRAWL STARS */
     .button {
       width: 100%;
-      border: none;
-      border-radius: 11px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
       padding: 14px;
       font-size: 16px;
-      font-weight: bold;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
       cursor: pointer;
       margin-top: 5px;
       text-decoration: none;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       text-align: center;
-      transition: all 0.2s ease;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 0.25s ease;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
     }
 
     /* Botón Iniciar sesión */
     .primary {
-      background: linear-gradient(135deg, #ffd43b, #f59e0b);
-      color: #111827;
-      box-shadow: 0 4px 15px rgba(255, 212, 59, 0.3);
+      background: linear-gradient(135deg, #ffcc00, #ff8800);
+      color: #0b0f19;
+      text-shadow: none;
+      border: 1px solid #ffe680;
+      box-shadow: 0 4px 15px rgba(255, 170, 0, 0.4);
     }
 
     .primary:hover {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
+      filter: brightness(1.15);
+      box-shadow: 0 6px 20px rgba(255, 170, 0, 0.6);
     }
 
     /* Botón Crear una cuenta */
     .secondary {
-      background: linear-gradient(135deg, #10b981, #059669);
+      background: linear-gradient(135deg, #10b981, #047857);
       color: white;
+      border: 1px solid #34d399;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
     }
 
     .secondary:hover {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
+      filter: brightness(1.15);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
     }
 
     /* Botón Cerrar sesión */
     .danger {
-      background: linear-gradient(135deg, #f87171, #b91c1c);
+      background: linear-gradient(135deg, #ef4444, #991b1b);
       color: white;
+      border: 1px solid #fca5a5;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(248, 113, 113, 0.3);
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35);
     }
 
     .danger:hover {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
+      filter: brightness(1.15);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
     }
 
     /* Botón Noticias */
     .news-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: linear-gradient(135deg, #38bdf8, #0284c7);
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
       color: white;
+      border: 1px solid #7dd3fc;
       margin-top: 12px;
-      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+      box-shadow: 0 4px 15px rgba(14, 165, 233, 0.35);
     }
 
     .news-button:hover {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
+      filter: brightness(1.15);
+      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5);
     }
 
     /* Botón Ranked Assistant */
     .ranked-button {
-      background: linear-gradient(135deg, #a855f7, #7e22ce);
+      background: linear-gradient(135deg, #a855f7, #6b21a8);
       color: white;
+      border: 1px solid #c084fc;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.35);
     }
 
     .ranked-button:hover {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
+      filter: brightness(1.15);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
     }
 
     /* Botón IA Coach */
     .ai-coach-button {
-      background: linear-gradient(135deg, #d946ef, #a21caf);
+      background: linear-gradient(135deg, #ec4899, #be185d);
       color: white;
+      border: 1px solid #fbcfe8;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(217, 70, 239, 0.3);
+      box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35);
     }
 
     .ai-coach-button:hover {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
+      filter: brightness(1.15);
+      box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5);
     }
 
     /* Botón Cursos y Servicios */
     .courses-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: linear-gradient(135deg, #ff2fb0, #d6008a);
+      background: linear-gradient(135deg, #ff007f, #99004d);
       color: white;
+      border: 1px solid #ff80bf;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(255, 47, 176, 0.4);
+      box-shadow: 0 4px 15px rgba(255, 0, 127, 0.4);
     }
 
     .courses-button:hover {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
+      filter: brightness(1.15);
+      box-shadow: 0 6px 20px rgba(255, 0, 127, 0.6);
     }
 
     /* Botón Stats */
     .stats-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: linear-gradient(135deg, #fb923c, #c2410c);
+      background: linear-gradient(135deg, #f97316, #c2410c);
       color: white;
+      border: 1px solid #fdba74;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(251, 146, 60, 0.3);
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.35);
     }
 
     .stats-button:hover {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
+      filter: brightness(1.15);
+      box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
     }
 
     /* Botón Reclutamiento de Coaches */
     .coach-button {
-      background: linear-gradient(135deg, #ef4444, #991b1b);
+      background: linear-gradient(135deg, #dc2626, #7f1d1d);
       color: white;
+      border: 1px solid #fca5a5;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.35);
     }
 
     .coach-button:hover {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
+      filter: brightness(1.15);
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
     }
 
     /* Botón Discord */
     .discord-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: linear-gradient(135deg, #5865f2, #4752c4);
+      background: linear-gradient(135deg, #5865f2, #313180);
       color: white;
+      border: 1px solid #8ea1f7;
       margin-top: 10px;
-      border: 1px solid #4752c4;
-      box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
+      box-shadow: 0 4px 15px rgba(88, 101, 242, 0.35);
     }
 
     .discord-button:hover {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
+      filter: brightness(1.15);
+      box-shadow: 0 6px 20px rgba(88, 101, 242, 0.5);
     }
 
     .discord-svg {
@@ -358,11 +378,12 @@
 
     .back {
       background: transparent;
-      color: #9ca3af;
+      color: #94a3b8;
       border: none;
       cursor: pointer;
       margin-top: 20px;
       font-size: 14px;
+      transition: color 0.2s;
     }
 
     .back:hover {
@@ -371,12 +392,12 @@
 
     .message {
       display: none;
-      background: #172033;
-      border: 1px solid #33415f;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #ffcc00;
       border-radius: 10px;
       padding: 12px;
       margin-top: 15px;
-      color: #cbd5e1;
+      color: #ffcc00;
       font-size: 14px;
     }
 
@@ -699,7 +720,6 @@
     button.textContent = "Creando cuenta...";
 
     try {
-      // Redirige eliminando cualquier parámetro residual
       const redirectUrl = window.location.origin + window.location.pathname;
       
       const { data, error } = await supabaseClient.auth.signUp({
@@ -793,13 +813,11 @@
     const counterEl = document.getElementById("visitCount");
     if (!counterEl) return;
 
-    // 1) Registrar esta visita incrementando el contador en Supabase
     try {
       const { data, error } = await supabaseClient.rpc('increment_site_visits');
       if (!error && data !== null) {
         counterEl.textContent = data;
       } else {
-        // Si falla el incremento, al menos mostramos el valor actual sin sumar
         const { data: current } = await supabaseClient
           .from('site_visits')
           .select('count')
@@ -811,8 +829,6 @@
       console.error("Error al incrementar el contador de visitas:", e);
     }
 
-    // 2) Suscribirse a cambios en tiempo real: cuando otra persona visite la
-    //    página, este número se actualizará solo, sin recargar.
     supabaseClient
       .channel('site_visits_realtime')
       .on(
@@ -851,7 +867,6 @@
   async function init() {
     const cleanUrl = window.location.origin + window.location.pathname;
 
-    // Detectar enlaces de confirmación por hash (#access_token=...)
     const hash = window.location.hash;
     if (hash && hash.includes('access_token')) {
       const params = new URLSearchParams(hash.substring(1));
@@ -877,7 +892,6 @@
       }
     }
 
-    // Detectar enlaces por parámetro (?code=...)
     const urlParams = new URLSearchParams(window.location.search);
     const authCode = urlParams.get('code');
 
@@ -896,7 +910,6 @@
       }
     }
 
-    // Comprobar sesión activa habitual
     const { data } = await supabaseClient.auth.getSession();
     renderAuthState(data?.session || null);
     initVisitCounter();
