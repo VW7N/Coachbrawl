@@ -1,7 +1,7 @@
 // scrape-news.mjs
 // Robot de noticias de BrawlCoach:
 // 1) Lee el blog oficial de Brawl Stars (supercell.com) - página pública, sin login.
-// 2) Si hay una noticia nueva que aún no hemos publicado, la manda a Gemini
+// 2) Si hay una noticia nueva que aún no hemos publicado, la manda a Hugging Face
 //    para que la redacte en español con el tono de BrawlCoach.
 // 3) Guarda el resultado en la tabla "noticias" de Supabase.
 
@@ -12,10 +12,10 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const HF_TOKEN = process.env.HF_TOKEN;
 
-// Modelo gratuito vía Hugging Face Inference Providers. Si este modelo deja
-// de estar disponible o se agota el crédito gratuito, cambia esta línea por
-// otro modelo de la lista en https://huggingface.co/docs/inference-providers
-const HF_MODEL = "meta-llama/Llama-3.1-8B-Instruct";
+// Modelo gratuito vía Hugging Face Inference Providers, fijado al proveedor
+// Groq (rápido y fiable) para evitar timeouts. Si deja de funcionar, prueba
+// otro modelo/proveedor de la lista en https://huggingface.co/docs/inference-providers
+const HF_MODEL = "meta-llama/Llama-3.1-8B-Instruct:groq";
 
 const BLOG_URL = "https://supercell.com/en/games/brawlstars/blog/";
 
@@ -39,7 +39,6 @@ async function fetchLatestArticle() {
   $('a[href*="/games/brawlstars/blog/"]').each((_, el) => {
     const href = $(el).attr("href");
     const text = $(el).text().trim();
-    // Descartamos enlaces de navegación / paginación / la propia página de listado
     if (
       href &&
       text &&
@@ -74,7 +73,7 @@ async function fetchArticleText(url) {
   const html = await res.text();
   const $ = cheerio.load(html);
   const text = $("main").text().replace(/\s+/g, " ").trim();
-  return text.slice(0, 6000); // límite razonable para no gastar de más en Gemini
+  return text.slice(0, 6000);
 }
 
 async function writeNewsWithHuggingFace(originalTitle, articleText) {
