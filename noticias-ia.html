@@ -362,24 +362,36 @@
       </div>`;
   }
 
-  /* OBTENER Y RENDERIZAR LAS NOTICIAS MÁS RECIENTES */
+  /* OBTENER Y RENDERIZAR LAS NOTICIAS MÁS RECIENTES
+     NOTA: usamos fetch() directo a la API REST de Supabase (en vez del cliente
+     supabase-js) porque con este proyecto, al usar la clave "publishable",
+     el cliente supabase-js añadía una cabecera Authorization que hacía que
+     Supabase devolviera 0 filas silenciosamente. Llamando directo a la API
+     con solo la cabecera "apikey" (como se comprobó manualmente) sí funciona. */
   async function fetchLatestNews() {
+    const url = `${SUPABASE_URL}/rest/v1/brawl_news?select=*&order=created_at.desc&limit=6`;
+
     try {
-      const { data: news, error, status, statusText } = await supabaseClient
-        .from('brawl_news')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(6);
+      const res = await fetch(url, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Accept: "application/json",
+        },
+      });
 
-      console.log("Respuesta de Supabase -> status:", status, statusText, "error:", error, "filas:", news);
+      console.log("Respuesta de Supabase -> status:", res.status, res.statusText);
 
-      if (error) {
-        showError("No se pudieron cargar las noticias (error de Supabase)", error);
+      if (!res.ok) {
+        const bodyText = await res.text();
+        showError(`No se pudieron cargar las noticias (HTTP ${res.status})`, { message: bodyText });
         return null;
       }
+
+      const news = await res.json();
+      console.log("Filas recibidas:", news);
       return news;
     } catch (e) {
-      // Esto captura fallos de red, de configuración del cliente, CORS, etc.
+      // Esto captura fallos de red, CORS, etc.
       showError("Fallo de conexión con Supabase", e);
       return null;
     }
