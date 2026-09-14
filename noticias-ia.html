@@ -278,6 +278,26 @@
       padding: 40px 0;
     }
 
+    .error-state {
+      text-align: center;
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+      grid-column: 1 / -1;
+      padding: 20px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .error-state code {
+      display: block;
+      margin-top: 8px;
+      color: #fecaca;
+      font-family: monospace;
+      word-break: break-word;
+    }
+
     @media (max-width: 600px) {
       .news-grid { grid-template-columns: 1fr; }
       .card { padding: 20px; }
@@ -332,25 +352,48 @@
 
   const knownIds = new Set();
 
+  function showError(title, err) {
+    console.error(title, err);
+    const details = (err && (err.message || err.error_description || JSON.stringify(err))) || "Error desconocido";
+    document.getElementById("newsContainer").innerHTML = `
+      <div class="error-state">
+        ⚠️ ${title}
+        <code>${details}</code>
+      </div>`;
+  }
+
   /* OBTENER Y RENDERIZAR LAS NOTICIAS MÁS RECIENTES */
   async function fetchLatestNews() {
-    const { data: news, error } = await supabaseClient
-      .from('brawl_news')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(6);
+    try {
+      const { data: news, error, status, statusText } = await supabaseClient
+        .from('brawl_news')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(6);
 
-    if (error) {
-      console.error("Error consultando noticias:", error.message);
+      console.log("Respuesta de Supabase -> status:", status, statusText, "error:", error, "filas:", news);
+
+      if (error) {
+        showError("No se pudieron cargar las noticias (error de Supabase)", error);
+        return null;
+      }
+      return news;
+    } catch (e) {
+      // Esto captura fallos de red, de configuración del cliente, CORS, etc.
+      showError("Fallo de conexión con Supabase", e);
       return null;
     }
-    return news;
   }
 
   async function loadNews() {
     const news = await fetchLatestNews();
 
-    if (!news || news.length === 0) {
+    if (news === null) {
+      // fetchLatestNews ya mostró el error correspondiente en pantalla
+      return;
+    }
+
+    if (news.length === 0) {
       document.getElementById("newsContainer").innerHTML =
         `<div class="empty-state">No hay noticias publicadas todavía. Vuelve a comprobarlo en breve.</div>`;
       return;
