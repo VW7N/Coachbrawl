@@ -3,7 +3,8 @@
 // 1) Lee el blog oficial de Brawl Stars (supercell.com) - página pública, sin login.
 // 2) Si hay una noticia nueva que aún no hemos publicado, la manda a Hugging Face
 //    para que la redacte en español con el tono de BrawlCoach.
-// 3) Guarda el resultado en la tabla "noticias" de Supabase.
+// 3) Guarda el resultado en la tabla "brawl_news" de Supabase (la que lee la web real).
+// 4) Marca la URL como procesada en "noticias_procesadas" para no repetirla.
 
 import * as cheerio from "cheerio";
 import { createClient } from "@supabase/supabase-js";
@@ -16,8 +17,23 @@ const HF_MODEL = "meta-llama/Llama-3.1-8B-Instruct";
 
 const BLOG_URL = "https://supercell.com/en/games/brawlstars/blog/";
 
+// Imagen de respaldo por si el artículo no tiene og:image
+const FALLBACK_IMAGE =
+  "https://supercell.com/en/games/brawlstars/static/images/social-share.jpg";
+
+// Categorías permitidas para clasificar la noticia
+const CATEGORIAS_VALIDAS = [
+  "Actualización",
+  "Evento",
+  "Balance",
+  "Esports",
+  "General"
+];
+
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY || !HF_TOKEN) {
-  console.error("Faltan variables de entorno (SUPABASE_URL, SUPABASE_SERVICE_KEY o HF_TOKEN).");
+  console.error(
+    "Faltan variables de entorno (SUPABASE_URL, SUPABASE_SERVICE_KEY o HF_TOKEN)."
+  );
   process.exit(1);
 }
 
@@ -27,15 +43,18 @@ async function fetchLatestArticle() {
   const res = await fetch(BLOG_URL, {
     headers: { "User-Agent": "Mozilla/5.0 (BrawlCoachNewsBot)" },
   });
+
   if (!res.ok) throw new Error(`No se pudo cargar el blog: ${res.status}`);
 
   const html = await res.text();
   const $ = cheerio.load(html);
 
   const candidates = [];
+
   $('a[href*="/games/brawlstars/blog/"]').each((_, el) => {
     const href = $(el).attr("href");
     const text = $(el).text().trim();
+
     if (
       href &&
       text &&
@@ -54,6 +73,7 @@ async function fetchLatestArticle() {
   }
 
   const latest = candidates[0];
+
   const fullUrl = latest.href.startsWith("http")
     ? latest.href
     : `https://supercell.com${latest.href}`;
@@ -61,33 +81,55 @@ async function fetchLatestArticle() {
   return { title: latest.text, url: fullUrl };
 }
 
-async function fetchArticleText(url) {
+async function fetchArticleDetails(url) {
   const res = await fetch(url, {
     headers: { "User-Agent": "Mozilla/5.0 (BrawlCoachNewsBot)" },
   });
+
   if (!res.ok) throw new Error(`No se pudo cargar el artículo: ${res.status}`);
 
   const html = await res.text();
   const $ = cheerio.load(html);
+
   const text = $("main").text().replace(/\s+/g, " ").trim();
-  return text.slice(0, 6000);
+
+  const ogImage =
+    $('meta[property="og:image"]').attr("content") ||
+    $('meta[name="twitter:image"]').attr("content") ||
+    FALLBACK_IMAGE;
+
+  return {
+    text: text.slice(0, 6000),
+    imageUrl: ogImage,
+  };
+}
+
+function formatFechaEspanol(date) {
+  return date.toLocaleDateString("es-ES", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 }
 
 async function writeNewsWithHuggingFace(originalTitle, articleText) {
   const prompt = `Eres el redactor de noticias de BrawlCoach, una web de coaching de Brawl Stars.
-Redacta una noticia breve en español (150-250 palabras), con tono cercano y entusiasta
+Redacta una noticia breve en español (40-60 palabras), con tono cercano y entusiasta
 para jugadores de Brawl Stars, a partir de este contenido oficial de Supercell.
 
 Título original (en inglés): ${originalTitle}
 Contenido original: ${articleText}
 
+También clasifica la noticia en UNA de estas categorías exactas (elige la que mejor encaje):
+${CATEGORIAS_VALIDAS.join(", ")}
+
 Responde ÚNICAMENTE con un JSON válido, sin texto adicional, sin backticks ni markdown,
 con este formato exacto:
-{"titulo": "...", "resumen": "...", "contenido": "..."}
+{"titulo": "...", "resumen": "...", "categoria": "..."}
 
-- "titulo": el título traducido/adaptado al español, atractivo.
-- "resumen": una frase de gancho (máx 25 palabras).
-- "contenido": el cuerpo de la noticia en español (150-250 palabras).`;
+- "titulo": el título traducido/adaptado al español, atractivo (máx 80 caracteres).
+- "resumen": el cuerpo de la noticia en español (40-60 palabras).
+- "categoria": una de las categorías de la lista de arriba, EXACTAMENTE como está escrita.`;
 
   const MAX_INTENTOS = 3;
 
@@ -96,41 +138,51 @@ con este formato exacto:
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 90000);
 
-      const res = await fetch("https://router.huggingface.co/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${HF_TOKEN}`,
-        },
-        body: JSON.stringify({
-          model: HF_MODEL,
-          messages: [{ role: "user", content: prompt }],
-        }),
-        signal: controller.signal,
-      });
+      const res = await fetch(
+        "https://router.huggingface.co/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${HF_TOKEN}`,
+          },
+          body: JSON.stringify({
+            model: HF_MODEL,
+            messages: [{ role: "user", content: prompt }],
+          }),
+          signal: controller.signal,
+        }
+      );
 
       clearTimeout(timeoutId);
 
       if (!res.ok) {
         const errText = await res.text();
-        throw new Error(`Error de Hugging Face (${res.status}): ${errText}`);
+        throw new Error(
+          `Error de Hugging Face (${res.status}): ${errText}`
+        );
       }
 
       const data = await res.json();
       const rawText = data.choices?.[0]?.message?.content || "";
-      let cleaned = rawText.replace(/```json|```/g, "").trim();
+      const cleaned = rawText.replace(/```json|```/g, "").trim();
 
-      cleaned = cleaned
-        .replace(/\r\n/g, "\\n")
-        .replace(/\n/g, "\\n")
-        .replace(/\r/g, "\\n")
-        .replace(/\t/g, " ")
-        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
+      const parsed = JSON.parse(cleaned);
 
-      return JSON.parse(cleaned);
+      // Nos aseguramos de que la categoría sea una de las válidas;
+      // si no, "General".
+      if (!CATEGORIAS_VALIDAS.includes(parsed.categoria)) {
+        parsed.categoria = "General";
+      }
+
+      return parsed;
     } catch (e) {
-      console.log(`Intento ${intento} de ${MAX_INTENTOS} falló: ${e.message}`);
+      console.log(
+        `Intento ${intento} de ${MAX_INTENTOS} falló: ${e.message}`
+      );
+
       if (intento === MAX_INTENTOS) throw e;
+
       await new Promise((r) => setTimeout(r, 3000));
     }
   }
@@ -138,8 +190,15 @@ con este formato exacto:
 
 async function main() {
   console.log("Buscando la última noticia en el blog oficial...");
+
   const latest = await fetchLatestArticle();
-  console.log("Última encontrada:", latest.title, "-", latest.url);
+
+  console.log(
+    "Última encontrada:",
+    latest.title,
+    "-",
+    latest.url
+  );
 
   const { data: existing, error: checkError } = await supabase
     .from("noticias_procesadas")
@@ -155,23 +214,40 @@ async function main() {
   }
 
   console.log("¡Es nueva! Descargando el contenido completo...");
-  const articleText = await fetchArticleText(latest.url);
 
-  console.log("Pidiendo a Hugging Face que la redacte en español...");
-  const noticia = await writeNewsWithHuggingFace(latest.title, articleText);
+  const { text: articleText, imageUrl } =
+    await fetchArticleDetails(latest.url);
 
-  console.log("Guardando en la tabla noticias...");
-  const { error: insertError } = await supabase.from("noticias").insert({
-    titulo: noticia.titulo,
-    resumen: noticia.resumen,
-    contenido: noticia.contenido,
-    fuente_url: latest.url,
-  });
+  console.log(
+    "Pidiendo a Hugging Face que la redacte en español..."
+  );
+
+  const noticia = await writeNewsWithHuggingFace(
+    latest.title,
+    articleText
+  );
+
+  console.log("Guardando en la tabla brawl_news...");
+
+  const { error: insertError } = await supabase
+    .from("brawl_news")
+    .insert({
+      title: noticia.titulo,
+      summary: noticia.resumen,
+      category: noticia.categoria,
+      image_url: imageUrl,
+      formatted_time: formatFechaEspanol(new Date()),
+      sources_count: 1,
+    });
+
   if (insertError) throw insertError;
 
   await supabase
     .from("noticias_procesadas")
-    .insert({ url: latest.url, titulo: latest.title });
+    .insert({
+      url: latest.url,
+      titulo: latest.title,
+    });
 
   console.log("Listo. Noticia publicada:", noticia.titulo);
 }
