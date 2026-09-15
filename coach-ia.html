@@ -1,451 +1,677 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IA Coach - BrawlCoach</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IA Coach · BrawlCoach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --ink:#0b0d17;
+    --panel:#131629;
+    --panel-2:#1a1e38;
+    --yellow:#ffcd3c;
+    --pink:#ff4d6d;
+    --cyan:#46e0ff;
+    --text:#f4f6fb;
+    --muted:#8791ab;
+    --line:#2a2f52;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:'Nunito Sans',sans-serif;
+    min-height:100vh;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(255,205,60,0.07), transparent 40%),
+      radial-gradient(circle at 90% 15%, rgba(70,224,255,0.08), transparent 45%);
+  }
+  .display{font-family:'Lilita One',cursive; letter-spacing:0.3px;}
 
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  .wrap{max-width:1100px;margin:0 auto;padding:32px 20px 80px;}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;flex-wrap:wrap;gap:14px;}
+  .back-link{
+    color:var(--muted);text-decoration:none;font-weight:700;font-size:14px;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .back-link:hover{color:var(--text);}
+  .logo{font-size:22px;}
+  .logo em{font-style:normal;color:var(--pink);}
 
-    body {
-      font-family: Arial, sans-serif;
-      background: radial-gradient(circle at top center, #1e1b4b 0%, #0b1020 60%, #05070d 100%);
-      color: white;
-      min-height: 100vh;
-      position: relative;
-      overflow-x: hidden;
-    }
+  .hero{
+    background:var(--panel);
+    border:3px solid var(--line);
+    border-radius:18px;
+    box-shadow:6px 6px 0 rgba(0,0,0,0.45);
+    padding:34px 34px 30px;
+    margin-bottom:28px;
+  }
+  .hero h1{
+    font-size:clamp(28px,4vw,42px);
+    line-height:1.05;
+    margin-bottom:10px;
+  }
+  .hero h1 .hl{color:var(--yellow);}
+  .hero p{color:var(--muted);max-width:60ch;font-size:15px;line-height:1.55;margin-bottom:22px;}
 
-    /* Iluminación trasera violeta */
-    body::before {
-      content: '';
-      position: absolute;
-      top: -10%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 600px;
-      height: 300px;
-      background: rgba(139, 92, 246, 0.15);
-      filter: blur(120px);
-      border-radius: 50%;
-      z-index: 0;
-      pointer-events: none;
-    }
+  .tagbar{display:flex;gap:12px;flex-wrap:wrap;}
+  .tagbar input{
+    flex:1;min-width:220px;
+    background:var(--ink);
+    border:3px solid var(--line);
+    border-radius:12px;
+    color:var(--text);
+    padding:14px 16px;
+    font-size:16px;
+    font-weight:700;
+    outline:none;
+  }
+  .tagbar input:focus{border-color:var(--cyan);}
+  .tagbar input::placeholder{color:var(--muted);font-weight:600;}
 
-    .page {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 40px 20px;
-      position: relative;
-      z-index: 1;
-    }
+  .btn{
+    border:3px solid transparent;
+    border-radius:12px;
+    padding:14px 22px;
+    font-weight:800;
+    font-size:15px;
+    cursor:pointer;
+    transition:transform .12s ease;
+    box-shadow:4px 4px 0 rgba(0,0,0,0.4);
+  }
+  .btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(0,0,0,0.4);}
+  .btn-primary{background:var(--yellow);color:#241a00;}
+  .btn-pink{background:var(--pink);color:#2a0010;}
+  .btn-ghost{background:transparent;border-color:var(--line);color:var(--text);}
 
-    .container {
-      width: 100%;
-      max-width: 1000px;
-    }
+  .status-line{margin-top:14px;font-size:14px;color:var(--cyan);font-weight:700;display:none;}
+  .status-line.show{display:block;}
+  .status-line.err{color:var(--pink);}
 
-    .header {
-      text-align: center;
-      margin-bottom: 35px;
-    }
+  section.panel{
+    background:var(--panel);
+    border:3px solid var(--line);
+    border-radius:18px;
+    box-shadow:6px 6px 0 rgba(0,0,0,0.45);
+    padding:30px 30px 26px;
+    margin-bottom:26px;
+  }
+  section.panel h2{font-size:22px;margin-bottom:6px;}
+  section.panel > p.sub{color:var(--muted);font-size:14px;margin-bottom:20px;}
 
-    .logo {
-      font-size: 38px;
-      font-weight: 900;
-      margin-bottom: 10px;
-      text-shadow: 0 0 25px rgba(139, 92, 246, 0.3);
-    }
+  .stat-strip{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:14px;margin-bottom:22px;
+  }
+  .stat-chip{
+    background:var(--ink);
+    border:2px solid var(--line);
+    border-radius:12px;
+    padding:14px 16px;
+  }
+  .stat-chip .num{font-family:'Lilita One',cursive;font-size:26px;color:var(--yellow);}
+  .stat-chip .lbl{font-size:12px;color:var(--muted);font-weight:700;}
 
-    .logo span {
-      color: #a78bfa;
-    }
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px;}
 
-    h1 {
-      font-size: 40px;
-      line-height: 1.1;
-      margin-bottom: 12px;
-    }
+  .card{
+    background:var(--panel-2);
+    border:2px solid var(--line);
+    border-radius:14px;
+    padding:18px;
+    border-top:5px solid var(--cyan);
+  }
+  .card.win{border-top-color:var(--cyan);}
+  .card.loss{border-top-color:var(--pink);}
 
-    h1 span {
-      color: #a78bfa;
-      text-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
-    }
+  .card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .card-top .mode{font-weight:800;font-size:15px;}
+  .badge{font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;}
+  .badge.win{background:rgba(70,224,255,0.15);color:var(--cyan);}
+  .badge.loss{background:rgba(255,77,109,0.15);color:var(--pink);}
 
-    .description {
-      color: #9ca3af;
-      font-size: 16px;
-      line-height: 1.6;
-      max-width: 650px;
-      margin: 0 auto;
-    }
+  .card-map{color:var(--muted);font-size:13px;margin-bottom:12px;}
+  .card-map b{color:var(--text);}
 
-    .analysis-layout {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 30px;
-    }
+  .analysis-card .example{
+    background:var(--ink);
+    border-left:3px solid var(--yellow);
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:13px;
+    color:var(--muted);
+    line-height:1.45;
+    margin-top:10px;
+  }
+  .analysis-card .example b{color:var(--text);display:block;font-size:11px;margin-bottom:3px;}
+  .analysis-title{font-weight:800;font-size:16px;margin-bottom:6px;color:var(--yellow);}
+  .analysis-detects{font-size:13px;color:var(--text);opacity:.9;line-height:1.4;}
 
-    .card {
-      background: rgba(21, 28, 50, 0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(139, 92, 246, 0.25);
-      border-radius: 24px;
-      padding: 35px;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(139, 92, 246, 0.1);
-    }
+  .coach-out{
+    display:none;
+    margin-top:18px;
+    background:var(--ink);
+    border:2px solid var(--cyan);
+    border-radius:14px;
+    padding:18px 20px;
+    font-size:14.5px;
+    line-height:1.6;
+    white-space:pre-wrap;
+  }
+  .coach-out.show{display:block;}
+  .coach-out.loading{color:var(--muted);font-style:italic;}
 
-    .card h2 {
-      font-size: 24px;
-      margin-bottom: 15px;
-    }
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 0 0;}
 
-    .input {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #34405f;
-      border-radius: 11px;
-      background: #0d1427;
-      color: white;
-      font-size: 15px;
-      outline: none;
-    }
-
-    .input:focus {
-      border-color: #a78bfa;
-      box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
-    }
-
-    /* Grid de recuadros */
-    .analysis-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin-top: 15px;
-    }
-
-    .analysis-card {
-      background: rgba(13, 20, 39, 0.7);
-      border: 1px solid rgba(139, 92, 246, 0.2);
-      border-radius: 16px;
-      padding: 20px;
-      transition: transform 0.2s, border-color 0.2s;
-    }
-
-    .analysis-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(167, 139, 250, 0.5);
-    }
-
-    .analysis-title {
-      font-size: 17px;
-      font-weight: bold;
-      color: #a78bfa;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .analysis-detects {
-      color: #e2e8f0;
-      font-size: 14px;
-      margin-bottom: 12px;
-      line-height: 1.4;
-    }
-
-    .analysis-example {
-      background: rgba(15, 23, 42, 0.8);
-      border-left: 3px solid #8b5cf6;
-      padding: 10px 12px;
-      border-radius: 6px;
-      font-size: 13px;
-      color: #94a3b8;
-      font-style: italic;
-      line-height: 1.4;
-    }
-
-    .analysis-example span {
-      display: block;
-      font-weight: bold;
-      font-style: normal;
-      color: #cbd5e1;
-      margin-bottom: 4px;
-      font-size: 11px;
-      text-transform: uppercase;
-    }
-
-    /* Botones */
-    .button {
-      border: none;
-      border-radius: 11px;
-      padding: 14px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-block;
-      text-align: center;
-      transition: all 0.2s ease;
-    }
-
-    .ai-coach-button {
-      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-      color: white;
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-    }
-
-    .ai-coach-button:hover {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
-    }
-
-    .back-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: transparent;
-      color: #9ca3af;
-      border: 1px solid #34405f;
-      border-radius: 11px;
-      padding: 10px 20px;
-      font-size: 14px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s;
-      margin-bottom: 25px;
-    }
-
-    .back-button:hover {
-      color: white;
-      border-color: #a78bfa;
-    }
-
-    @media (max-width: 600px) {
-      .analysis-grid { grid-template-columns: 1fr; }
-      .card { padding: 20px; }
-      h1 { font-size: 30px; }
-    }
-  </style>
+  @media (max-width:600px){
+    section.panel, .hero{padding:22px 18px;}
+  }
+</style>
 </head>
-
 <body>
 
-<div class="page">
-  <div class="container">
+<div class="wrap">
 
-    <a href="./index.html" class="back-button">
-      ← Volver al inicio
-    </a>
-
-    <div class="header">
-      <div class="logo">
-        Brawl<span>Coach</span>
-      </div>
-      <h1>
-        🤖 <span>IA Coach</span> (Análisis de Partida)
-      </h1>
-      <p class="description">
-        Ingresa tu Player Tag para cargar tu historial de combate o revisa los parámetros tácticos que evalúa nuestra IA.
-      </p>
-    </div>
-
-    <div class="analysis-layout">
-      
-      <!-- BUSCADOR POR PLAYER TAG -->
-      <div class="card">
-        <h2>🎮 Importar partidas por Player Tag</h2>
-        <p class="description" style="margin: 0 0 20px 0; font-size: 14px; text-align: left;">
-          Obtén tus últimos combates al instante desde la API sin necesidad de grabar vídeo.
-        </p>
-
-        <div style="display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap;">
-          <input id="playerTag" class="input" type="text" placeholder="Ej: #2PP08280" style="flex: 1; min-width: 200px;">
-          <button class="button ai-coach-button" style="padding: 0 25px;" onclick="fetchBattleLog()">
-            Buscar Partidas
-          </button>
-        </div>
-
-        <div id="loadingBattles" style="display: none; text-align: center; color: #a78bfa; padding: 20px 0;">
-          Obteniendo historial de combate desde Brawl Stars...
-        </div>
-
-        <!-- LISTA DE PARTIDAS ENCONTRADAS -->
-        <div id="battleList" class="analysis-grid" style="display: none;"></div>
-      </div>
-
-      <!-- RECUADROS DE ÁREAS DE ANÁLISIS -->
-      <div class="card">
-        <h2>📊 Parámetros de Análisis Táctico</h2>
-        <p class="description" style="margin: 0 0 20px 0; font-size: 14px; text-align: left;">
-          La Inteligencia Artificial examina las métricas de tu partida bajo estas 6 categorías:
-        </p>
-
-        <div class="analysis-grid">
-
-          <div class="analysis-card">
-            <div class="analysis-title">📍 Posicionamiento</div>
-            <div class="analysis-detects">Distancia respecto a cobertura y rango de rivales.</div>
-            <div class="analysis-example">
-              <span>Ejemplo:</span>
-              "Te expusiste al rango de Piper sin cobertura de arbusto al min 1:12."
-            </div>
-          </div>
-
-          <div class="analysis-card">
-            <div class="analysis-title">⚡ Uso de Habilidades</div>
-            <div class="analysis-detects">Acierto/Desperdicio de Super y Gadgets.</div>
-            <div class="analysis-example">
-              <span>Ejemplo:</span>
-              "Usaste la Super con la salud al 10%, sin posibilidades de Trade."
-            </div>
-          </div>
-
-          <div class="analysis-card">
-            <div class="analysis-title">🎯 Decisiones & Mapa</div>
-            <div class="analysis-detects">Control de líneas (Laning) y control de visión.</div>
-            <div class="analysis-example">
-              <span>Ejemplo:</span>
-              "Abandonaste la línea derecha dejando a tu support sin cobertura."
-            </div>
-          </div>
-
-          <div class="analysis-card">
-            <div class="analysis-title">💎 Errores de Objetivo</div>
-            <div class="analysis-detects">Prioridad en recolección vs. presión en batalla.</div>
-            <div class="analysis-example">
-              <span>Ejemplo:</span>
-              "Tenías 8 gemas e iniciaste un pusheo agresivo en vez de ralentizar."
-            </div>
-          </div>
-
-          <div class="analysis-card">
-            <div class="analysis-title">⏱️ Momentos Clave</div>
-            <div class="analysis-detects">Decisivos para victoria o derrota (Clutch/Throws).</div>
-            <div class="analysis-example">
-              <span>Ejemplo:</span>
-              "Minuto 2:05: El Wipeout rival se dio tras una mala rotación."
-            </div>
-          </div>
-
-          <div class="analysis-card">
-            <div class="analysis-title">💡 Consejos Pro</div>
-            <div class="analysis-detects">Ajustes tácticos para la próxima partida.</div>
-            <div class="analysis-example">
-              <span>Ejemplo:</span>
-              "Equipa el Gadget X en este mapa para cortar canalizaciones."
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
-
+  <div class="topbar">
+    <a href="./index.html" class="back-link">&larr; Volver al inicio</a>
+    <div class="logo display">Brawl<em>Coach</em></div>
   </div>
+
+  <div class="hero">
+    <h1 class="display">Tu <span class="hl">coach de IA</span> ya vio tu última partida</h1>
+    <p>Pega tu Player Tag para importar tus combates recientes. Calculamos tus winrates por brawler, mapa y modo, y el coach cruza esos números con consejos tácticos por modo para darte algo concreto que probar en la próxima ronda. 100% gratis: no usa ninguna IA de pago ni depende de límites de terceros.</p>
+
+    <div class="tagbar">
+      <input id="playerTag" type="text" placeholder="Ej: #2PP08280" autocomplete="off">
+      <button class="btn btn-primary" onclick="fetchBattleLog()">Buscar partidas</button>
+      <button class="btn btn-ghost" onclick="askGeneralCoaching()">Consejo general con IA</button>
+    </div>
+    <div id="statusLine" class="status-line"></div>
+  </div>
+
+  <section class="panel" id="statsPanel" style="display:none;">
+    <h2 class="display">Tu rendimiento reciente</h2>
+    <p class="sub">Calculado sobre tus últimas partidas disponibles en la API oficial.</p>
+    <div class="stat-strip" id="statStrip"></div>
+    <div id="generalCoachOut" class="coach-out"></div>
+  </section>
+
+  <section class="panel" id="battlesPanel" style="display:none;">
+    <h2 class="display">Últimas partidas</h2>
+    <p class="sub">Elige una para pedirle a la IA un análisis táctico de esa ronda concreta.</p>
+    <div id="battleList" class="grid"></div>
+  </section>
+
+  <section class="panel" id="videoPanel">
+    <h2 class="display">Sube un clip de tu partida</h2>
+    <p class="sub">Clips cortos (máx. 45s / 25MB). La IA lo revisa y te da su lectura de la jugada.</p>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+      <input id="videoFile" type="file" accept="video/mp4,video/webm,video/quicktime"
+        style="flex:1;min-width:220px;color:var(--muted);font-size:14px;">
+      <button class="btn btn-pink" onclick="uploadAndAnalyzeVideo()">Analizar vídeo con IA</button>
+    </div>
+    <div id="videoStatus" class="status-line"></div>
+    <div id="videoOut" class="coach-out"></div>
+  </section>
+
+
+  <section class="panel">
+    <h2 class="display">Qué mira el coach</h2>
+    <p class="sub">El motor trabaja sobre datos reales de la API oficial, no sobre la repetición jugada a jugada &mdash; eso no lo expone Supercell. Esto es lo que sí puede saber con certeza:</p>
+    <div class="grid">
+
+      <div class="card analysis-card">
+        <div class="analysis-title">Winrate por brawler</div>
+        <div class="analysis-detects">Con qué brawlers ganas más en tus partidas recientes.</div>
+        <div class="example"><b>Ejemplo</b>Con Max ganaste 4 de tus últimas 5 partidas: es tu mejor pick ahora mismo.</div>
+      </div>
+
+      <div class="card analysis-card">
+        <div class="analysis-title">Winrate por mapa</div>
+        <div class="analysis-detects">En qué mapas te va mejor y en cuáles peor.</div>
+        <div class="example"><b>Ejemplo</b>En Mina Rocosa solo ganas 1 de cada 3: es tu punto más débil ahora.</div>
+      </div>
+
+      <div class="card analysis-card">
+        <div class="analysis-title">Winrate por modo</div>
+        <div class="analysis-detects">Tu rendimiento comparado entre Atrapagemas, Balón Brawl, Showdown, etc.</div>
+        <div class="example"><b>Ejemplo</b>En Balón Brawl tu winrate baja 20 puntos respecto a tu media general.</div>
+      </div>
+
+      <div class="card analysis-card">
+        <div class="analysis-title">Tendencia general</div>
+        <div class="analysis-detects">Si tu racha reciente es buena, irregular o floja, y con qué fiabilidad (según el número de partidas).</div>
+        <div class="example"><b>Ejemplo</b>Solo hay 6 partidas analizadas: la tendencia aún no es fiable, sigue jugando.</div>
+      </div>
+
+      <div class="card analysis-card">
+        <div class="analysis-title">Estrategia por modo</div>
+        <div class="analysis-detects">Consejos tácticos genéricos y contrastados del modo de la partida elegida.</div>
+        <div class="example"><b>Ejemplo</b>En Atrapagemas, no rompas la formación en torno a la mina hasta tener ventaja clara.</div>
+      </div>
+
+      <div class="card analysis-card">
+        <div class="analysis-title">Siguiente paso</div>
+        <div class="analysis-detects">Una recomendación concreta y accionable para tu próxima partida.</div>
+        <div class="example"><b>Ejemplo</b>Prueba Piper en mapas abiertos: es donde mejor rinden los tiradores de largo alcance.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>BrawlCoach usa datos públicos de la API oficial de Brawl Stars. No afiliado a Supercell.</footer>
+
 </div>
 
 <script>
-  /* CONFIGURACIÓN SUPABASE */
+  /* ---------- Config ---------- */
   const SUPABASE_URL = "https://wzbdwcovghhcjbiedmuh.supabase.co";
   const SUPABASE_KEY = "sb_publishable_VD7Kf7j3RrEHg2RvVOQ6FA_H4FuT_k-";
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  /* VERIFICACIÓN DE SESIÓN */
+  let lastStats = null;
+  let lastItems = null;
+  let lastPlayerName = null;
+
+  /* ---------- Auth guard ---------- */
   async function checkAuth() {
     const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) {
-      window.location.href = "./index.html";
-    }
+    if (!session) window.location.href = "./index.html";
   }
   checkAuth();
 
-  /* OBTENER HISTORIAL DE PARTIDAS */
-  async function fetchBattleLog() {
-    let tag = document.getElementById("playerTag").value.trim();
-    const battleList = document.getElementById("battleList");
-    const loading = document.getElementById("loadingBattles");
-
-    if (!tag) {
-      alert("Por favor, ingresa un Player Tag válido.");
-      return;
-    }
-
+  /* ---------- Helpers ---------- */
+  function setStatus(msg, isError) {
+    const el = document.getElementById("statusLine");
+    el.textContent = msg;
+    el.className = "status-line show" + (isError ? " err" : "");
+  }
+  function clearStatus() {
+    const el = document.getElementById("statusLine");
+    el.className = "status-line";
+  }
+  function normalizeTag(raw) {
+    let tag = raw.trim().toUpperCase();
     if (!tag.startsWith("#")) tag = "#" + tag;
-    const cleanTag = encodeURIComponent(tag);
+    return tag;
+  }
 
-    battleList.style.display = "none";
-    loading.style.display = "block";
+  /* ---------- Fetch battle log + stats via Edge Function ---------- */
+  async function fetchBattleLog() {
+    const raw = document.getElementById("playerTag").value.trim();
+    if (!raw) { setStatus("Ingresa un Player Tag válido.", true); return; }
+    const tag = normalizeTag(raw);
+
+    setStatus("Obteniendo historial de combate desde Brawl Stars…", false);
+    document.getElementById("statsPanel").style.display = "none";
+    document.getElementById("battlesPanel").style.display = "none";
 
     try {
       const { data, error } = await supabaseClient.functions.invoke('brawl-proxy', {
-        body: { tag: cleanTag }
+        body: { tag }
       });
+      if (error || !data || data.error) throw (data && data.error) || error;
 
-      if (error || !data) throw error;
-      renderBattles(data.items);
+      lastItems = data.items || [];
+      lastStats = data.stats || null;
+      lastPlayerName = data.playerName || tag;
+
+      renderStats(lastStats);
+      renderBattles(lastItems);
+      clearStatus();
     } catch (err) {
-      console.warn("Cargando vista demo...", err);
-      renderMockBattles();
-    } finally {
-      loading.style.display = "none";
+      console.warn("Usando datos de ejemplo:", err);
+      setStatus("No se pudo conectar con la API todavía — mostrando datos de ejemplo.", true);
+      loadMockData();
     }
   }
 
-  /* RENDERIZAR TARJETAS */
+  /* ---------- Mock fallback (no live API configured yet) ---------- */
+  function loadMockData() {
+    lastPlayerName = "Jugador de ejemplo";
+    lastItems = [
+      { event: { mode: "gemGrab", map: "Mina Rocosa" }, battle: { result: "victory", starPlayer: { brawler: { name: "Shelly" } } } },
+      { event: { mode: "brawlBall", map: "Espirales" }, battle: { result: "defeat", starPlayer: { brawler: { name: "Colt" } } } },
+      { event: { mode: "hotZone", map: "Pueblo Abierto" }, battle: { result: "victory", starPlayer: { brawler: { name: "Edgar" } } } }
+    ];
+    lastStats = {
+      totalBattles: 3, wins: 2, winrate: 67,
+      byBrawler: [{ name: "Shelly", games: 1, wins: 1, winrate: 100 }],
+      byMap: [{ name: "Mina Rocosa", games: 1, wins: 1, winrate: 100 }],
+      byMode: [{ name: "gemGrab", games: 1, wins: 1, winrate: 100 }]
+    };
+    renderStats(lastStats);
+    renderBattles(lastItems);
+  }
+
+  /* ---------- Render: stat strip ---------- */
+  function renderStats(stats) {
+    const panel = document.getElementById("statsPanel");
+    const strip = document.getElementById("statStrip");
+    if (!stats) { panel.style.display = "none"; return; }
+    panel.style.display = "block";
+    const top = (stats.byBrawler || [])[0];
+    strip.innerHTML = `
+      <div class="stat-chip"><div class="num">${stats.winrate}%</div><div class="lbl">Winrate reciente</div></div>
+      <div class="stat-chip"><div class="num">${stats.totalBattles}</div><div class="lbl">Partidas analizadas</div></div>
+      <div class="stat-chip"><div class="num">${top ? top.name : '—'}</div><div class="lbl">Brawler más jugado</div></div>
+    `;
+    document.getElementById("generalCoachOut").className = "coach-out";
+  }
+
+  /* ---------- Render: battle cards ---------- */
   function renderBattles(items) {
-    const battleList = document.getElementById("battleList");
-    battleList.innerHTML = "";
-    battleList.style.display = "grid";
+    const panel = document.getElementById("battlesPanel");
+    const list = document.getElementById("battleList");
+    if (!items || !items.length) { panel.style.display = "none"; return; }
+    panel.style.display = "block";
+    list.innerHTML = "";
 
-    items.slice(0, 6).forEach((battle, index) => {
-      const isVictory = battle.battle.result === "victory";
-      const statusColor = isVictory ? "#10b981" : "#ef4444";
-      const statusText = isVictory ? "Victoria 🟢" : "Derrota 🔴";
+    items.slice(0, 6).forEach((b, index) => {
+      const isWin = b.battle.result === "victory";
+      const mode = b.event.mode || b.battle.mode || "Partida";
+      const map = b.event.map || "Mapa estándar";
+      const star = b.battle.starPlayer?.brawler?.name || "—";
 
-      const cardHtml = `
-        <div class="analysis-card" style="border-left: 4px solid ${statusColor};">
-          <div class="analysis-title">
-            <span>${(battle.event.mode || 'Partida').toUpperCase()}</span>
-            <span style="font-size: 12px; color: ${statusColor};">${statusText}</span>
-          </div>
-          <div class="analysis-detects">
-            Mapa: <b>${battle.event.map || 'Mapa Estándar'}</b>
-          </div>
-          <div class="analysis-example" style="margin-bottom: 12px;">
-            <span>Jugador Destacado:</span>
-            Brawler: <b>${battle.battle.starPlayer?.brawler?.name || 'Compañero'}</b>
-          </div>
-          <button class="button ai-coach-button" style="width: 100%; padding: 10px; font-size: 13px;" onclick="analyzeMatch(${index})">
-            🤖 Analizar con IA
-          </button>
+      const el = document.createElement("div");
+      el.className = "card " + (isWin ? "win" : "loss");
+      el.innerHTML = `
+        <div class="card-top">
+          <span class="mode">${mode}</span>
+          <span class="badge ${isWin ? 'win' : 'loss'}">${isWin ? 'Victoria' : 'Derrota'}</span>
         </div>
+        <div class="card-map">Mapa: <b>${map}</b> · MVP: <b>${star}</b></div>
+        <button class="btn btn-pink" style="width:100%;padding:10px;font-size:13px;">Analizar con IA</button>
+        <div class="coach-out" data-out></div>
       `;
-      battleList.innerHTML += cardHtml;
+      el.querySelector("button").addEventListener("click", () => analyzeMatch(index, el));
+      list.appendChild(el);
     });
   }
 
-  function renderMockBattles() {
-    const mockData = [
-      { event: { mode: "Atrapagemas", map: "Mina Rocosa" }, battle: { result: "victory", starPlayer: { brawler: { name: "Shelly" } } } },
-      { event: { mode: "Balón Brawl", map: "Espirales" }, battle: { result: "defeat", starPlayer: { brawler: { name: "Colt" } } } },
-      { event: { mode: "Zona Restringida", map: "Pueblo Abierto" }, battle: { result: "victory", starPlayer: { brawler: { name: "Edgar" } } } }
-    ];
-    renderBattles(mockData);
+  /* ---------- Coach: about one specific match ---------- */
+  async function analyzeMatch(index, cardEl) {
+    const out = cardEl.querySelector("[data-out]");
+    out.className = "coach-out show loading";
+    out.textContent = "Pensando el consejo…";
+
+    const match = lastItems[index];
+    const advice = await getCoachAdvice(lastPlayerName, lastStats, match);
+    out.className = "coach-out show";
+    out.textContent = advice;
   }
 
-  function analyzeMatch(index) {
-    alert("Procesando datos tácticos de la partida " + (index + 1) + "...");
+  /* ---------- Coach: general read on recent form ---------- */
+  async function askGeneralCoaching() {
+    if (!lastStats) { setStatus("Primero busca tus partidas con tu Player Tag.", true); return; }
+    const out = document.getElementById("generalCoachOut");
+    out.className = "coach-out show loading";
+    out.textContent = "Pensando el consejo…";
+
+    const advice = await getCoachAdvice(lastPlayerName, lastStats, null);
+    out.className = "coach-out show";
+    out.textContent = advice;
+  }
+
+  /* ---------- Try Gemini (free tier) first, fall back to local rules ---------- */
+  async function getCoachAdvice(playerName, stats, match) {
+    try {
+      const { data, error } = await supabaseClient.functions.invoke('ai-coach', {
+        body: { playerName, stats, match }
+      });
+      if (error || !data || data.error || !data.advice) {
+        throw (data && data.error) || error || new Error("Sin respuesta de la IA.");
+      }
+      return data.advice;
+    } catch (err) {
+      console.warn("Gemini no disponible, usando el motor de reglas:", err);
+      return generateCoachAdvice(playerName, stats, match);
+    }
+  }
+
+  /* =====================================================================
+     MOTOR DE REGLAS — genera el consejo sin llamar a ninguna IA externa.
+     100% gratis, sin límites de uso, corre entero en el navegador.
+     ===================================================================== */
+
+  const MODE_TIPS = {
+    gemgrab: [
+      "No rompas la formación alrededor de la mina hasta tener una ventaja clara de gemas.",
+      "A partir de 8-9 gemas, prioriza jugar seguro y forzar el reloj en vez de buscar más.",
+      "Presiona al portador de gemas rival antes de que llegue a su punto de canalización favorito."
+    ],
+    brawlball: [
+      "Controla el centro del mapa antes de intentar avanzar el balón: sin control, el avance se corta enseguida.",
+      "Usa brawlers de área para despejar arbustos antes de que tu equipo entre con el balón.",
+      "Defiende con uno o dos brawlers cerca de la portería en vez de rotar todo el equipo al ataque."
+    ],
+    heist: [
+      "En Atraco, no descuides tu propia caja fuerte por perseguir daño en la del rival.",
+      "Los brawlers de daño en área rinden mejor abriendo caminos hacia la caja que los de un solo objetivo.",
+      "Vigila los flancos: una ruta lateral sin marcar suele decidir la partida en Atraco."
+    ],
+    bounty: [
+      "En Recompensa evita morir gratis: cada estrella cedida pesa más que en otros modos.",
+      "Juega desde media-larga distancia y fuerza intercambios favorables en vez de peleas cuerpo a cuerpo.",
+      "Vigila el conteo de estrellas del rival para saber cuándo jugar agresivo o conservador."
+    ],
+    hotzone: [
+      "En Zona Restringida, mantén presencia constante en la zona aunque no puedas limpiarla del todo.",
+      "Divide fuerzas entre zonas cuando hay más de una activa, no concentres a todo el equipo en una sola.",
+      "Los brawlers de control de área son más valiosos aquí que los de una sola diana."
+    ],
+    knockout: [
+      "En Noqueo, juega con paciencia la ronda decisiva: perder una vida de más suele costar la partida entera.",
+      "Usa la cobertura del mapa para reposicionarte tras cada intercambio, no hay respawns que perdonen errores.",
+      "Fuerza peleas en número (2 contra 1) siempre que puedas antes de exponerte en solitario."
+    ],
+    siege: [
+      "En Asedio, prioriza recoger pernos sin exponerte: perder al portador de pernos es perder ventaja de robot.",
+      "No actives el robot sin ventaja numérica cerca del núcleo rival.",
+      "Defiende tu propio núcleo cuando el rival tenga el robot grande, aunque tengas que ceder pernos."
+    ],
+    soloshowdown: [
+      "En Showdown en solitario, evita las primeras peleas si puedes rotar hacia cajas de botín con seguridad.",
+      "La zona segura decide más partidas que el daño bruto: vigila el mapa constantemente.",
+      "Guarda tu Súper para el último tramo, cuando la zona obliga a peleas forzadas."
+    ],
+    duoshowdown: [
+      "En Showdown por parejas, no os separéis más de una pantalla: perder a tu compañero suele sentenciar la ronda.",
+      "Cubríos los ángulos muertos el uno al otro en vez de enfocar el mismo objetivo a la vez.",
+      "Guardad una Súper de reserva para el cierre de zona, cuando los enfrentamientos se vuelven inevitables."
+    ],
+    default: [
+      "Prioriza sobrevivir a intercambios desfavorables antes que buscar la jugada vistosa.",
+      "Adapta tu brawler al mapa: el mismo pick no rinde igual en un mapa abierto que en uno de pasillos estrechos.",
+      "Revisa qué brawler te está dando mejores resultados últimamente y dale más partidas seguidas para confirmarlo."
+    ]
+  };
+
+  function normalizeModeKey(mode) {
+    return (mode || "").toLowerCase().replace(/[^a-z]/g, "");
+  }
+
+  function pickRandom(arr, n) {
+    const copy = [...arr];
+    const out = [];
+    while (copy.length && out.length < n) {
+      out.push(copy.splice(Math.floor(Math.random() * copy.length), 1)[0]);
+    }
+    return out;
+  }
+
+  async function generateCoachAdvice(playerName, stats, match) {
+    if (!stats || !stats.totalBattles) {
+      return "Todavía no tengo partidas para analizar. Busca tu Player Tag primero.";
+    }
+
+    const lines = [];
+    const lowSample = stats.totalBattles < 15;
+
+    // 1) Lectura general
+    if (stats.winrate >= 60) {
+      lines.push(`Vienes de buena racha: ${stats.winrate}% de victorias en las últimas ${stats.totalBattles} partidas.`);
+    } else if (stats.winrate >= 45) {
+      lines.push(`Tu forma reciente es pareja: ${stats.winrate}% de victorias en ${stats.totalBattles} partidas.`);
+    } else {
+      lines.push(`Racha floja ahora mismo: ${stats.winrate}% de victorias en ${stats.totalBattles} partidas. Toca ajustar algo.`);
+    }
+    if (lowSample) {
+      lines.push(`Aviso: son pocas partidas para sacar conclusiones firmes, tómalo como una primera pista.`);
+    }
+
+    // 2) Mejor brawler con muestra mínima
+    const goodBrawler = (stats.byBrawler || []).find((b) => b.games >= 2 && b.winrate >= 60);
+    if (goodBrawler) {
+      lines.push(`${goodBrawler.name} es tu punto fuerte ahora: ${goodBrawler.winrate}% de victorias en ${goodBrawler.games} partidas. Dale más protagonismo.`);
+    }
+
+    // 3) Punto débil (mapa o modo) con muestra mínima
+    const weakMap = (stats.byMap || []).find((m) => m.games >= 2 && m.winrate <= 40);
+    const weakMode = (stats.byMode || []).find((m) => m.games >= 2 && m.winrate <= 40);
+    if (weakMap) {
+      lines.push(`En ${weakMap.name} te está costando: solo ${weakMap.winrate}% de victorias en ${weakMap.games} partidas. Prueba a cambiar de brawler ahí.`);
+    } else if (weakMode) {
+      lines.push(`${weakMode.name} es tu modo más flojo ahora mismo, con ${weakMode.winrate}% de victorias.`);
+    }
+
+    // 4) Consejo táctico de la partida elegida (si hay una)
+    if (match) {
+      const modeRaw = match.event?.mode || match.battle?.mode || "";
+      const mapName = match.event?.map || "este mapa";
+      const isWin = match.battle?.result === "victory";
+      const key = normalizeModeKey(modeRaw) || "default";
+      const pool = MODE_TIPS[key] || MODE_TIPS.default;
+      const [tip] = pickRandom(pool, 1);
+
+      lines.push(
+        isWin
+          ? `Sobre esa victoria en ${mapName}: buen resultado, y para seguir así — ${tip.toLowerCase()}`
+          : `Sobre esa derrota en ${mapName}: ${tip.toLowerCase()}`
+      );
+    } else {
+      const [tip1, tip2] = pickRandom(MODE_TIPS.default, 2);
+      lines.push(`Consejo general para la próxima: ${tip1.toLowerCase()}`);
+      if (tip2) lines.push(tip2);
+    }
+
+    return lines.join(" ");
+  }
+
+  /* =====================================================================
+     ANÁLISIS DE VÍDEO
+     Límites pensados para que la cuota gratuita de Gemini y el 1GB gratis
+     de Supabase Storage duren para muchos usuarios, no solo para uno.
+     ===================================================================== */
+  const VIDEO_MAX_MB = 25;
+  const VIDEO_MAX_SECONDS = 45;
+  const VIDEO_DAILY_LIMIT = 3; // por dispositivo, límite blando (no es seguridad real)
+
+  function videosUsedToday() {
+    const today = new Date().toISOString().slice(0, 10);
+    const key = "bc_video_quota";
+    let record = {};
+    try { record = JSON.parse(localStorage.getItem(key) || "{}"); } catch (e) {}
+    if (record.date !== today) record = { date: today, count: 0 };
+    return record;
+  }
+  function bumpVideoQuota() {
+    const key = "bc_video_quota";
+    const record = videosUsedToday();
+    record.count++;
+    localStorage.setItem(key, JSON.stringify(record));
+  }
+
+  function readVideoDuration(file) {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement("video");
+      video.preload = "metadata";
+      video.onloadedmetadata = () => { URL.revokeObjectURL(video.src); resolve(video.duration); };
+      video.onerror = () => reject(new Error("No se pudo leer el vídeo."));
+      video.src = URL.createObjectURL(file);
+    });
+  }
+
+  async function uploadAndAnalyzeVideo() {
+    const input = document.getElementById("videoFile");
+    const out = document.getElementById("videoOut");
+    out.className = "coach-out";
+
+    const file = input.files[0];
+    if (!file) { setVideoStatus("Selecciona un vídeo primero.", true); return; }
+
+    const quota = videosUsedToday();
+    if (quota.count >= VIDEO_DAILY_LIMIT) {
+      setVideoStatus(`Has llegado al límite de ${VIDEO_DAILY_LIMIT} análisis de vídeo por hoy. Vuelve mañana.`, true);
+      return;
+    }
+
+    if (file.size > VIDEO_MAX_MB * 1024 * 1024) {
+      setVideoStatus(`El vídeo pesa demasiado (máx. ${VIDEO_MAX_MB}MB).`, true);
+      return;
+    }
+
+    try {
+      const duration = await readVideoDuration(file);
+      if (duration > VIDEO_MAX_SECONDS) {
+        setVideoStatus(`El clip dura demasiado (máx. ${VIDEO_MAX_SECONDS}s). Recorta el momento que quieras analizar.`, true);
+        return;
+      }
+    } catch (e) {
+      setVideoStatus("No se pudo leer la duración del vídeo. Prueba con otro archivo.", true);
+      return;
+    }
+
+    setVideoStatus("Subiendo clip…", false);
+
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    const userId = session?.user?.id || "anon";
+    const path = `${userId}/${Date.now()}-${file.name}`;
+
+    try {
+      const { error: uploadError } = await supabaseClient
+        .storage.from("match-clips")
+        .upload(path, file, { contentType: file.type });
+      if (uploadError) throw uploadError;
+
+      const { data: signedData, error: signedError } = await supabaseClient
+        .storage.from("match-clips")
+        .createSignedUrl(path, 600); // 10 minutos, justo lo que tarda en analizarse
+      if (signedError) throw signedError;
+
+      setVideoStatus("Analizando con IA…", false);
+      out.className = "coach-out show loading";
+      out.textContent = "Revisando el clip…";
+
+      const { data, error } = await supabaseClient.functions.invoke('video-coach', {
+        body: { videoUrl: signedData.signedUrl, storagePath: path }
+      });
+      if (error || !data || data.error) throw (data && data.error) || error;
+
+      bumpVideoQuota();
+      out.className = "coach-out show";
+      out.textContent = data.analysis;
+      clearVideoStatus();
+    } catch (err) {
+      console.error(err);
+      out.className = "coach-out show";
+      out.textContent = "No se pudo analizar el vídeo ahora mismo. Puede que se haya agotado la cuota gratuita de hoy — inténtalo más tarde.";
+      clearVideoStatus();
+    }
+  }
+
+  function setVideoStatus(msg, isError) {
+    const el = document.getElementById("videoStatus");
+    el.textContent = msg;
+    el.className = "status-line show" + (isError ? " err" : "");
+  }
+  function clearVideoStatus() {
+    document.getElementById("videoStatus").className = "status-line";
   }
 </script>
 
